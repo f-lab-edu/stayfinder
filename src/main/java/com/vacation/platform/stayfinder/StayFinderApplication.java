@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StayfinderApplication {
+public class StayFinderApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StayfinderApplication.class, args);
+		SpringApplication.run(StayFinderApplication.class, args);
 	}
 
 }

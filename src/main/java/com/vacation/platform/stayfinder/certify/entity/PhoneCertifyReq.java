@@ -1,14 +1,18 @@
-package com.vacation.platform.stayfinder.user.entity;
+package com.vacation.platform.stayfinder.certify.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
+@ToString
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Table(name = "phone_certify_req")
 public class PhoneCertifyReq {
 

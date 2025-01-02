@@ -1,15 +1,19 @@
-package com.vacation.platform.stayfinder.user.entity;
+package com.vacation.platform.stayfinder.terms.entity;
 
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
+@ToString
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Table(name = "terms_sub")
 public class TermsSub {
 

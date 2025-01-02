@@ -1,14 +1,15 @@
 package com.vacation.platform.stayfinder.user.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.sql.Timestamp;
 
+@ToString
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
@@ -21,6 +22,9 @@ public class User {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "nick_name")
     private String nickName;
@@ -42,4 +46,14 @@ public class User {
 
     @Column(name = "modify_at")
     private Timestamp modifyAt;
+
+    @Builder
+    public User(String email, String password, String nickName, String phoneNumber, String birthday, boolean gender) {
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
 }

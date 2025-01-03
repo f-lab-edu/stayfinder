@@ -17,7 +17,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-!**/src/main/resources/db-config.properties
+*.properties
 
 ### IntelliJ IDEA ###
 .idea

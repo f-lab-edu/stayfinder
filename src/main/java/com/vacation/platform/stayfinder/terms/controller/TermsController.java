@@ -30,7 +30,7 @@ public class TermsController {
 
     @PostMapping("/terms_register")
     public Result<?> termsRegistration(@Valid @RequestBody Terms terms) {
-        return termsService.
+        return termsService.registerTerms();
     }
 
 

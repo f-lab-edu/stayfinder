@@ -1,46 +1,31 @@
 package com.vacation.platform.stayfinder.terms.entity;
 
 
+import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @ToString
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
-@Table(name = "terms_sub")
-public class TermsSub {
+@Data
+@Table
+@EqualsAndHashCode(callSuper = true)
+public class TermsSub extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "terms_sub_id")
-    private int termsSubId;
-
-    @Column(name = "terms_main_id")
     private int termsMainId;
 
-    @Column(name = "version")
+    @Id
     private int version;
 
-    @Column(name = "terms_details_title")
     private String termsDetailsTitle;
 
-    @Column(name = "terms_details_content")
     private String termsDetailsContent;
 
-    @Column(name = "is_active")
     private boolean isActive;
-
-    @Column(name = "create_at")
-    private Timestamp createAt;
-
-    @Column(name = "modify_at")
-    private Timestamp modifyAt;
-
 }

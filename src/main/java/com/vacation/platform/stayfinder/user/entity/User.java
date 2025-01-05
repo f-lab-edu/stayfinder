@@ -1,5 +1,6 @@
 package com.vacation.platform.stayfinder.user.entity;
 
+import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -8,47 +9,36 @@ import java.sql.Timestamp;
 
 @ToString
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@Table(name = "users")
-public class User {
+@Table
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("user 시퀀스")
-    @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "email")
+    // 유니크
     private String email;
 
-    @Column(name = "password")
     private String password;
 
-    @Column(name = "nick_name")
+    //유니크
     private String nickName;
-
-    @Column(name = "phone_number")
+    
+    //유니크
     private String phoneNumber;
 
-    @Column(name = "birthday")
     private String birthday;
+    
+    private Gender gender;
 
-    @Column(name = "gender")
-    private boolean gender;
-
-    @Column(name = "is_active")
+    // enum으로 처리
     private boolean isActive;
 
-    @Column(name = "create_at")
-    private Timestamp createAt;
-
-    @Column(name = "modify_at")
-    private Timestamp modifyAt;
-
     @Builder
-    public User(String email, String password, String nickName, String phoneNumber, String birthday, boolean gender) {
+    public User(String email, String password, String nickName, String phoneNumber, String birthday, Gender gender) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;

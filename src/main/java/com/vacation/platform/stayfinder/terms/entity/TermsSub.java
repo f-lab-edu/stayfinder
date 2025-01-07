@@ -2,6 +2,7 @@ package com.vacation.platform.stayfinder.terms.entity;
 
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.user.entity.TermsSubId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 @Data
 @Table
 @EqualsAndHashCode(callSuper = true)
+@IdClass(TermsSubId.class) // 복합 키 클래스 설정
 public class TermsSub extends BaseEntity {
 
     @Id
@@ -18,6 +20,8 @@ public class TermsSub extends BaseEntity {
     @JoinColumn(name = "terms_id")
     private Terms termsMainId;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "version", nullable = false)
     private int version;
 

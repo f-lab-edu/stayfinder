@@ -1,9 +1,6 @@
 package com.vacation.platform.stayfinder.common;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,9 +14,11 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @CreatedDate
+    @Column(name = "create_at")
     private Long createAt;
 
     @LastModifiedDate
+    @Column(name = "modify_at")
     private Long modifyAt;
 
     @PrePersist

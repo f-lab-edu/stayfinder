@@ -34,7 +34,7 @@ public class Terms extends BaseEntity {
     @Column(name = "is_active", nullable = false, length = 1)
     private boolean isActive;
 
-    @OneToMany(mappedBy = "terms")
+    @OneToMany(mappedBy = "termsMainId")
     private List<TermsSub> subList = new ArrayList<>();
 
 }

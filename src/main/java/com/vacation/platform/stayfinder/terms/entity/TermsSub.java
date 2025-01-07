@@ -4,10 +4,6 @@ package com.vacation.platform.stayfinder.terms.entity;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @ToString
 @Entity
@@ -18,14 +14,19 @@ import java.time.LocalDateTime;
 public class TermsSub extends BaseEntity {
 
     @Id
-    private int termsMainId;
+    @ManyToOne
+    @JoinColumn(name = "terms_id")
+    private Terms termsMainId;
 
-    @Id
+    @Column(name = "version", nullable = false)
     private int version;
 
+    @Column(name = "terms_details_title", nullable = false, length = 100)
     private String termsDetailsTitle;
 
+    @Column(name = "terms_details_content", nullable = false, length = 10000)
     private String termsDetailsContent;
 
+    @Column(name = "is_active", nullable = false, length = 1)
     private boolean isActive;
 }

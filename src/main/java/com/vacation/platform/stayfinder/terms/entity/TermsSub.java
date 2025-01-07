@@ -1,46 +1,36 @@
 package com.vacation.platform.stayfinder.terms.entity;
 
 
+import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.user.entity.TermsSubId;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.sql.Timestamp;
+import lombok.*;
 
 @ToString
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
-@Table(name = "terms_sub")
-public class TermsSub {
+@Data
+@Table
+@EqualsAndHashCode(callSuper = true)
+@IdClass(TermsSubId.class) // 복합 키 클래스 설정
+public class TermsSub extends BaseEntity {
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "terms_id")
+    private Terms termsMainId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "terms_sub_id")
-    private int termsSubId;
-
-    @Column(name = "terms_main_id")
-    private int termsMainId;
-
-    @Column(name = "version")
+    @Column(name = "version", nullable = false)
     private int version;
 
-    @Column(name = "terms_details_title")
+    @Column(name = "terms_details_title", nullable = false, length = 100)
     private String termsDetailsTitle;
 
-    @Column(name = "terms_details_content")
+    @Column(name = "terms_details_content", nullable = false, length = 10000)
     private String termsDetailsContent;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false, length = 1)
     private boolean isActive;
-
-    @Column(name = "create_at")
-    private Timestamp createAt;
-
-    @Column(name = "modify_at")
-    private Timestamp modifyAt;
-
 }

@@ -32,10 +32,5 @@ public class TermsUserAgreement extends BaseEntity {
 
     // version도 들어와야됨.
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
-
-    @Column(name = "modify_at")
-    private Timestamp modifyAt;
 
 }

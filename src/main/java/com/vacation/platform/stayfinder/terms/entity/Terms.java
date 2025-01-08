@@ -4,7 +4,6 @@ import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +27,8 @@ public class Terms extends BaseEntity {
     @Column(name = "terms_main_title", nullable = false, length = 100)
     private String termsMainTile;
 
-    @Column(name = "is_terms_required", nullable = false, length = 20)
-    private String isTermsRequired;
+    @Column(name = "is_terms_required", nullable = false, length = 1)
+    private boolean isTermsRequired;
 
     @Column(name = "is_active", nullable = false, length = 1)
     private boolean isActive;

@@ -2,15 +2,21 @@ package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
+import com.vacation.platform.stayfinder.terms.entity.TermsRequired;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@Slf4j
 public class TermsServiceImpl implements TermsService {
 
     private final TermsRepository termsRepository;
@@ -23,8 +29,19 @@ public class TermsServiceImpl implements TermsService {
     }
 
     @Override
-    public Result<Terms> getTermsMain() {
+    public Result<List<Terms>> getTermsMain() {
 
+        List<Terms> termsList = termsRepository.findAllByIsActive(true);
+
+        if(termsList.size() > 0) {
+            return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), termsList);
+        }
+
+        return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), null);
+    }
+
+    @Override
+    public Result<List<TermsSub>> getTermsSub(TermsDto termsDto) {
         return null;
     }
 
@@ -34,13 +51,47 @@ public class TermsServiceImpl implements TermsService {
     // 약관 버전
 
     @Override
+    @Transactional
     public Result<?> registerTerms(TermsDto termsDto) {
-        if(termsDto == null) {
-            return new Result<>(ResponseCode.BAD_REQUEST, ResponseCode.BAD_REQUEST.getCustomMessage(), null);
+        Terms terms = termsRepository.findByTermsMainTileAndIsActive(termsDto.getMainTitle(), true);
+
+        if(!termsDto.isCompulsion() && terms != null) {
+            return new Result<>(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
+        } else if(termsDto.isCompulsion() && terms != null) {
+            // 수정 서비스로 토스
         }
 
+        return termsSave(termsDto);
+    }
 
 
-        return null;
+    @Transactional
+    private Result<?> termsSave(TermsDto termsDto) {
+        try {
+            Terms terms = new Terms();
+
+            terms.setTermsMainTile(termsDto.getMainTitle());
+            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
+            terms.setActive(true);
+
+            termsRepository.save(terms);
+
+            Terms newTerms = termsRepository.findByTermsMainTileAndIsActive(terms.getTermsMainTile(), true);
+
+            TermsSub termsSub = new TermsSub();
+            termsSub.setTermsMainId(newTerms);
+            termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+            termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+            termsSub.setVersion(1);
+            termsSub.setActive(true);
+
+            termsSubRepository.save(termsSub);
+
+            return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), null);
+        } catch (Exception e) {
+            log.error("termsSave error {}", e.getMessage());
+            return new Result<>(ResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage(), null);
+        }
+
     }
 }

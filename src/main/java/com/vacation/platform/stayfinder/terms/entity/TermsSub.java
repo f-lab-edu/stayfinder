@@ -10,7 +10,10 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @Data
-@Table
+@Table(name = "TERMS_SUB", uniqueConstraints = {@UniqueConstraint(
+        name = "termsMainId_version",
+        columnNames = {"terms_main_id", "version"}
+)})
 @EqualsAndHashCode(callSuper = true)
 @IdClass(TermsSubId.class) // 복합 키 클래스 설정
 public class TermsSub extends BaseEntity {

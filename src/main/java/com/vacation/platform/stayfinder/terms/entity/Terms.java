@@ -4,7 +4,6 @@ import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

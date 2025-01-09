@@ -1,5 +1,6 @@
-package com.vacation.platform.stayfinder;
+package com.vacation.platform.stayfinder.terms;
 
+import com.vacation.platform.stayfinder.StayFinderApplication;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

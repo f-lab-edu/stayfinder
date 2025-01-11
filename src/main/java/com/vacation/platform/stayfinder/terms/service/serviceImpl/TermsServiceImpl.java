@@ -6,6 +6,7 @@ import com.vacation.platform.stayfinder.terms.entity.TermsRequired;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
+import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
@@ -23,7 +24,7 @@ public class TermsServiceImpl implements TermsService {
 
     private final TermsSubRepository termsSubRepository;
 
-    public TermsServiceImpl(TermsRepository termsRepository, TermsSubRepository termsSubRepository) {
+    public TermsServiceImpl(TermsRepository termsRepository, TermsSubRepository termsSubRepository, TermsUserAgreementRepository termsUserAgreementRepository) {
         this.termsRepository = termsRepository;
         this.termsSubRepository = termsSubRepository;
     }
@@ -34,10 +35,10 @@ public class TermsServiceImpl implements TermsService {
         List<Terms> termsList = termsRepository.findAllByIsActive(true);
 
         if(termsList.size() > 0) {
-            return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), termsList);
+            return Result.success(termsList);
         }
 
-        return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), null);
+        return Result.success();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class TermsServiceImpl implements TermsService {
         Terms terms = termsRepository.findByTermsMainTileAndIsActive(termsDto.getMainTitle(), true);
 
         if(!termsDto.isCompulsion() && terms != null) {
-            return new Result<>(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
+            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
         } else if(termsDto.isCompulsion() && terms != null) {
             // 수정 서비스로 토스
         }
@@ -87,10 +88,10 @@ public class TermsServiceImpl implements TermsService {
 
             termsSubRepository.save(termsSub);
 
-            return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), null);
+            return Result.success();
         } catch (Exception e) {
             log.error("termsSave error {}", e.getMessage());
-            return new Result<>(ResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage(), null);
+            return Result.fail(ResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage());
         }
 
     }

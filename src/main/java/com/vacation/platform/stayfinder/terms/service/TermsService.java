@@ -11,10 +11,10 @@ import java.util.List;
 @Service
 public interface TermsService {
 
-    public Result<List<Terms>> getTermsMain();
+    Result<List<Terms>> getTermsMain();
 
-    public Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
+    Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
 
-    public Result<?> registerTerms (TermsDto termsDto);
+    Result<?> registerTerms (TermsDto termsDto);
 
 }

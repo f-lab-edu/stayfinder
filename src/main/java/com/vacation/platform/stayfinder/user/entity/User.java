@@ -3,9 +3,6 @@ package com.vacation.platform.stayfinder.user.entity;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Comment;
-
-import java.sql.Timestamp;
 
 @ToString
 @Entity
@@ -16,7 +13,6 @@ import java.sql.Timestamp;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
     // 유니크

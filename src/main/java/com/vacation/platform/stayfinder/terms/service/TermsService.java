@@ -6,12 +6,14 @@ import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.util.Result;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface TermsService {
 
     Result<Terms> getTermsMain();
 
-    Result<TermsSub> getTermsSub();
+    Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
 
     Result<?> registerTerms (TermsDto termsDto);
 

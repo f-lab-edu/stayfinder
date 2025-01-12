@@ -1,11 +1,15 @@
 package com.vacation.platform.stayfinder.user.entity;
 
+import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.Comment;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @Entity
@@ -16,8 +20,7 @@ import java.sql.Timestamp;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Integer userId;
 
     // 유니크
     private String email;
@@ -35,7 +38,10 @@ public class User extends BaseEntity {
     private Gender gender;
 
     // enum으로 처리
-    private boolean isActive;
+    private Boolean isActive;
+
+    @OneToMany(mappedBy = "userId")
+    private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, String birthday, Gender gender) {

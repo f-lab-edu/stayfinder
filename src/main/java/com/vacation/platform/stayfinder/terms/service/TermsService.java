@@ -11,9 +11,9 @@ import java.util.List;
 @Service
 public interface TermsService {
 
-    Result<Terms> getTermsMain();
+    Result<List<Terms>> getTermsMain();
 
-    Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
+    Result<List<TermsSub>> getTermsSub();
 
     Result<?> registerTerms (TermsDto termsDto);
 

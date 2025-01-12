@@ -5,11 +5,9 @@ import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.terms.service.serviceImpl.TermsServiceImpl;
-import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,12 +34,12 @@ public class TermsController {
     //메인 동의 api 에서 응답으로 필수 동의를 전체 동의 한 경우에 휴대폰 인증으로 넘어감
 
     @GetMapping("/main")
-    public Result<Terms> getMain() {
+    public Result<List<Terms>> getMain() {
         return termsService.getTermsMain();
     }
 
     @PostMapping("/sub")
-    public Result<TermsSub> getSub() {
+    public Result<List<TermsSub>> getSub() {
         return termsService.getTermsSub();
     }
 

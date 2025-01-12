@@ -41,12 +41,7 @@ public class TermsServiceImpl implements TermsService {
     }
 
     @Override
-    public Result<List<TermsSub>> getTermsSub(TermsDto termsDto) {
-        return null;
-    }
-
-    @Override
-    public Result<TermsSub> getTermsSub() {
+    public Result<List<TermsSub>> getTermsSub() {
         return null;
     }
 

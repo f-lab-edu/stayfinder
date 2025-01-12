@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TermsRepository extends JpaRepository<Terms, Long> {
 
-    List<Terms> findAllByIsActive(boolean isActive);
-    Terms findByTermsMainTileAndIsActive(String mainTitle, boolean isActive);
+
+    Terms findByTermsMainTile(String mainTitle);
 
 }

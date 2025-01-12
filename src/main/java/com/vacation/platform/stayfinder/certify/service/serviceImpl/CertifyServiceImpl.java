@@ -44,7 +44,7 @@ public class CertifyServiceImpl implements CertifyService {
     @Override
     public Result<?> reqSend(String certifyTarget) {
         Message message = new Message();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random random = new Random();
 
         int certifyNumber = random.nextInt(100000);

@@ -45,6 +45,11 @@ public class TermsServiceImpl implements TermsService {
         return null;
     }
 
+    @Override
+    public Result<TermsSub> getTermsSub() {
+        return null;
+    }
+
     // 약관 저장 하는것부터 처리해야함
     // 필요한것은 약관 메인 타이틀, 약관 서브 타이틀
     // 약관 내용

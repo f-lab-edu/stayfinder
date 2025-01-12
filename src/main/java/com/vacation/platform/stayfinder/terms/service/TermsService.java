@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface TermsService {
 
-    Result<List<Terms>> getTermsMain();
+    Result<Terms> getTermsMain();
 
     Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
 

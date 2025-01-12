@@ -1,12 +1,11 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
+import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
-import com.vacation.platform.stayfinder.terms.entity.TermsRequired;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
-import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
@@ -32,7 +31,7 @@ public class TermsServiceImpl implements TermsService {
     @Override
     public Result<List<Terms>> getTermsMain() {
 
-        List<Terms> termsList = termsRepository.findAllByIsActive(true);
+        List<Terms> termsList = termsRepository.findAll();
 
         if(termsList.size() > 0) {
             return Result.success(termsList);
@@ -54,7 +53,7 @@ public class TermsServiceImpl implements TermsService {
     @Override
     @Transactional
     public Result<?> registerTerms(TermsDto termsDto) {
-        Terms terms = termsRepository.findByTermsMainTileAndIsActive(termsDto.getMainTitle(), true);
+        Terms terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
 
         if(!termsDto.isCompulsion() && terms != null) {
             return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
@@ -72,19 +71,19 @@ public class TermsServiceImpl implements TermsService {
             Terms terms = new Terms();
 
             terms.setTermsMainTile(termsDto.getMainTitle());
-            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
-            terms.setActive(true);
+//            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
+//            terms.setActive(true);
 
             termsRepository.save(terms);
 
-            Terms newTerms = termsRepository.findByTermsMainTileAndIsActive(terms.getTermsMainTile(), true);
+            Terms newTerms = termsRepository.findByTermsMainTile(terms.getTermsMainTile());
 
             TermsSub termsSub = new TermsSub();
-            termsSub.setTermsMainId(newTerms);
+//            termsSub.setTermsMainId(newTerms);
             termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
             termsSub.setTermsDetailsContent(termsDto.getDetailContent());
             termsSub.setVersion(1);
-            termsSub.setActive(true);
+//            termsSub.setActive(true);
 
             termsSubRepository.save(termsSub);
 

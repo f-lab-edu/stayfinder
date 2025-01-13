@@ -2,10 +2,7 @@ package com.vacation.platform.stayfinder.user.entity;
 
 import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -22,23 +19,28 @@ public class User extends BaseEntity {
     @Id
     private Integer userId;
 
-    // 유니크
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-    //유니크
+    @Column(nullable = false, unique = true)
     private String nickName;
     
-    //유니크
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
+    @Column(nullable = false)
     private String birthday;
-    
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    // enum으로 처리
-    private Boolean isActive;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     @OneToMany(mappedBy = "userId")
     private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();

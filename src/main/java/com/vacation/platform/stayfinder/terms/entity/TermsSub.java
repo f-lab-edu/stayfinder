@@ -28,7 +28,7 @@ public class TermsSub extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Integer version;
 
     @Column(nullable = false, length = 100)

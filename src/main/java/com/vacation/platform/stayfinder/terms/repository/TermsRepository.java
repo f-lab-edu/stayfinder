@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface TermsRepository extends JpaRepository<Terms, Long> {
 
-
-    Terms findByTermsMainTile(String mainTitle);
+    List<Terms> findByTermsMainTile(String mainTitle);
 
 }

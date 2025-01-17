@@ -1,12 +1,11 @@
 package com.vacation.platform.stayfinder.user.entity;
 
-import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Comment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
 @ToString
 @Entity
@@ -17,33 +16,26 @@ import java.util.List;
 public class User extends BaseEntity {
 
     @Id
-    private Integer userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userId;
 
-    @Column(nullable = false, unique = true)
+    // 유니크
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    //유니크
     private String nickName;
     
-    @Column(nullable = false, unique = true)
+    //유니크
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String birthday;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    
     private Gender gender;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserStatus userStatus;
-
-    @OneToMany(mappedBy = "userId")
-    private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
+    // enum으로 처리
+    private boolean isActive;
 
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, String birthday, Gender gender) {

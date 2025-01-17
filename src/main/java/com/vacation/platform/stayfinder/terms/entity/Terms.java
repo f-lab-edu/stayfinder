@@ -1,10 +1,13 @@
 package com.vacation.platform.stayfinder.terms.entity;
 
+import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +24,19 @@ public class Terms extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "terms_id", nullable = false)
-    private int termsId;
+    @Column(nullable = false)
+    private Integer termsId;
 
     // 유니크 해야됨.
-    @Column(name = "terms_main_title", nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String termsMainTile;
 
-    @Column(name = "is_terms_required", nullable = false, length = 20)
-    private String isTermsRequired;
+    @Column(nullable = false, length = 1)
+    private Boolean isTermsRequired;
 
-    @Column(name = "is_active", nullable = false, length = 1)
-    private boolean isActive;
-
-    @OneToMany(mappedBy = "termsMainId")
+    @OneToMany(mappedBy = "termsId")
     private List<TermsSub> subList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "termsId")
+    private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 }

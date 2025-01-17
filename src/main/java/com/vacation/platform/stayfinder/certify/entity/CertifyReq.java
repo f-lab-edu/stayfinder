@@ -4,34 +4,34 @@ import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @ToString
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "certify_req")
+@Table(name = "CERTIFY_REQ", uniqueConstraints={@UniqueConstraint(
+    name = "id_userId_reqCertifyNumber",
+        columnNames = {"id", "user_id", "req_certify_number"}
+)})
 @EqualsAndHashCode(callSuper = true)
 public class CertifyReq extends BaseEntity {
 
     // 인증 테이블을 공통으로 사용할수 있게 처리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(nullable = false)
+    private Integer id;
 
+    @Column(nullable = false)
     private String userId;
 
-    // create_at 을 사용하는게 좋음
-    private Timestamp reqTime;
-
-    private Timestamp resTime;
-
+    @Column(nullable = false, length = 6)
     private String reqCertifyNumber;
 
-    private int tryNumber;
+    @Column(nullable = false)
+    private Integer tryNumber;
 
-    // 삭제 대상
     // 인증 대상 enum으로 처리
-    private String certifyPhoneNumber;
+    @Column(name = "certify_number", nullable = false, length = 20)
+    private CertifyType certifyNumber; // 인증 대상
 
 }

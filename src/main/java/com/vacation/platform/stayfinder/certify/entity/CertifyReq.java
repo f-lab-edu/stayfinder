@@ -19,7 +19,7 @@ public class CertifyReq extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String userId;
@@ -28,7 +28,7 @@ public class CertifyReq extends BaseEntity {
     private String reqCertifyNumber;
 
     @Column(nullable = false)
-    private int tryNumber;
+    private Integer tryNumber;
 
     // 인증 대상 enum으로 처리
     @Column(name = "certify_number", nullable = false, length = 20)

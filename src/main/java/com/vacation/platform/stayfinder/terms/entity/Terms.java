@@ -28,7 +28,7 @@ public class Terms extends BaseEntity {
     private Integer termsId;
 
     // 유니크 해야됨.
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String termsMainTile;
 
     @Column(nullable = false, length = 1)

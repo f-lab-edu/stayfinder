@@ -7,29 +7,25 @@ import lombok.Setter;
 @Setter
 public class Result<T> {
 
-    private ResponseCode code;
+    private String code;
     private String message;
     private T data;
 
-    public Result(ResponseCode code, String message, T data) {
+    public Result(String code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
     public static <T> Result<T> success(T data) {
-        return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), data);
+        return new Result<>("0000", ResponseCode.SUCCESS.getCustomMessage(), data);
     }
 
     public static <T> Result<T> success() {
-        return new Result<>(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getCustomMessage(), null);
+        return new Result<>("0000", ResponseCode.SUCCESS.getCustomMessage(), null);
     }
 
-    public static <T> Result<T> fail(ResponseCode code, String message, T data) {
-        return new Result<>(code, message, data);
-    }
-
-    public static <T> Result<T> fail(ResponseCode code, String message) {
+    public static <T> Result<T> fail(String code, String message) {
         return new Result<>(code, message, null);
     }
 

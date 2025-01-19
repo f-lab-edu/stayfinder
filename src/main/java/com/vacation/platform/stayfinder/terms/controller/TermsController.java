@@ -27,7 +27,6 @@ public class TermsController {
 
     private final TermsService termsService;
 
-
     //처음에 약관 동의 하는 api 전송
     //특정 고객이 약관 상세 보고 싶다면 해당 약관 sub 전송
     //메인 동의 api 에서 응답으로 필수 동의를 전체 동의 한 경우에 휴대폰 인증으로 넘어감

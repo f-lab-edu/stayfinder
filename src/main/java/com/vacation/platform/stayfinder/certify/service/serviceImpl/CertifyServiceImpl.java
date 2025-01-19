@@ -1,7 +1,6 @@
 package com.vacation.platform.stayfinder.certify.service.serviceImpl;
 
 import com.vacation.platform.stayfinder.certify.repository.CertifyRepository;
-import com.vacation.platform.stayfinder.certify.service.CertifyService;
 import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
 import net.nurigo.sdk.NurigoApp;
@@ -16,7 +15,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @Service
-public class CertifyServiceImpl implements CertifyService {
+public class CertifyServiceImpl{
 
     private final DefaultMessageService defaultMessageService;
 
@@ -40,8 +39,6 @@ public class CertifyServiceImpl implements CertifyService {
         this.certifyRepository = certifyRepository;
     }
 
-
-    @Override
     public Result<?> reqSend(String certifyTarget) {
         Message message = new Message();
         StringBuilder sb = new StringBuilder();

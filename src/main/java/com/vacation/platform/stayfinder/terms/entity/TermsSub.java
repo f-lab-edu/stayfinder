@@ -28,16 +28,16 @@ public class TermsSub extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "약관의 버전")
     private Integer version;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, columnDefinition = "상세 약관의 타이틀")
     private String termsDetailsTitle;
 
-    @Column(nullable = false, length = 10000)
+    @Column(nullable = false, length = 10000, columnDefinition = "상세 약관의 내용")
     private String termsDetailsContent;
 
-    @Column(nullable = false, length = 1)
+    @Column(nullable = false, length = 1, columnDefinition = "약관의 상태")
     private Boolean isActive;
 
     @OneToMany(mappedBy = "version")

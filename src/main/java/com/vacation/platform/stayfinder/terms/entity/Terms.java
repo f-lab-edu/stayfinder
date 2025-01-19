@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,13 @@ public class Terms extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "테이블 id")
     private Integer termsId;
 
-    // 유니크 해야됨.
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(nullable = false, length = 100, unique = true, columnDefinition = "메인 약관 제목")
     private String termsMainTile;
 
-    @Column(nullable = false, length = 1)
+    @Column(nullable = false, length = 1, columnDefinition = "메인 약관 필수 여부")
     private Boolean isTermsRequired;
 
     @OneToMany(mappedBy = "termsId")

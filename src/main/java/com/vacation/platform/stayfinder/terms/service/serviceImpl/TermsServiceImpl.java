@@ -1,6 +1,8 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
 import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
+import com.vacation.platform.stayfinder.common.ErrorType;
+import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
@@ -56,7 +58,7 @@ public class TermsServiceImpl implements TermsService {
         Terms terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
 
         if(!termsDto.isCompulsion() && terms != null) {
-            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
+//            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
         } else if(termsDto.isCompulsion() && terms != null) {
             // 수정 서비스로 토스
         }
@@ -89,9 +91,7 @@ public class TermsServiceImpl implements TermsService {
 
             return Result.success();
         } catch (Exception e) {
-            log.error("termsSave error {}", e.getMessage());
-            return Result.fail(ResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage());
+            throw new StayFinderException(ErrorType.SYSTEM_ERROR);
         }
-
     }
 }

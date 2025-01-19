@@ -1,13 +1,13 @@
 package com.vacation.platform.stayfinder.user.service.serviceImpl;
 
+import com.vacation.platform.stayfinder.common.ErrorType;
+import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
-import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,18 +24,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Result<String> saveUser(User user) {
+    public void saveUser(User user) {
 
         List<User> nickNameList = userRepository.findByNickName(user.getNickName());
 
         if(!nickNameList.isEmpty()) {
-            return Result.fail(ResponseCode.SUCCESS, "요청하신 닉네임은 사용중입니다.", user.getNickName());
+            throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME);
         }
 
+        // 응답 없애기
 
-
-
-        return null;
     }
 
     @Override

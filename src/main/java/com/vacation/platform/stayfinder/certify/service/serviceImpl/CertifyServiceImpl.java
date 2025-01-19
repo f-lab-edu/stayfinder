@@ -70,9 +70,9 @@ public class CertifyServiceImpl implements CertifyService {
             });
 
         } catch (NurigoMessageNotReceivedException nuriException){
-            return Result.fail(ResponseCode.INTERNAL_SERVER_ERROR, nuriException.getMessage());
+            return Result.fail("9999", nuriException.getMessage());
         } catch (Exception e) {
-            return Result.fail(ResponseCode.INTERNAL_SERVER_ERROR, ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage());
+            return Result.fail("9999", ResponseCode.INTERNAL_SERVER_ERROR.getCustomMessage());
         } finally {
             // db 저장 로직
         }

@@ -4,8 +4,8 @@ package com.vacation.platform.stayfinder.terms.controller;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
-import com.vacation.platform.stayfinder.terms.service.serviceImpl.TermsServiceImpl;
 import com.vacation.platform.stayfinder.util.Result;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +20,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/terms")
+@RequiredArgsConstructor
 @Slf4j
 public class TermsController {
 
+
     private final TermsService termsService;
 
-    public TermsController(TermsServiceImpl termsService) {
-        this.termsService = termsService;
-    }
 
     //처음에 약관 동의 하는 api 전송
     //특정 고객이 약관 상세 보고 싶다면 해당 약관 sub 전송

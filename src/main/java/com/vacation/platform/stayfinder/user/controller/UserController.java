@@ -1,17 +1,15 @@
 package com.vacation.platform.stayfinder.user.controller;
 
-import com.vacation.platform.stayfinder.user.dto.UserDTO;
+import com.vacation.platform.stayfinder.common.ErrorType;
+import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 
 @RestController
@@ -26,10 +24,12 @@ public class UserController {
 
     //user 생성
     @PostMapping("/create")
-    public Result<?> createUser(@RequestBody User users) {
-        return userService.saveUser(users);
-    }
+    public Result<?> createUser(@Valid @RequestBody User users) {
+        if(users == null) throw new StayFinderException(ErrorType.SYSTEM_ERROR);
 
-    //user 수정
+        userService.saveUser(users);
+
+        return Result.success();
+    }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface  UserService {
 
-    public Result<?> saveUser(User user);
-    public Result<?> modifyUser(UserDTO.saveDTO modifyDTO);
+    void saveUser(User user);
+    Result<?> modifyUser(UserDTO.saveDTO modifyDTO);
 
 }

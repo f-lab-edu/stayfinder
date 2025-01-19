@@ -15,6 +15,6 @@ public interface TermsService {
 
     Result<List<TermsSub>> getTermsSub();
 
-    Result<?> registerTerms (TermsDto termsDto);
+    void registerTerms (TermsDto termsDto);
 
 }

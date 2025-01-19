@@ -9,13 +9,13 @@ import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
-import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -54,44 +54,42 @@ public class TermsServiceImpl implements TermsService {
 
     @Override
     @Transactional
-    public Result<?> registerTerms(TermsDto termsDto) {
-        Terms terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
+    public void registerTerms(TermsDto termsDto) {
+        Optional<Terms> terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
 
-        if(!termsDto.isCompulsion() && terms != null) {
-//            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
-        } else if(termsDto.isCompulsion() && terms != null) {
+
+
+        if(  !termsDto.isCompulsion() && terms.isPresent()) {
+            throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);
+        } else if(termsDto.isCompulsion() && terms.isPresent()) {
             // 수정 서비스로 토스
+            termsModify(termsDto);
         }
 
-        return termsSave(termsDto);
+        termsSave(termsDto);
     }
 
 
     @Transactional
-    private Result<?> termsSave(TermsDto termsDto) {
+    private void termsSave(TermsDto termsDto) {
+        Terms terms = new Terms();
+        TermsSub termsSub = new TermsSub();
+
+        termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+        termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+        termsSub.setVersion(1);
+        terms.setTermsMainTile(termsDto.getMainTitle());
+
         try {
-            Terms terms = new Terms();
-
-            terms.setTermsMainTile(termsDto.getMainTitle());
-//            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
-//            terms.setActive(true);
-
             termsRepository.save(terms);
-
-            Terms newTerms = termsRepository.findByTermsMainTile(terms.getTermsMainTile());
-
-            TermsSub termsSub = new TermsSub();
-//            termsSub.setTermsMainId(newTerms);
-            termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
-            termsSub.setTermsDetailsContent(termsDto.getDetailContent());
-            termsSub.setVersion(1);
-//            termsSub.setActive(true);
-
             termsSubRepository.save(termsSub);
-
-            return Result.success();
         } catch (Exception e) {
-            throw new StayFinderException(ErrorType.SYSTEM_ERROR);
+            throw new StayFinderException(ErrorType.DB_ERROR);
         }
+    }
+
+    @Transactional
+    public void termsModify(TermsDto termsDto) {
+
     }
 }

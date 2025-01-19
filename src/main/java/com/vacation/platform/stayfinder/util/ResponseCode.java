@@ -10,8 +10,7 @@ public enum ResponseCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한 없음"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "금지된 요청"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "리소스를 찾을 수 없음"),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버상 에러가 존재합니다."),
-    DATA_NOT_FOUND(HttpStatus.OK, "데이터가 미존재 합니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버상 에러가 존재합니다."),;
 
     private final HttpStatus httpStatus;
     private final String customMessage;

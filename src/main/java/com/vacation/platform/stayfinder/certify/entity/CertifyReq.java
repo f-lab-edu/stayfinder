@@ -2,7 +2,10 @@ package com.vacation.platform.stayfinder.certify.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @ToString
 @Entity

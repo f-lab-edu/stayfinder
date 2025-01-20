@@ -1,11 +1,9 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
-import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
-import com.vacation.platform.stayfinder.terms.entity.TermsRequired;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.entity.TermsSubId;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;

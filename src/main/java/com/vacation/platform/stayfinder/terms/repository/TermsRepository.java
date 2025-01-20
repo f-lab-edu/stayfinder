@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface TermsRepository extends JpaRepository<Terms, Long> {
 
 
-    Optional<Terms> findByTermsMainTitleOrderByCreateAtDesc(String mainTitle);
+    Optional<Terms> findFirstByTermsMainTitleOrderByCreateAtDesc(String mainTitle);
 
     Optional<Terms> findByTermsMainTitle(String mainTitle);
 

@@ -54,11 +54,10 @@ public class TermsServiceImpl implements TermsService {
     public void registerTerms(TermsDto termsDto) {
         Optional<Terms> terms = termsRepository.findByTermsMainTitle(termsDto.getMainTitle());
 
-        if(  !termsDto.isCompulsion() && terms.isPresent()) {
+        if(!termsDto.isCompulsion() && terms.isPresent()) {
             throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);
         } else if(termsDto.isCompulsion() && terms.isPresent()) {
-            // 수정 서비스로 토스
-            termsModify(termsDto);
+            termsUpdate(termsDto, terms.get());
         }
 
         termsSave(termsDto);
@@ -75,7 +74,7 @@ public class TermsServiceImpl implements TermsService {
         try {
             termsRepository.save(terms);
 
-             Optional<Terms> termsOptional = termsRepository.findByTermsMainTitleOrderByCreateAtDesc(termsDto.getMainTitle());
+             Optional<Terms> termsOptional = termsRepository.findFirstByTermsMainTitleOrderByCreateAtDesc(termsDto.getMainTitle());
 
             if(termsOptional.isPresent()) {
                 Terms termsResult = termsOptional.get();
@@ -95,13 +94,30 @@ public class TermsServiceImpl implements TermsService {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new StayFinderException(ErrorType.DB_ERROR);
         }
     }
 
     @Transactional
-    public void termsModify(TermsDto termsDto) {
+    public void termsUpdate(TermsDto termsDto, Terms reqTerms) {
+
+        Optional<TermsSub> termsSub;
+        try {
+            termsSub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(reqTerms.getTermsId());
+        } catch (Exception e) {
+            throw new StayFinderException(ErrorType.DB_ERROR);
+        }
+
+        if(termsSub.isPresent()) {
+            reqTerms.setIsTermsRequired(termsDto.isRequired());
+            reqTerms.setTermsMainTitle(termsDto.getMainTitle());
+            TermsSub sub = termsSub.get();
+
+            sub.setVersion(sub.getVersion());
+            sub.setTermsDetailsTitle(termsDto.getSubTitle());
+            sub.setTermsDetailsContent(termsDto.getDetailContent());
+            sub.setIsActive(false);
+        }
 
     }
 }

@@ -1,34 +1,31 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
-import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
+import com.vacation.platform.stayfinder.terms.entity.TermsSubId;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
-import com.vacation.platform.stayfinder.util.ResponseCode;
 import com.vacation.platform.stayfinder.util.Result;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TermsServiceImpl implements TermsService {
 
     private final TermsRepository termsRepository;
 
     private final TermsSubRepository termsSubRepository;
-
-    public TermsServiceImpl(TermsRepository termsRepository, TermsSubRepository termsSubRepository, TermsUserAgreementRepository termsUserAgreementRepository) {
-        this.termsRepository = termsRepository;
-        this.termsSubRepository = termsSubRepository;
-    }
 
     @Override
     public Result<List<Terms>> getTermsMain() {
@@ -54,44 +51,73 @@ public class TermsServiceImpl implements TermsService {
 
     @Override
     @Transactional
-    public Result<?> registerTerms(TermsDto termsDto) {
-        Terms terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
+    public void registerTerms(TermsDto termsDto) {
+        Optional<Terms> terms = termsRepository.findByTermsMainTitle(termsDto.getMainTitle());
 
-        if(!termsDto.isCompulsion() && terms != null) {
-//            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
-        } else if(termsDto.isCompulsion() && terms != null) {
-            // 수정 서비스로 토스
+        if(!termsDto.isCompulsion() && terms.isPresent()) {
+            throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);
+        } else if(termsDto.isCompulsion() && terms.isPresent()) {
+            termsUpdate(termsDto, terms.get());
         }
 
-        return termsSave(termsDto);
+        termsSave(termsDto);
     }
 
 
     @Transactional
-    private Result<?> termsSave(TermsDto termsDto) {
+    private void termsSave(TermsDto termsDto) {
+        Terms terms = new Terms();
+
+        terms.setTermsMainTitle(termsDto.getMainTitle());
+        terms.setIsTermsRequired(termsDto.isRequired());
+
         try {
-            Terms terms = new Terms();
-
-            terms.setTermsMainTile(termsDto.getMainTitle());
-//            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
-//            terms.setActive(true);
-
             termsRepository.save(terms);
 
-            Terms newTerms = termsRepository.findByTermsMainTile(terms.getTermsMainTile());
+             Optional<Terms> termsOptional = termsRepository.findFirstByTermsMainTitleOrderByCreateAtDesc(termsDto.getMainTitle());
 
-            TermsSub termsSub = new TermsSub();
-//            termsSub.setTermsMainId(newTerms);
-            termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
-            termsSub.setTermsDetailsContent(termsDto.getDetailContent());
-            termsSub.setVersion(1);
-//            termsSub.setActive(true);
+            if(termsOptional.isPresent()) {
+                Terms termsResult = termsOptional.get();
+                TermsSub termsSub = new TermsSub();
+                TermsSubId id = new TermsSubId();
 
-            termsSubRepository.save(termsSub);
+                id.setTermsId(termsResult.getTermsId());
 
-            return Result.success();
+                termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+                termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+                termsSub.setIsActive(true);
+                termsSub.setTerms(termsResult);
+                termsSub.setVersion(id.getTermsId());
+                termsSub.setTermsId(id.getTermsId());
+                termsSubRepository.save(termsSub);
+            }
+
+
         } catch (Exception e) {
-            throw new StayFinderException(ErrorType.SYSTEM_ERROR);
+            throw new StayFinderException(ErrorType.DB_ERROR);
         }
+    }
+
+    @Transactional
+    public void termsUpdate(TermsDto termsDto, Terms reqTerms) {
+
+        Optional<TermsSub> termsSub;
+        try {
+            termsSub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(reqTerms.getTermsId());
+        } catch (Exception e) {
+            throw new StayFinderException(ErrorType.DB_ERROR);
+        }
+
+        if(termsSub.isPresent()) {
+            reqTerms.setIsTermsRequired(termsDto.isRequired());
+            reqTerms.setTermsMainTitle(termsDto.getMainTitle());
+            TermsSub sub = termsSub.get();
+
+            sub.setVersion(sub.getVersion());
+            sub.setTermsDetailsTitle(termsDto.getSubTitle());
+            sub.setTermsDetailsContent(termsDto.getDetailContent());
+            sub.setIsActive(false);
+        }
+
     }
 }

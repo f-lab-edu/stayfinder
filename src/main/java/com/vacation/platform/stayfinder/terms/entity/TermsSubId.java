@@ -11,5 +11,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TermsSubId implements Serializable {
     private Long termsId;
-    private Integer version;
+    private Long version;
 }

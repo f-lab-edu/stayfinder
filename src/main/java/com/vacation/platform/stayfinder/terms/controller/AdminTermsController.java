@@ -1,5 +1,7 @@
 package com.vacation.platform.stayfinder.terms.controller;
 
+import com.vacation.platform.stayfinder.common.ErrorType;
+import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.terms.service.serviceImpl.TermsServiceImpl;
@@ -22,12 +24,11 @@ public class AdminTermsController {
 
     @PostMapping("/register")
     public Result<?> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
-        try {
-            return termsService.registerTerms(termsDto);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        if(termsDto == null) throw new StayFinderException(ErrorType.TERMS_NOT_FOUND);
+
+        termsService.registerTerms(termsDto);
+
+        return Result.success();
     }
 
 }

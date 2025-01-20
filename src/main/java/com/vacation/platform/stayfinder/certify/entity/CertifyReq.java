@@ -2,7 +2,10 @@ package com.vacation.platform.stayfinder.certify.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @ToString
 @Entity
@@ -32,6 +35,7 @@ public class CertifyReq extends BaseEntity {
 
     // 인증 대상 enum으로 처리
     @Column(name = "certify_number", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private CertifyType certifyNumber; // 인증 대상
 
 }

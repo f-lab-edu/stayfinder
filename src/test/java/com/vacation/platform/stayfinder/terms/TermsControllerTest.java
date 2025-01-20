@@ -29,7 +29,7 @@ public class TermsControllerTest {
                 "메인 타이틀",
                 "서브 타이틀",
                 "상세 내용",
-                1,
+                true,
                 true,
                 1001,
                 1

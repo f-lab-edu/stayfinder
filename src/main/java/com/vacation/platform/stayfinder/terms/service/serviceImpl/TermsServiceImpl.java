@@ -52,7 +52,7 @@ public class TermsServiceImpl implements TermsService {
     @Override
     @Transactional
     public void registerTerms(TermsDto termsDto) {
-        Optional<Terms> terms = termsRepository.findByTermsMainTitle(termsDto.getMainTitle());
+        Optional<Terms> terms = termsRepository.findByTermsMainTitleAndIsTermsRequired(termsDto.getMainTitle(), termsDto.isRequired());
 
         if(!termsDto.isCompulsion() && terms.isPresent()) {
             throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);

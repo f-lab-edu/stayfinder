@@ -5,12 +5,15 @@ import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
+import com.vacation.platform.stayfinder.terms.entity.TermsRequired;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
+import com.vacation.platform.stayfinder.terms.entity.TermsSubId;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.Result;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +22,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TermsServiceImpl implements TermsService {
 
     private final TermsRepository termsRepository;
 
     private final TermsSubRepository termsSubRepository;
-
-    public TermsServiceImpl(TermsRepository termsRepository, TermsSubRepository termsSubRepository, TermsUserAgreementRepository termsUserAgreementRepository) {
-        this.termsRepository = termsRepository;
-        this.termsSubRepository = termsSubRepository;
-    }
 
     @Override
     public Result<List<Terms>> getTermsMain() {
@@ -55,9 +54,7 @@ public class TermsServiceImpl implements TermsService {
     @Override
     @Transactional
     public void registerTerms(TermsDto termsDto) {
-        Optional<Terms> terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
-
-
+        Optional<Terms> terms = termsRepository.findByTermsMainTitle(termsDto.getMainTitle());
 
         if(  !termsDto.isCompulsion() && terms.isPresent()) {
             throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);
@@ -73,17 +70,34 @@ public class TermsServiceImpl implements TermsService {
     @Transactional
     private void termsSave(TermsDto termsDto) {
         Terms terms = new Terms();
-        TermsSub termsSub = new TermsSub();
 
-        termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
-        termsSub.setTermsDetailsContent(termsDto.getDetailContent());
-        termsSub.setVersion(1);
-        terms.setTermsMainTile(termsDto.getMainTitle());
+        terms.setTermsMainTitle(termsDto.getMainTitle());
+        terms.setIsTermsRequired(termsDto.isRequired());
 
         try {
             termsRepository.save(terms);
-            termsSubRepository.save(termsSub);
+
+             Optional<Terms> termsOptional = termsRepository.findByTermsMainTitleOrderByCreateAtDesc(termsDto.getMainTitle());
+
+            if(termsOptional.isPresent()) {
+                Terms termsResult = termsOptional.get();
+                TermsSub termsSub = new TermsSub();
+                TermsSubId id = new TermsSubId();
+
+                id.setTermsId(termsResult.getTermsId());
+
+                termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+                termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+                termsSub.setIsActive(true);
+                termsSub.setTerms(termsResult);
+                termsSub.setVersion(id.getTermsId());
+                termsSub.setTermsId(id.getTermsId());
+                termsSubRepository.save(termsSub);
+            }
+
+
         } catch (Exception e) {
+            e.printStackTrace();
             throw new StayFinderException(ErrorType.DB_ERROR);
         }
     }

@@ -32,6 +32,7 @@ public class CertifyReq extends BaseEntity {
 
     // 인증 대상 enum으로 처리
     @Column(name = "certify_number", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private CertifyType certifyNumber; // 인증 대상
 
 }

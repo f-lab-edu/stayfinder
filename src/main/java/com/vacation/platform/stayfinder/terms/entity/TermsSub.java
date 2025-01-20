@@ -22,14 +22,16 @@ import java.util.List;
 public class TermsSub extends BaseEntity {
 
     @Id
+    @Column(name = "terms_id")
+    private Long termsId; // 변경: Terms -> Long
+
     @ManyToOne
-    @JoinColumn(name = "terms_id")
-    private Terms termsId;
+    @JoinColumn(name = "terms_id", insertable = false, updatable = false)
+    private Terms terms;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true, columnDefinition = "약관의 버전")
-    private Integer version;
+    private Long version;
 
     @Column(nullable = false, length = 100, columnDefinition = "상세 약관의 타이틀")
     private String termsDetailsTitle;

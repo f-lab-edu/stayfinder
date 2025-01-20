@@ -26,10 +26,10 @@ public class Terms extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, columnDefinition = "테이블 id")
-    private Integer termsId;
+    private Long termsId;
 
     @Column(nullable = false, length = 100, unique = true, columnDefinition = "메인 약관 제목")
-    private String termsMainTile;
+    private String termsMainTitle;
 
     @Column(nullable = false, length = 1, columnDefinition = "메인 약관 필수 여부")
     private Boolean isTermsRequired;

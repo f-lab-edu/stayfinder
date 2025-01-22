@@ -13,7 +13,7 @@ public interface TermsService {
 
     Result<List<Terms>> getTermsMain();
 
-    Result<List<TermsSub>> getTermsSub();
+    Result<List<TermsSub>> getTermsSub(TermsDto termsDto);
 
     void registerTerms (TermsDto termsDto);
 

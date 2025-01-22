@@ -44,5 +44,5 @@ public class TermsControllerTest {
                         .content(termsDtoJson))
                 .andExpect(status().isOk());
     }
-    
+
 }

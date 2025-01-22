@@ -8,6 +8,7 @@ import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.entity.TermsSubId;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
+import com.vacation.platform.stayfinder.terms.repository.support.TermsRepositorySupport;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.Result;
 import jakarta.transaction.Transactional;
@@ -27,21 +28,28 @@ public class TermsServiceImpl implements TermsService {
 
     private final TermsSubRepository termsSubRepository;
 
+    private final TermsRepositorySupport termsRepositorySupport;
+
     @Override
     public Result<List<Terms>> getTermsMain() {
 
-        List<Terms> termsList = termsRepository.findAll();
+        List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
-        if(termsList.size() > 0) {
-            return Result.success(termsList);
+        if(termsList.size() < 1) {
+            throw new StayFinderException(ErrorType.TERMS_NOT_FOUND);
         }
-
-        return Result.success();
+        return Result.success(termsList);
     }
 
     @Override
-    public Result<List<TermsSub>> getTermsSub() {
-        return null;
+    public Result<List<TermsSub>> getTermsSub(TermsDto termsDto) {
+        List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
+
+        if(termsSubList.size() < 1) {
+            throw new StayFinderException(ErrorType.TERMS_NOT_FOUND);
+        }
+
+        return Result.success(termsSubList);
     }
 
     // 약관 저장 하는것부터 처리해야함

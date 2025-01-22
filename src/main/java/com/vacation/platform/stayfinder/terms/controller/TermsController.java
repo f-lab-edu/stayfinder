@@ -1,16 +1,17 @@
 package com.vacation.platform.stayfinder.terms.controller;
 
 
+import com.vacation.platform.stayfinder.common.ErrorType;
+import com.vacation.platform.stayfinder.common.StayFinderException;
+import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.Result;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,8 +38,10 @@ public class TermsController {
     }
 
     @PostMapping("/sub")
-    public Result<List<TermsSub>> getSub() {
-        return termsService.getTermsSub();
+    public Result<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
+        if(termsDto == null) throw new StayFinderException(ErrorType.TERMS_DTO_NOT_FOUND);
+
+        return termsService.getTermsSub(termsDto);
     }
 
 

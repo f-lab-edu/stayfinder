@@ -18,7 +18,7 @@ public class UtilTest {
 
         String key = AES256Util.generateKey();
         String iv = AES256Util.generateIV();
-        
+
         System.out.println("key     " + key);
         System.out.println("iv       " + iv);
 

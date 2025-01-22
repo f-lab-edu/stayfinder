@@ -44,17 +44,6 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
-// querydsl generated 경로 설정
-def querydslDir = "build/generated/querydsl"
-
-tasks.withType(JavaCompile) {
-	options.generatedSourceOutputDirectory = file(querydslDir)
-}
-
-clean {
-	delete file(querydslDir)
-}
-
 tasks.named('test') {
 	useJUnitPlatform()
 }

@@ -24,7 +24,7 @@ public class AdminTermsController {
 
     @PostMapping("/register")
     public Result<?> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
-        if(termsDto == null) throw new StayFinderException(ErrorType.TERMS_DTO_NOT_FOUND);
+        if(termsDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND);
 
         termsService.registerTerms(termsDto);
 

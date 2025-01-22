@@ -52,11 +52,6 @@ public class TermsServiceImpl implements TermsService {
         return Result.success(termsSubList);
     }
 
-    // 약관 저장 하는것부터 처리해야함
-    // 필요한것은 약관 메인 타이틀, 약관 서브 타이틀
-    // 약관 내용
-    // 약관 버전
-
     @Override
     @Transactional
     public void registerTerms(TermsDto termsDto) {

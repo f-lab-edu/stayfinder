@@ -39,7 +39,7 @@ public class TermsController {
 
     @PostMapping("/sub")
     public Result<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
-        if(termsDto == null) throw new StayFinderException(ErrorType.TERMS_DTO_NOT_FOUND);
+        if(termsDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND);
 
         return termsService.getTermsSub(termsDto);
     }

@@ -25,6 +25,10 @@ public class Result<T> {
         return new Result<>("0000", ResponseCode.SUCCESS.getCustomMessage(), null);
     }
 
+    public static <T> Result<T> fail(String code, String message, T data) {
+        return new Result<>(code, message, data);
+    }
+
     public static <T> Result<T> fail(String code, String message) {
         return new Result<>(code, message, null);
     }

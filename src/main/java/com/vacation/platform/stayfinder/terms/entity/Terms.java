@@ -33,6 +33,9 @@ public class Terms extends BaseEntity {
     @Column(nullable = false, length = 1, columnDefinition = "메인 약관 필수 여부")
     private Boolean isTermsRequired;
 
+    @Column(nullable = false, length = 1, columnDefinition = "약관 보이는 순서")
+    private Integer sortSeq;
+
     @OneToMany(mappedBy = "termsId")
     private List<TermsSub> subList = new ArrayList<>();
 

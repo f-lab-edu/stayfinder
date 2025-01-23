@@ -34,7 +34,7 @@ public class TermsRepositorySupport extends QuerydslRepositorySupport {
                 .innerJoin(termsSub)
                 .on(terms.termsId.eq(termsSub.termsId))
                 .where(termsSub.isActive)
-                .orderBy(terms.createAt.desc())
+                .orderBy(terms.sortSeq.asc())
                 .groupBy(terms.termsMainTitle, terms.termsId, terms.isTermsRequired)
                 .fetch();
     }

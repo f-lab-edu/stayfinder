@@ -14,7 +14,6 @@ public class StayFinderExceptionHandler {
     @ExceptionHandler(StayFinderException.class)
     public ResponseEntity<Result<?>> handleStayFinderException(StayFinderException e) {
         ErrorType error = e.getErrorType();
-        log.error("StayFinderException: {}", error.getInternalMessage());
 
         return ResponseEntity.status(error.getHttpStatus())
                 .body(new Result<>(error.getCode(), error.getExternalMessage(), null));

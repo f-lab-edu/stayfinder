@@ -12,7 +12,9 @@ import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
+import net.nurigo.sdk.message.exception.NurigoUnknownException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.response.MultipleDetailMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
@@ -62,35 +64,48 @@ public class CertifyServiceImpl implements CertifyService {
         CertifyRequestDto resultDto = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
         Random random = new Random();
 
+        /*
+        * resultDto == null 예외로 변경
+        * */
         if(resultDto != null) {
             if(resultDto.getTryNumber() >= 5) {
-                throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER);
+                throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER,
+                        resultDto.getPhoneNumber(),
+                        x -> log.error("{}", ErrorType.CERTIFY_TRY_NUMBER.getInternalMessage()),
+                        null);
             }
-
-            if(resultDto.getTermsDtoList().size() == 5){
-
-            }
+            // in 쿼리로 처리 해야함 @query 어노테이션으로 list로 처리
+//            Terms Term = termsRepository.findById(CertifyRequestDto.getTermsMainId()).orElseThrow(() -> new StayFinderException(ErrorType.SYSTEM_ERROR));
 
             for(TermsDto userTermsDto : resultDto.getTermsDtoList()) {
-                Optional<Terms> dto = termsRepository.findById(userTermsDto.getTermsMainId());
-                dto.orElseThrow();
+
+                //                        if(userTermsDto.getIsAgreement() != terms.getIsTermsRequired()) {
+                //                            throw new StayFinderException(ErrorType.TERMS_DIDNT_AGREEMENT);
+                //                        }
+
             }
         }
-
-
 
         int tryNumber = certifyRequestDto.getTryNumber() == 0 ? 0 : certifyRequestDto.getTryNumber();
 
         int certifyNumber = random.nextInt(100000);
 
-        CertifyResponseDto responseDto;
+        CertifyResponseDto responseDto = new CertifyResponseDto();
 
         certifyRequestDto.setTryNumber(tryNumber + 1);
 
         try {
             responseDto = sendMessage(certifyRequestDto.getPhoneNumber(), certifyNumber);
-        } catch (StayFinderException e) {
-            throw new StayFinderException(e.getErrorType());
+        } catch (NurigoMessageNotReceivedException | NurigoEmptyResponseException | NurigoUnknownException nuri) {
+            throw new StayFinderException(ErrorType.Nurigo_ERROR,
+                    Objects.requireNonNull(responseDto),
+                    x -> log.error("{}", (Object) nuri.getStackTrace()),
+                    null);
+        } catch (Exception e) {
+            throw new StayFinderException(ErrorType.SYSTEM_ERROR,
+                    certifyRequestDto,
+                    null,
+                    null);
         } finally {
             redisTemporaryStorageService.saveTemporaryData(certifyRequestDto.getPhoneNumber(), certifyRequestDto, 3600);
         }
@@ -107,7 +122,7 @@ public class CertifyServiceImpl implements CertifyService {
      * @return CertifyResponseDto
      * @throws StayFinderException
      */
-    private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException {
+    private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException, NurigoMessageNotReceivedException, NurigoEmptyResponseException, NurigoUnknownException {
         Message message = new Message();
         StringBuilder sb = new StringBuilder();
         CertifyResponseDto result = new CertifyResponseDto();
@@ -120,26 +135,20 @@ public class CertifyServiceImpl implements CertifyService {
         message.setTo(phoneNum);
         message.setText(sb.toString());
 
-        try {
-            MultipleDetailMessageSentResponse response = defaultMessageService.send(message);
+        // try 캐치 없애고 service 에서 처리
 
-            response.getFailedMessageList().forEach(item -> {
-                if(Objects.requireNonNull(item.getStatusCode()).equals("2000")) {
-                    result.setResponseCode(item.getStatusCode());
-                }
-                else {
-                    result.setResponseCode(item.getStatusCode());
-                    result.setResponseMessage(item.getStatusMessage());
-                }
-            });
+        MultipleDetailMessageSentResponse response = defaultMessageService.send(message);
 
-        } catch (NurigoMessageNotReceivedException nuriException){
-            log.error(nuriException.getMessage());
-            throw new StayFinderException(ErrorType.Nurigo_ERROR);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new StayFinderException(ErrorType.SYSTEM_ERROR);
-        }
+        response.getFailedMessageList().forEach(item -> {
+            if(Objects.requireNonNull(item.getStatusCode()).equals("2000")) {
+                result.setResponseCode(item.getStatusCode());
+            }
+            else {
+                result.setResponseCode(item.getStatusCode());
+                result.setResponseMessage(item.getStatusMessage());
+            }
+        });
+
         return result;
     }
 

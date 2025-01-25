@@ -8,6 +8,7 @@ import com.vacation.platform.stayfinder.util.Result;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Level;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,10 @@ public class CertifyController {
 
     @PostMapping("/req_send")
     public Result<?> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
-        if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND);
+        if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
+                null,
+                x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
+                null);
         return certifyService.reqSend(certifyRequestDto);
     }
 

@@ -37,9 +37,16 @@ public class TermsController {
         return termsService.getTermsMain();
     }
 
+    //Get 으로 처리
+    // TermsSub만 받음
+    // Response 객체로 리턴
     @PostMapping("/sub")
     public Result<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
-        if(termsDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND);
+        if(termsDto == null)
+            throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
+                    "null pointer",
+                    x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
+                    null);
 
         return termsService.getTermsSub(termsDto);
     }

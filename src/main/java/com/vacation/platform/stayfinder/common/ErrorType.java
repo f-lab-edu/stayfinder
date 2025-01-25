@@ -18,6 +18,7 @@ public enum ErrorType {
     Nurigo_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "1008", "핸드폰 인증 API 오류 입니다.", "시스템 에러 입니다."),
 
     TERMS_NOT_AGREEMENT(HttpStatus.BAD_REQUEST, "1009", "약관 동의 요청이 잘못되었습니다.", "요청한 값을 확인해주세요"),
+    TERMS_DIDNT_AGREEMENT(HttpStatus.BAD_REQUEST, "1010", "필수 약관 동의를 하지 않았습니다.", "요청한 값이 잘못 되었습니다."),
 
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요.")

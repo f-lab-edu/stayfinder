@@ -38,7 +38,7 @@ public class TermsServiceImpl implements TermsService {
             throw new StayFinderException(
                     ErrorType.TERMS_NOT_FOUND,
                     termsList,
-                    x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                    x -> log.error("{}", x),
                     null);
         }
         return Result.success(termsList);
@@ -52,7 +52,7 @@ public class TermsServiceImpl implements TermsService {
             throw new StayFinderException(
                     ErrorType.TERMS_NOT_FOUND,
                     termsSubList,
-                    x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                    x -> log.error("{}", x),
                     null);
         }
 
@@ -64,34 +64,42 @@ public class TermsServiceImpl implements TermsService {
     public void registerTerms(TermsDto termsDto) {
         Terms terms = termsRepository.findByTermsMainTitleAndIsTermsRequired(termsDto.getMainTitle(), termsDto.getIsCompulsion()).orElse(null);
 
+        if(!termsDto.getIsCompulsion() && terms != null) {
+            throw new StayFinderException(
+                    ErrorType.DUPLICATE_TERMS_TITLE,
+                    terms,
+                    x -> log.error("{}", x),
+                    null);
+        }
+
         try {
-            if(!termsDto.getIsCompulsion() && terms != null) {
-                throw new StayFinderException(
-                        ErrorType.DUPLICATE_TERMS_TITLE,
-                        terms,
-                        x -> log.error("{}", ErrorType.DUPLICATE_TERMS_TITLE.getInternalMessage()),
-                        null);
-            } else if(termsDto.getIsCompulsion() && terms != null) {
+            if(terms != null) {
                 termsUpdate(termsDto, terms);
             }
             termsSave(termsDto);
+        } catch (StayFinderException st) {
+            throw new StayFinderException(
+                    st.getErrorType(),
+                    terms,
+                    x -> log.error("{}",x),
+                    null);
         } catch (Exception e) {
             throw new StayFinderException(
                     ErrorType.DB_ERROR,
                     terms,
-                    x -> log.error("{}", (Object) e.getStackTrace()),
-                    null);
+                    x -> log.error("{}", e.getMessage()),
+                    e);
         }
     }
 
     @Transactional
-    public void termsUpdate(TermsDto termsDto, Terms reqTerms) throws Exception {
+    public void termsUpdate(TermsDto termsDto, Terms reqTerms){
 
         TermsSub sub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(
                 reqTerms.getTermsId())
                 .orElseThrow(() -> new StayFinderException(ErrorType.DB_ERROR,
                         null,
-                        x -> log.error("{}", ErrorType.DB_ERROR.getInternalMessage()),
+                        x -> log.error("{}", x),
                         null));
 
         reqTerms.setIsTermsRequired(termsDto.getIsCompulsion());
@@ -104,7 +112,7 @@ public class TermsServiceImpl implements TermsService {
     }
 
     @Transactional
-    private void termsSave(TermsDto termsDto) throws Exception {
+    private void termsSave(TermsDto termsDto){
         Terms terms = new Terms();
 
         terms.setTermsMainTitle(termsDto.getMainTitle());
@@ -113,11 +121,11 @@ public class TermsServiceImpl implements TermsService {
 
         termsRepository.save(terms);
 
-        Terms term = termsRepository.findFirstByTermsMainTitleOrderByCreateAtDesc(
+        Terms term = termsRepository.findByTermsMainTitle(
                         termsDto.getMainTitle())
                 .orElseThrow(() -> new StayFinderException(ErrorType.TERMS_NOT_FOUND,
                         terms,
-                        x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                        x -> log.error("{}", x),
                         null));
 
         TermsSub termsSub = new TermsSub();

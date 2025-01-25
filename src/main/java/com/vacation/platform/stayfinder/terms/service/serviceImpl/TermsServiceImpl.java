@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -36,7 +35,11 @@ public class TermsServiceImpl implements TermsService {
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
         if(termsList.size() < 1) {
-            throw new StayFinderException(ErrorType.TERMS_NOT_FOUND);
+            throw new StayFinderException(
+                    ErrorType.TERMS_NOT_FOUND,
+                    termsList,
+                    x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                    null);
         }
         return Result.success(termsList);
     }
@@ -46,7 +49,11 @@ public class TermsServiceImpl implements TermsService {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
         if(termsSubList.size() < 1) {
-            throw new StayFinderException(ErrorType.TERMS_NOT_FOUND);
+            throw new StayFinderException(
+                    ErrorType.TERMS_NOT_FOUND,
+                    termsSubList,
+                    x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                    null);
         }
 
         return Result.success(termsSubList);
@@ -55,72 +62,75 @@ public class TermsServiceImpl implements TermsService {
     @Override
     @Transactional
     public void registerTerms(TermsDto termsDto) {
-        Optional<Terms> terms = termsRepository.findByTermsMainTitleAndIsTermsRequired(termsDto.getMainTitle(), termsDto.isRequired());
+        Terms terms = termsRepository.findByTermsMainTitleAndIsTermsRequired(termsDto.getMainTitle(), termsDto.getIsCompulsion()).orElse(null);
 
-        if(!termsDto.isCompulsion() && terms.isPresent()) {
-            throw new StayFinderException(ErrorType.DUPLICATE_TERMS_TITLE);
-        } else if(termsDto.isCompulsion() && terms.isPresent()) {
-            termsUpdate(termsDto, terms.get());
+        try {
+            if(!termsDto.getIsCompulsion() && terms != null) {
+                throw new StayFinderException(
+                        ErrorType.DUPLICATE_TERMS_TITLE,
+                        terms,
+                        x -> log.error("{}", ErrorType.DUPLICATE_TERMS_TITLE.getInternalMessage()),
+                        null);
+            } else if(termsDto.getIsCompulsion() && terms != null) {
+                termsUpdate(termsDto, terms);
+            }
+            termsSave(termsDto);
+        } catch (Exception e) {
+            throw new StayFinderException(
+                    ErrorType.DB_ERROR,
+                    terms,
+                    x -> log.error("{}", (Object) e.getStackTrace()),
+                    null);
         }
-
-        termsSave(termsDto);
     }
 
+    @Transactional
+    public void termsUpdate(TermsDto termsDto, Terms reqTerms) throws Exception {
+
+        TermsSub sub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(
+                reqTerms.getTermsId())
+                .orElseThrow(() -> new StayFinderException(ErrorType.DB_ERROR,
+                        null,
+                        x -> log.error("{}", ErrorType.DB_ERROR.getInternalMessage()),
+                        null));
+
+        reqTerms.setIsTermsRequired(termsDto.getIsCompulsion());
+        reqTerms.setTermsMainTitle(termsDto.getMainTitle());
+
+        sub.setVersion(sub.getVersion());
+        sub.setTermsDetailsTitle(termsDto.getSubTitle());
+        sub.setTermsDetailsContent(termsDto.getDetailContent());
+        sub.setIsActive(false);
+    }
 
     @Transactional
-    private void termsSave(TermsDto termsDto) {
+    private void termsSave(TermsDto termsDto) throws Exception {
         Terms terms = new Terms();
 
         terms.setTermsMainTitle(termsDto.getMainTitle());
-        terms.setIsTermsRequired(termsDto.isRequired());
+        terms.setIsTermsRequired(termsDto.getIsCompulsion());
+        terms.setSortSeq(termsDto.getSortSeq());
 
-        try {
-            termsRepository.save(terms);
+        termsRepository.save(terms);
 
-             Optional<Terms> termsOptional = termsRepository.findFirstByTermsMainTitleOrderByCreateAtDesc(termsDto.getMainTitle());
+        Terms term = termsRepository.findFirstByTermsMainTitleOrderByCreateAtDesc(
+                        termsDto.getMainTitle())
+                .orElseThrow(() -> new StayFinderException(ErrorType.TERMS_NOT_FOUND,
+                        terms,
+                        x -> log.error("{}", ErrorType.TERMS_NOT_FOUND.getInternalMessage()),
+                        null));
 
-            if(termsOptional.isPresent()) {
-                Terms termsResult = termsOptional.get();
-                TermsSub termsSub = new TermsSub();
-                TermsSubId id = new TermsSubId();
+        TermsSub termsSub = new TermsSub();
+        TermsSubId id = new TermsSubId();
 
-                id.setTermsId(termsResult.getTermsId());
+        id.setTermsId(term.getTermsId());
 
-                termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
-                termsSub.setTermsDetailsContent(termsDto.getDetailContent());
-                termsSub.setIsActive(true);
-                termsSub.setTerms(termsResult);
-                termsSub.setVersion(id.getTermsId());
-                termsSub.setTermsId(id.getTermsId());
-                termsSubRepository.save(termsSub);
-            }
-
-
-        } catch (Exception e) {
-            throw new StayFinderException(ErrorType.DB_ERROR);
-        }
-    }
-
-    @Transactional
-    public void termsUpdate(TermsDto termsDto, Terms reqTerms) {
-
-        Optional<TermsSub> termsSub;
-        try {
-            termsSub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(reqTerms.getTermsId());
-        } catch (Exception e) {
-            throw new StayFinderException(ErrorType.DB_ERROR);
-        }
-
-        if(termsSub.isPresent()) {
-            reqTerms.setIsTermsRequired(termsDto.isRequired());
-            reqTerms.setTermsMainTitle(termsDto.getMainTitle());
-            TermsSub sub = termsSub.get();
-
-            sub.setVersion(sub.getVersion());
-            sub.setTermsDetailsTitle(termsDto.getSubTitle());
-            sub.setTermsDetailsContent(termsDto.getDetailContent());
-            sub.setIsActive(false);
-        }
-
+        termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+        termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+        termsSub.setIsActive(true);
+        termsSub.setTerms(term);
+        termsSub.setVersion(id.getTermsId());
+        termsSub.setTermsId(id.getTermsId());
+        termsSubRepository.save(termsSub);
     }
 }

@@ -7,7 +7,6 @@ import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.RedisTemporaryStorageService;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -55,11 +53,6 @@ public class CertifyServiceImpl implements CertifyService {
         this.termsRepository = termsRepository;
     }
 
-    /**
-     * 핸드폰 인증 요청
-     * @param certifyRequestDto
-     * @return
-     */
     public Result<?> reqSend(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto resultDto = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
         Random random = new Random();
@@ -99,13 +92,13 @@ public class CertifyServiceImpl implements CertifyService {
         } catch (NurigoMessageNotReceivedException | NurigoEmptyResponseException | NurigoUnknownException nuri) {
             throw new StayFinderException(ErrorType.Nurigo_ERROR,
                     Objects.requireNonNull(responseDto),
-                    x -> log.error("{}", (Object) nuri.getStackTrace()),
-                    null);
+                    x -> log.error("{}", nuri.getMessage()),
+                    nuri);
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
                     certifyRequestDto,
-                    null,
-                    null);
+                    x -> log.error("{}", e.getMessage()),
+                    e);
         } finally {
             redisTemporaryStorageService.saveTemporaryData(certifyRequestDto.getPhoneNumber(), certifyRequestDto, 3600);
         }
@@ -115,13 +108,6 @@ public class CertifyServiceImpl implements CertifyService {
 
     }
 
-    /**
-     * 핸드폰 인증 요청 API 발송
-     * @param phoneNum
-     * @param certifyNumber
-     * @return CertifyResponseDto
-     * @throws StayFinderException
-     */
     private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException, NurigoMessageNotReceivedException, NurigoEmptyResponseException, NurigoUnknownException {
         Message message = new Message();
         StringBuilder sb = new StringBuilder();

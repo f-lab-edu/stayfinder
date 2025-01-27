@@ -26,13 +26,14 @@ public class TermsControllerTest {
     public void testSaveTerms() throws Exception {
         // given
         TermsDto termsDto = new TermsDto(
+                1L,
                 "메인 타이틀",
                 "서브 타이틀",
                 "상세 내용",
                 true,
+                1L,
                 true,
-                1001,
-                1
+                true
         );
 
         ObjectMapper objectMapper = new ObjectMapper();

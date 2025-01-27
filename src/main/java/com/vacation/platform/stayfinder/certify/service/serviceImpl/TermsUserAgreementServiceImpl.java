@@ -4,7 +4,8 @@ import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRep
 import com.vacation.platform.stayfinder.certify.service.TermsUserAgreementService;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +23,7 @@ public class TermsUserAgreementServiceImpl implements TermsUserAgreementService 
 
     // user id 생성후 저장
     @Override
-    public Result<?> registerUserTerms(TermsDto termsDto) {
+    public ResponseEntity<StayFinderResponseDTO<?>> registerUserTerms(TermsDto termsDto) {
         //
         /*
          * 랜덤한 값으로 user_id값을 넣고 saveAndFlush
@@ -31,6 +32,6 @@ public class TermsUserAgreementServiceImpl implements TermsUserAgreementService 
          * 해당 user_id를 리턴
          */
 
-        return Result.success();
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 }

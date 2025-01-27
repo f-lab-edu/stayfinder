@@ -6,12 +6,15 @@ import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -29,7 +32,10 @@ public class UserServiceImpl implements UserService {
         List<User> nickNameList = userRepository.findByNickName(user.getNickName());
 
         if(!nickNameList.isEmpty()) {
-            throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME);
+            throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME,
+                    "nickNameList is not empty",
+                    x -> log.error("{}", ErrorType.DUPLICATE_NICK_NAME.getInternalMessage()),
+                    null);
         }
 
         // 응답 없애기
@@ -37,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<String> modifyUser(UserDTO.saveDTO modifyDTO) {
-        return null;
+    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 
 

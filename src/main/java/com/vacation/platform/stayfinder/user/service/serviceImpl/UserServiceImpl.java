@@ -6,9 +6,10 @@ import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<String> modifyUser(UserDTO.saveDTO modifyDTO) {
-        return null;
+    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 
 

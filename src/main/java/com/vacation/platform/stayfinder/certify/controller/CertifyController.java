@@ -4,11 +4,11 @@ import com.vacation.platform.stayfinder.certify.dto.CertifyRequestDto;
 import com.vacation.platform.stayfinder.certify.service.CertifyService;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Level;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ public class CertifyController {
     * */
 
     @PostMapping("/req_send")
-    public Result<?> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
+    public ResponseEntity<StayFinderResponseDTO<?>> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                 null,
                 x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),

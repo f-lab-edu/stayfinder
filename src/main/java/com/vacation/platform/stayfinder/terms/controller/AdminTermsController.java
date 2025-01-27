@@ -5,9 +5,10 @@ import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.terms.service.serviceImpl.TermsServiceImpl;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public class AdminTermsController {
     }
 
     @PostMapping("/register")
-    public Result<?> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
+    public ResponseEntity<StayFinderResponseDTO<?>> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     "null pointer",
@@ -35,7 +36,7 @@ public class AdminTermsController {
 
         termsService.registerTerms(termsDto);
 
-        return Result.success();
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 
 }

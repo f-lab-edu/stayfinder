@@ -10,10 +10,11 @@ import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
 import com.vacation.platform.stayfinder.terms.repository.support.TermsRepositorySupport;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class TermsServiceImpl implements TermsService {
     private final TermsRepositorySupport termsRepositorySupport;
 
     @Override
-    public Result<List<Terms>> getTermsMain() {
+    public ResponseEntity<StayFinderResponseDTO<List<Terms>>> getTermsMain() {
 
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
@@ -41,11 +42,11 @@ public class TermsServiceImpl implements TermsService {
                     x -> log.error("{}", x),
                     null);
         }
-        return Result.success(termsList);
+        return ResponseEntity.ok(StayFinderResponseDTO.success(termsList));
     }
 
     @Override
-    public Result<List<TermsSub>> getTermsSub(TermsDto termsDto) {
+    public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getTermsSub(TermsDto termsDto) {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
         if(termsSubList.size() < 1) {
@@ -56,7 +57,7 @@ public class TermsServiceImpl implements TermsService {
                     null);
         }
 
-        return Result.success(termsSubList);
+        return  ResponseEntity.ok(StayFinderResponseDTO.success(termsSubList));
     }
 
     @Override

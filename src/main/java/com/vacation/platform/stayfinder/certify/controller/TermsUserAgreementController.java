@@ -3,8 +3,9 @@ package com.vacation.platform.stayfinder.certify.controller;
 import com.vacation.platform.stayfinder.certify.service.TermsUserAgreementService;
 import com.vacation.platform.stayfinder.certify.service.serviceImpl.TermsUserAgreementServiceImpl;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class TermsUserAgreementController {
 
     // 유저 약관 등록 api
     @PostMapping("/agreement")
-    public Result<?> registerAgreement(@Valid @RequestBody TermsDto termsDto) {
+    public ResponseEntity<StayFinderResponseDTO<?>> registerAgreement(@Valid @RequestBody TermsDto termsDto) {
         return termsUserAgreementService.registerUserTerms(termsDto);
     }
 

@@ -4,9 +4,10 @@ import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.service.UserService;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public class UserController {
 
     //user 생성
     @PostMapping("/create")
-    public Result<?> createUser(@Valid @RequestBody User users) {
+    public ResponseEntity<StayFinderResponseDTO<?>> createUser(@Valid @RequestBody User users) {
         if(users == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     "null pointer",
@@ -35,7 +36,7 @@ public class UserController {
 
         userService.saveUser(users);
 
-        return Result.success();
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 
 }

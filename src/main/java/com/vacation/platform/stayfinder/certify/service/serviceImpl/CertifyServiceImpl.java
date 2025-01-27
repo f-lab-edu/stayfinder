@@ -99,8 +99,6 @@ public class CertifyServiceImpl implements CertifyService {
 
         }
 
-
-
         Integer certifyNumber = generateRandomNumber();
 
         CertifyResponseDto responseDto = new CertifyResponseDto();

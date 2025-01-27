@@ -2,7 +2,7 @@ package com.vacation.platform.stayfinder.user.controller;
 
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
-import com.vacation.platform.stayfinder.user.entity.User;
+import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ public class UserController {
 
     //user 생성
     @PostMapping("/create")
-    public ResponseEntity<StayFinderResponseDTO<?>> createUser(@Valid @RequestBody User users) {
+    public ResponseEntity<StayFinderResponseDTO<?>> createUser(@Valid @RequestBody UserDTO.saveDTO users) {
         if(users == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     "null pointer",

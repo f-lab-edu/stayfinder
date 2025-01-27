@@ -22,25 +22,34 @@ import lombok.ToString;
 @IdClass(TermsUserAgreementId.class)
 public class TermsUserAgreement extends BaseEntity {
 
-    // 필요 없음
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Integer id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Id
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User userId;
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 
     @Id
+    @Column(name = "terms_id", nullable = false)
+    private Long termsId;
+
     @ManyToOne
-    @JoinColumn(name = "terms_id")
-    private Terms termsId;
+    @JoinColumn(name = "terms_id", insertable = false, updatable = false)
+    private Terms terms;
+
+    @Id
+    @Column(name = "version", nullable = false)
+    private Long version;
 
     @ManyToOne
     @JoinColumns({@JoinColumn(name = "version", referencedColumnName = "version"),
                  @JoinColumn(name = "terms_id", referencedColumnName = "terms_id")})
-    private TermsSub version;
+    private TermsSub termsSub;
 
 }

@@ -18,19 +18,18 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class CertifyReq extends BaseEntity {
 
-    // 인증 테이블을 공통으로 사용할수 있게 처리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
-    private String userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @Column(nullable = false, length = 6)
+    @Column(name = "req_certify_number", nullable = false, length = 6)
     private String reqCertifyNumber;
 
-    @Column(nullable = false)
+    @Column(name = "try_number", nullable = false)
     private Integer tryNumber;
 
     // 인증 대상 enum으로 처리

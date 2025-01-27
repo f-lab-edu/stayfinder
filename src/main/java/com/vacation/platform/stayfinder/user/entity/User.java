@@ -12,46 +12,39 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-@Table
+@AllArgsConstructor
+@Table(name = "users")
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
 
     @Id
-    private Integer userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false, columnDefinition = "유저 id")
+    private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, columnDefinition = "이메일")
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false, columnDefinition = "비밀번호")
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "nick_name",nullable = false, unique = true, columnDefinition = "닉네임")
     private String nickName;
     
-    @Column(nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = false, unique = true, columnDefinition = "전화번호")
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(name = "birthday", nullable = false, columnDefinition = "생년월일")
     private String birthday;
 
-    @Column(nullable = false)
+    @Column(name = "gender", nullable = false, columnDefinition = "성별")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
+    @Column(name = "user_status", nullable = false, columnDefinition = "회원상태")
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
     @OneToMany(mappedBy = "userId")
     private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
-
-    @Builder
-    public User(String email, String password, String nickName, String phoneNumber, String birthday, Gender gender) {
-        this.email = email;
-        this.password = password;
-        this.nickName = nickName;
-        this.phoneNumber = phoneNumber;
-        this.birthday = birthday;
-        this.gender = gender;
-    }
 }

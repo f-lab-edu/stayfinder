@@ -38,10 +38,7 @@ public class TermsController {
         return termsService.getTermsMain();
     }
 
-    //Get 으로 처리
-    // TermsSub만 받음
-    // Response 객체로 리턴
-    @PostMapping("/sub")
+    @GetMapping("/sub")
     public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getSub(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,

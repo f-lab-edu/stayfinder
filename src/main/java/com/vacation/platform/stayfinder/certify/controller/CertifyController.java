@@ -28,13 +28,22 @@ public class CertifyController {
     * req_send로 들어올때는 약관 동의 내용, 핸드폰 번호를 입력 받아야 한다.
     * */
 
-    @PostMapping("/req_send")
+    @PostMapping("/req/send")
     public ResponseEntity<StayFinderResponseDTO<?>> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                 null,
                 x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
                 null);
         return certifyService.reqSend(certifyRequestDto);
+    }
+
+    @PostMapping("/certify/num/prove")
+    public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
+        if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
+                null,
+                x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
+                null);
+        return certifyService.certifyNumberProve(certifyRequestDto);
     }
 
 }

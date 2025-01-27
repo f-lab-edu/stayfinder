@@ -18,4 +18,7 @@ public interface TermsRepository extends JpaRepository<Terms, Long> {
     Optional<Terms> findByTermsMainTitleAndIsTermsRequired(@Param("mainTitle") String mainTitle, @Param("isRequired") Boolean isRequired);
 
 
+//    @Query(value = "SELECT t FROM Terms t WHERE t.termsId IN :termsMainIds")
+//    List<Terms> findByTermsIdIn(@Param("termsMainIds") List<Long> termsMainIds);
+
 }

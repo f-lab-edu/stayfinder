@@ -10,4 +10,6 @@ public interface CertifyService {
 
     ResponseEntity<StayFinderResponseDTO<?>> reqSend(CertifyRequestDto certifyRequestDto);
 
+    ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto);
+
 }

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ResponseCode {
-    SUCCESS(HttpStatus.OK, "요청 성공"),
+    SUCCESS(HttpStatus.OK, "성공"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청 입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한 없음"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "금지된 요청"),

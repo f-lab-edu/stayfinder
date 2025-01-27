@@ -14,9 +14,6 @@ public class RedisTemporaryStorageService {
 
     /**
      * Redis 데이터 저장
-     * @param key
-     * @param value
-     * @param timeoutSeconds
      */
     public void saveTemporaryData(String key, Object value, long timeoutSeconds) {
         redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(timeoutSeconds));
@@ -25,20 +22,14 @@ public class RedisTemporaryStorageService {
 
     /**
      * Redis 데이터 가져오기
-     * @param key
-     * @return
      */
     public Object getTemporaryData(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
 
-    /**
-     * Redis 데이터 삭제
-     * @param key
-     */
-    public void deleteTemporaryData(String key) {
-        redisTemplate.delete(key);
-    }
+//    public void deleteTemporaryData(String key) {
+//        redisTemplate.delete(key);
+//    }
 
 }

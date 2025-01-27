@@ -26,7 +26,7 @@ public class StayFinderExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StayFinderResponseDTO<?>> handleGenericException(Exception e) {
 
-        log.error("sssss {}", (Object) e.getStackTrace());
+        log.error("Exception {}", (Object) e.getStackTrace());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new StayFinderResponseDTO<>(

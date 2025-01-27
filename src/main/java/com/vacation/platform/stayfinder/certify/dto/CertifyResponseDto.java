@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class CertifyResponseDto {
     private String responseCode;
     private String responseMessage;
+    private Integer certifyNumber;
+    private String phoneNumber;
 }

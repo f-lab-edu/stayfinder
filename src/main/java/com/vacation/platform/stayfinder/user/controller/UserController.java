@@ -2,7 +2,7 @@ package com.vacation.platform.stayfinder.user.controller;
 
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
-import com.vacation.platform.stayfinder.user.entity.User;
+import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
@@ -27,12 +27,30 @@ public class UserController {
 
     //user 생성
     @PostMapping("/create")
-    public ResponseEntity<StayFinderResponseDTO<?>> createUser(@Valid @RequestBody User users) {
+    public ResponseEntity<StayFinderResponseDTO<?>> createUser(@Valid @RequestBody UserDTO.saveDTO users) {
         if(users == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                    "null pointer",
+                    null,
                     x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
                     null);
+
+        if(!users.getPassword().equals(users.getPasswordCheck())) {
+            throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
+                    users,
+                    x -> log.error("{}", ErrorType.USER_PASSWORD_NOT_MATCHED.getInternalMessage()),
+                    null);
+        }
+
+        if(users.getEmail() != null) {
+            String emailValid = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+            if(emailValid.matches(users.getEmail())) {
+                throw new StayFinderException(ErrorType.USER_EMAIL_NOT_VALID,
+                        users,
+                        x -> log.error("{}", ErrorType.USER_EMAIL_NOT_VALID),
+                        null);
+            }
+        }
 
         userService.saveUser(users);
 

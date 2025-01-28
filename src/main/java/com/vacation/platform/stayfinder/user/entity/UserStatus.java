@@ -12,4 +12,5 @@ public enum UserStatus {
     private final int code;
     private final String name;
     private final String desc;
+
 }

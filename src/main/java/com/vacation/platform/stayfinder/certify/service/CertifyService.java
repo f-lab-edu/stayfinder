@@ -12,4 +12,6 @@ public interface CertifyService {
 
     ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto);
 
+    ResponseEntity<StayFinderResponseDTO<?>> certifyDelete(CertifyRequestDto certifyRequestDto);
+
 }

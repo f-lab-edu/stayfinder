@@ -19,7 +19,11 @@ public enum ErrorType {
     TERMS_DIDNT_AGREEMENT(HttpStatus.BAD_REQUEST, "1010", "필수 약관 동의를 하지 않았습니다.", "요청한 값이 잘못 되었습니다."),
     CERTIFY_PHONE_NUM_NOT_MATCHED(HttpStatus.BAD_REQUEST, "1011", "핸드폰 인증 번호가 불일치 합니다.", "요청한 값이 잘못 되었습니다."),
     CERTIFY_IS_COMPLETE(HttpStatus.MULTI_STATUS, "1012", "핸드폰 인증 처리가 이미 완료 되었습니다.", "요청값을 확인해 주세요."),
-
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "1013", "가입된 이메일이 존재합니다.", "요청한 데이터를 확인해주세요."),
+    CERTIFY_IS_NOT_COMPLETE(HttpStatus.NOT_FOUND, "1014", "핸드폰 인증이 미완료 되었습니다.", "요청값을 확인해주세요"),
+    USER_PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "1015", "비밀번호가 불일치 합니다.", "요청값을 확인해 주세요."),
+    USER_EMAIL_NOT_VALID(HttpStatus.BAD_REQUEST, "1016", "이메일의 형식이 잘못 되었습니다.", "요청값을 확인해 주세요."),
+    USER_PHONE_NUM_NOT_MATCHED(HttpStatus.BAD_REQUEST, "1017", "인증받은 핸드폰 번호가 아닙니다.", "요청값을 확인해 주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요.")
 

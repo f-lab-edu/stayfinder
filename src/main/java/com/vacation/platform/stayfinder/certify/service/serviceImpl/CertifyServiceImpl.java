@@ -99,8 +99,6 @@ public class CertifyServiceImpl implements CertifyService {
 
         }
 
-
-
         Integer certifyNumber = generateRandomNumber();
 
         CertifyResponseDto responseDto = new CertifyResponseDto();
@@ -130,9 +128,10 @@ public class CertifyServiceImpl implements CertifyService {
                     e);
         } finally {
             certifyRequestDto.setIsCertify(false);
+            log.info("reqSend certifyRequestDto{}", certifyRequestDto);
+            log.info("reqSend phoneNumber{}", phoneNumber);
             redisTemporaryStorageService.saveTemporaryData(phoneNumber, certifyRequestDto, 3600);
         }
-
 
         return ResponseEntity.ok(StayFinderResponseDTO.success(responseDto));
 
@@ -163,19 +162,27 @@ public class CertifyServiceImpl implements CertifyService {
             if(!certifyRequestDto.getPhoneNumber().equals(decPhoneNum)) {
                 throw new Exception();
             }
-
-            certifyDtoResult.setIsCertify(true);
-
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.CERTIFY_NOT_VALID,
                     certifyRequestDto.getPhoneNumber(),
                     x -> log.error("{}", ErrorType.CERTIFY_NOT_VALID),
                     e);
         } finally {
-            redisTemporaryStorageService.saveTemporaryData(Objects.requireNonNull(certifyDtoResult).getPhoneNumber(), certifyDtoResult, 3600);
+            Objects.requireNonNull(certifyDtoResult).setIsCertify(true);
+
+            log.info("certifyNumberProve certifyDtoResult {}", certifyDtoResult);
+            log.info("certifyNumberProve certifyRequestDto.getPhoneNumber(){}", certifyRequestDto.getPhoneNumber());
+
+            redisTemporaryStorageService.saveTemporaryData(certifyRequestDto.getPhoneNumber(), certifyDtoResult, 3600);
         }
 
         return ResponseEntity.ok(StayFinderResponseDTO.success(certifyRequestDto.getPhoneNumber()));
+    }
+
+    @Override
+    public ResponseEntity<StayFinderResponseDTO<?>> certifyDelete(CertifyRequestDto certifyRequestDto) {
+        redisTemporaryStorageService.deleteTemporaryData(certifyRequestDto.getPhoneNumber());
+        return ResponseEntity.ok(StayFinderResponseDTO.success());
     }
 
     private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException, NurigoMessageNotReceivedException, NurigoEmptyResponseException, NurigoUnknownException {

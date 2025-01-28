@@ -11,14 +11,10 @@ import java.util.Optional;
 @Repository
 public interface TermsRepository extends JpaRepository<Terms, Long> {
 
-    @Query("SELECT t FROM Terms t WHERE t.termsMainTitle = :mainTitle ORDER BY t.createAt DESC")
+    @Query(value = "SELECT * FROM terms WHERE terms_main_title = :mainTitle ORDER BY create_at DESC LIMIT 1", nativeQuery = true)
     Optional<Terms> findByTermsMainTitle(@Param("mainTitle") String mainTitle);
 
-    @Query(value = "SELECT * FROM terms t WHERE t.terms_main_title = :mainTitle AND t.is_terms_required = :isRequired ORDER BY t.create_at DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM terms WHERE terms_main_title = :mainTitle AND is_terms_required = :isRequired ORDER BY create_at DESC LIMIT 1", nativeQuery = true)
     Optional<Terms> findByTermsMainTitleAndIsTermsRequired(@Param("mainTitle") String mainTitle, @Param("isRequired") Boolean isRequired);
-
-
-//    @Query(value = "SELECT t FROM Terms t WHERE t.termsId IN :termsMainIds")
-//    List<Terms> findByTermsIdIn(@Param("termsMainIds") List<Long> termsMainIds);
 
 }

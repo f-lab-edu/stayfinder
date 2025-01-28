@@ -28,8 +28,8 @@ public class RedisTemporaryStorageService {
     }
 
 
-//    public void deleteTemporaryData(String key) {
-//        redisTemplate.delete(key);
-//    }
+    public void deleteTemporaryData(String key) {
+        redisTemplate.delete(key);
+    }
 
 }

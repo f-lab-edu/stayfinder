@@ -9,8 +9,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TermsUserAgreementId implements Serializable {
+public class CertifyReqId implements Serializable {
     private Long id;
     private Long userId;
-    private Long termsId;
 }

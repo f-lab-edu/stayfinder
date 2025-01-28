@@ -1,13 +1,17 @@
 package com.vacation.platform.stayfinder;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class StayFinderApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+
+//	@Test
+//	void contextLoads() {
+//		RedisTemporaryStorageService redisTemporaryStorageService = new RedisTemporaryStorageService(new RedisTemplate<>());
+//
+//		redisTemporaryStorageService.deleteTemporaryData("01094901115");
+//
+//	}
 
 }

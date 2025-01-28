@@ -1,16 +1,12 @@
 package com.vacation.platform.stayfinder.terms.entity;
 
 
-import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ToString
 @Entity
@@ -44,7 +40,4 @@ public class TermsSub extends BaseEntity {
 
     @Column(name = "is_active", nullable = false, length = 1, columnDefinition = "약관의 상태")
     private Boolean isActive;
-
-    @OneToMany(mappedBy = "termsSub")
-    private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 }

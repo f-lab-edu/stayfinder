@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -37,13 +34,18 @@ public class CertifyController {
         return certifyService.reqSend(certifyRequestDto);
     }
 
-    @PostMapping("/certify/num/prove")
+    @PostMapping("/num/prove")
     public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                 null,
                 x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
                 null);
         return certifyService.certifyNumberProve(certifyRequestDto);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<StayFinderResponseDTO<?>> deleteCertify(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
+        return certifyService.certifyDelete(certifyRequestDto);
     }
 
 }

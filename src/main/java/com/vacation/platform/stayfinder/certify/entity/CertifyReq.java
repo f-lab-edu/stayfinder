@@ -1,6 +1,7 @@
 package com.vacation.platform.stayfinder.certify.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,16 +13,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @Data
 @Table(name = "CERTIFY_REQ", uniqueConstraints={@UniqueConstraint(
-    name = "id_userId_reqCertifyNumber",
-        columnNames = {"id", "user_id", "req_certify_number"}
+    name = "id_userId",
+        columnNames = {"id", "user_id"}
 )})
 @EqualsAndHashCode(callSuper = true)
+@IdClass(CertifyReqId.class)
 public class CertifyReq extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -32,9 +33,12 @@ public class CertifyReq extends BaseEntity {
     @Column(name = "try_number", nullable = false)
     private Integer tryNumber;
 
-    // 인증 대상 enum으로 처리
     @Column(name = "certify_number", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    private CertifyType certifyNumber; // 인증 대상
+    private CertifyType certifyNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 
 }

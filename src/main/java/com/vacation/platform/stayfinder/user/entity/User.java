@@ -1,5 +1,6 @@
 package com.vacation.platform.stayfinder.user.entity;
 
+import com.vacation.platform.stayfinder.certify.entity.CertifyReq;
 import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
@@ -47,4 +48,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "userId")
     private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userId")
+    private List<CertifyReq> certifyReqList = new ArrayList<>();
 }

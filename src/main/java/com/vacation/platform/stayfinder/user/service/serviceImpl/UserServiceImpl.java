@@ -6,15 +6,19 @@ import com.vacation.platform.stayfinder.certify.entity.CertifyType;
 import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.certify.repository.CertifyRepository;
 import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
+import com.vacation.platform.stayfinder.certify.service.serviceImpl.SequenceService;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.RedisTemporaryStorageService;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
+import com.vacation.platform.stayfinder.user.entity.Gender;
 import com.vacation.platform.stayfinder.user.entity.User;
+import com.vacation.platform.stayfinder.user.entity.UserStatus;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.AES256Util;
+import com.vacation.platform.stayfinder.util.SHA256Util;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -39,15 +43,19 @@ public class UserServiceImpl implements UserService {
 
     private final RedisTemporaryStorageService redisTemporaryStorageService;
 
+    private final SequenceService sequenceService;
+
 
     public UserServiceImpl(UserRepository userRepository,
                            RedisTemporaryStorageService redisTemporaryStorageService,
                            CertifyRepository certifyRepository,
-                           TermsUserAgreementRepository termsUserAgreementRepository) {
+                           TermsUserAgreementRepository termsUserAgreementRepository,
+                           SequenceService sequenceService) {
         this.userRepository = userRepository;
         this.redisTemporaryStorageService = redisTemporaryStorageService;
         this.certifyRepository = certifyRepository;
         this.termsUserAgreementRepository = termsUserAgreementRepository;
+        this.sequenceService = sequenceService;
     }
 
     @Override
@@ -71,6 +79,16 @@ public class UserServiceImpl implements UserService {
                 });
 
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(userDTO.getPhoneNumber());
+
+        log.info("certifyDtoResult {}", certifyDtoResult);
+
+        if(certifyDtoResult == null) {
+            throw new StayFinderException(ErrorType.USER_PHONE_NUM_NOT_MATCHED,
+                    userDTO,
+                    x -> log.error("{}", ErrorType.USER_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
+                    null);
+        }
+
 
         if(!certifyDtoResult.getIsCertify()) {
             throw new StayFinderException(ErrorType.CERTIFY_IS_NOT_COMPLETE,
@@ -99,39 +117,53 @@ public class UserServiceImpl implements UserService {
         ModelMapper modelMapper = new ModelMapper();
 
         User user = modelMapper.map(userDTO, User.class);
-        // 패스워드 hash 암호화 설정
-        user.setPassword(userDTO.getPassword());
 
-        userRepository.save(user);
+        try {
+            user.setPassword(SHA256Util.encrypt(userDTO.getPassword()));
+            user.setGender(Gender.getCode(userDTO.getGender()));
+            user.setUserStatus(UserStatus.REGISTERED);
+            log.info("user {}", user);
+            userRepository.saveAndFlush(user);
 
-        User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow( () -> {
-           throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                   userDTO.getPhoneNumber(),
-                   x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                   null);
-        });
+            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow( () -> {
+                throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
+                        userDTO.getPhoneNumber(),
+                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
+                        null);
+            });
 
-        CertifyReq certifyReq = modelMapper.map(certifyDtoResult, CertifyReq.class);
-        certifyReq.setUserId(resultUser.getUserId());
-        certifyReq.setCertifyNumber(CertifyType.PHONE);
+            CertifyReq certifyReq =  new CertifyReq();
+            Long certifyReqId = sequenceService.getNextCertifyReqId();
+            certifyReq.setId(certifyReqId);
+            certifyReq.setUserId(resultUser.getUserId());
+            certifyReq.setCertifyNumber(CertifyType.PHONE);
+            certifyReq.setReqCertifyNumber(String.valueOf(certifyDtoResult.getReqCertifyNumber()));
+            certifyReq.setTryNumber(certifyDtoResult.getTryNumber());
+            log.info("certifyReq {}", certifyReq);
+            certifyRepository.saveAndFlush(certifyReq);
 
-        certifyRepository.save(certifyReq);
-
-        for(TermsDto terms : certifyDtoResult.getTermsDtoList()) {
-            TermsUserAgreement termsUserAgreement = new TermsUserAgreement();
-            termsUserAgreement.setUserId(resultUser.getUserId());
-            termsUserAgreement.setTermsId(terms.getTermsMainId());
-            termsUserAgreement.setVersion(terms.getTermsMainId());
-            termsUserAgreementRepository.save(termsUserAgreement);
+            for(TermsDto terms : certifyDtoResult.getTermsDtoList()) {
+                log.info("terms {}", terms);
+                TermsUserAgreement termsUserAgreement = new TermsUserAgreement();
+                Long termsUserAgreementId = sequenceService.getNextTermsUserAgreementId();
+                termsUserAgreement.setId(termsUserAgreementId);
+                termsUserAgreement.setUserId(resultUser.getUserId());
+                termsUserAgreement.setTermsId(terms.getTermsMainId());
+                termsUserAgreement.setIsAgreement(terms.getIsAgreement());
+                log.info("termsUserAgreement {}", termsUserAgreement);
+                termsUserAgreementRepository.saveAndFlush(termsUserAgreement);
+            }
+        } catch (Exception e) {
+            throw new StayFinderException(ErrorType.SYSTEM_ERROR,
+                    userDTO,
+                    x -> log.error("{}", e.getMessage()),
+                    e);
         }
-
-
     }
 
 //    @Override
 //    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {
 //        return ResponseEntity.ok(StayFinderResponseDTO.success());
 //    }
-
 
 }

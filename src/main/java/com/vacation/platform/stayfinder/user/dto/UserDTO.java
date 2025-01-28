@@ -11,6 +11,7 @@ public class UserDTO {
     public static class saveDTO {
         private String email;
         private String password;
+        private String passwordCheck;
         private String nickName;
         private String phoneNumber;
         private String birthday;

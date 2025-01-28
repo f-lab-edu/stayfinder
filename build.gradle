@@ -43,6 +43,7 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+
 	/* 핸드폰 인증 api 설정 */
 	implementation 'net.nurigo:sdk:4.3.2'
 

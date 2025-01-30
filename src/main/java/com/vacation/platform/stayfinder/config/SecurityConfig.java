@@ -31,7 +31,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/users/**").permitAll()
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                                .anyRequest().denyAll()
+                                .anyRequest().authenticated()
                 );
         return http.build();
     }

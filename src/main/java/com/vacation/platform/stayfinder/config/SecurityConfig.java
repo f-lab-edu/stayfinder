@@ -25,10 +25,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizationManagerRequestMatcherRegistry) ->
                         authorizationManagerRequestMatcherRegistry
-                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-//                                .requestMatchers("**/**").permitAll()
-//                                .anyRequest().authenticated() // 위에 패턴 이외에는 인증해야한다.
-                                .anyRequest().permitAll()
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/api/v1/certify/**").permitAll()
+                                .requestMatchers("/api/v1/terms/**").permitAll()
+                                .requestMatchers("/api/v1/users/**").permitAll()
+                                .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
+                                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                                .anyRequest().denyAll()
                 );
         return http.build();
     }

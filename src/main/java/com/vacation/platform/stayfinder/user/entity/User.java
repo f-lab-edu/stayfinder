@@ -51,4 +51,8 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "userId")
     private List<CertifyReq> certifyReqList = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private UserAuth userAuth;
 }

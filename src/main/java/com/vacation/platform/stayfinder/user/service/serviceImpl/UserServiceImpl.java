@@ -11,6 +11,7 @@ import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.RedisTemporaryStorageService;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
+import com.vacation.platform.stayfinder.user.dto.LoginDTO;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.Gender;
 import com.vacation.platform.stayfinder.user.entity.User;
@@ -18,11 +19,13 @@ import com.vacation.platform.stayfinder.user.entity.UserStatus;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.AES256Util;
-import com.vacation.platform.stayfinder.util.SHA256Util;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -45,17 +48,21 @@ public class UserServiceImpl implements UserService {
 
     private final SequenceService sequenceService;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     public UserServiceImpl(UserRepository userRepository,
                            RedisTemporaryStorageService redisTemporaryStorageService,
                            CertifyRepository certifyRepository,
                            TermsUserAgreementRepository termsUserAgreementRepository,
-                           SequenceService sequenceService) {
+                           SequenceService sequenceService,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.redisTemporaryStorageService = redisTemporaryStorageService;
         this.certifyRepository = certifyRepository;
         this.termsUserAgreementRepository = termsUserAgreementRepository;
         this.sequenceService = sequenceService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -119,7 +126,7 @@ public class UserServiceImpl implements UserService {
         User user = modelMapper.map(userDTO, User.class);
 
         try {
-            user.setPassword(SHA256Util.encrypt(userDTO.getPassword()));
+            user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
             user.setGender(Gender.getCode(userDTO.getGender()));
             user.setUserStatus(UserStatus.REGISTERED);
             log.info("user {}", user);
@@ -159,6 +166,11 @@ public class UserServiceImpl implements UserService {
                     x -> log.error("{}", e.getMessage()),
                     e);
         }
+    }
+
+    @Override
+    public ResponseEntity<StayFinderResponseDTO<?>> login(LoginDTO loginDTO) {
+        return null;
     }
 
 //    @Override

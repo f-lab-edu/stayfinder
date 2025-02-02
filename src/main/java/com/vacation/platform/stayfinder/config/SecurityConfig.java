@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/certify/**").permitAll()
                                 .requestMatchers("/api/v1/terms/**").permitAll()
                                 .requestMatchers("/api/v1/users/**").permitAll()
+                                .requestMatchers("/api/v1/user/**").permitAll()
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()

@@ -1,4 +1,4 @@
-package com.vacation.platform.stayfinder.user.dto;
+package com.vacation.platform.stayfinder.login.dto;
 
 import lombok.Data;
 

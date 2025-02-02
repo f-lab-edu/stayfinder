@@ -11,7 +11,6 @@ import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.RedisTemporaryStorageService;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.user.dto.LoginDTO;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.Gender;
 import com.vacation.platform.stayfinder.user.entity.User;
@@ -19,12 +18,10 @@ import com.vacation.platform.stayfinder.user.entity.UserStatus;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.AES256Util;
-import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -168,10 +165,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> login(LoginDTO loginDTO) {
-        return null;
-    }
+
 
 //    @Override
 //    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {

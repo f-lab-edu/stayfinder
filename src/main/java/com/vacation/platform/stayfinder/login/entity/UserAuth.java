@@ -1,6 +1,7 @@
-package com.vacation.platform.stayfinder.user.entity;
+package com.vacation.platform.stayfinder.login.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

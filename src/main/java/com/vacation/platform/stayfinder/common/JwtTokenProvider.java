@@ -3,34 +3,38 @@ package com.vacation.platform.stayfinder.common;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("secret.key")
-    private final String secretKey;
+    private final String accessTokenValidity;
 
-    @Value("access.token.valid")
-    private final Long accessTokenValidity;
+    private final String refreshTokenValidity;
 
-    @Value("refresh.token.valid")
-    private final Long refreshTokenValidity;
+    private final Key key;
 
-    private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    public JwtTokenProvider(@Value("${secret.key}") String secretKey,
+                            @Value("${access.token.valid}") String accessTokenValidity,
+                            @Value("${refresh.token.valid}") String refreshTokenValidity) {
+        this.accessTokenValidity = accessTokenValidity;
+        this.refreshTokenValidity = refreshTokenValidity;
+
+        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
 
     public String generateAccessToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(accessTokenValidity)))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
@@ -39,7 +43,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenValidity)))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }

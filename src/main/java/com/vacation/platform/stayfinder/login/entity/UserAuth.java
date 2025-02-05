@@ -8,28 +8,31 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_auth")
+@Table(name = "user_auth", uniqueConstraints = {@UniqueConstraint(
+        name = "id_userId",
+        columnNames = {"id", "user_id"}
+)})
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @ToString
+@IdClass(UserAuthId.class)
 @EqualsAndHashCode(callSuper = true)
 public class UserAuth extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false)
-    private String refreshTokne;
+    private String refreshToken;
 
     @Column(nullable = false)
     private LocalDateTime expiresAt;
 
-    @OneToOne
-    @JoinColumn(name = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 }

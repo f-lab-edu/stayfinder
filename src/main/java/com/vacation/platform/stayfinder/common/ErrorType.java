@@ -24,6 +24,9 @@ public enum ErrorType {
     USER_PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "1015", "비밀번호가 불일치 합니다.", "요청값을 확인해 주세요."),
     USER_EMAIL_NOT_VALID(HttpStatus.BAD_REQUEST, "1016", "이메일의 형식이 잘못 되었습니다.", "요청값을 확인해 주세요."),
     USER_PHONE_NUM_NOT_MATCHED(HttpStatus.BAD_REQUEST, "1017", "인증받은 핸드폰 번호가 아닙니다.", "요청값을 확인해 주세요."),
+    USER_EMAIL_NOT_EXIST(HttpStatus.BAD_REQUEST, "1018", "이메일이 없습니다.", "요청값을 확인해주세요."),
+    VALID_ERROR(HttpStatus.BAD_REQUEST, "1019", "잘못된 값입니다.", "요청값을 확인해주세요."),
+    USER_AUTH_DUPLICATION(HttpStatus.BAD_REQUEST, "1020", "Refresh Token은 한개만 사용 가능합니다.", "요청값을 확인해주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요.")
 

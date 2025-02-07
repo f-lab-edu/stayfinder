@@ -3,6 +3,7 @@ package com.vacation.platform.stayfinder.user.entity;
 import com.vacation.platform.stayfinder.certify.entity.CertifyReq;
 import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.login.entity.UserAuth;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,9 +47,17 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
+    @Column(name = "role", nullable = false, columnDefinition = "권한")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(mappedBy = "userId")
     private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 
     @OneToMany(mappedBy = "userId")
     private List<CertifyReq> certifyReqList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userId")
+    private List<UserAuth> userAuth = new ArrayList<>();
+
 }

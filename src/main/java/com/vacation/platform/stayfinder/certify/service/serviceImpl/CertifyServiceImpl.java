@@ -11,6 +11,7 @@ import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.repository.support.TermsRepositorySupport;
 import com.vacation.platform.stayfinder.util.AES256Util;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
@@ -61,19 +62,11 @@ public class CertifyServiceImpl implements CertifyService {
         this.termsRepositorySupport = termsRepositorySupport;
     }
 
+    @Transactional
     public ResponseEntity<StayFinderResponseDTO<?>> reqSend(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
-        int tryNumber = 0;
-        if(certifyDtoResult != null) {
-            if (certifyDtoResult.getTryNumber() >= 5) {
-                throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER,
-                        certifyRequestDto.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_TRY_NUMBER.getInternalMessage()),
-                        null);
-            }
-            tryNumber = certifyDtoResult.getTryNumber() == 0 ? 0 : certifyDtoResult.getTryNumber();
-        }
+        int tryNumber = getTryNumber(certifyRequestDto, certifyDtoResult);
 
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
@@ -137,6 +130,21 @@ public class CertifyServiceImpl implements CertifyService {
 
     }
 
+    private static int getTryNumber(CertifyRequestDto certifyRequestDto, CertifyRequestDto certifyDtoResult) {
+        int tryNumber = 0;
+        if(certifyDtoResult != null) {
+            if (certifyDtoResult.getTryNumber() >= 5) {
+                throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER,
+                        certifyRequestDto.getPhoneNumber(),
+                        x -> log.error("{}", ErrorType.CERTIFY_TRY_NUMBER.getInternalMessage()),
+                        null);
+            }
+            tryNumber = certifyDtoResult.getTryNumber() == 0 ? 0 : certifyDtoResult.getTryNumber();
+        }
+        return tryNumber;
+    }
+
+    @Transactional
     public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 

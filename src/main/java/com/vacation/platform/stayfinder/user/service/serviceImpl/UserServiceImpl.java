@@ -13,16 +13,17 @@ import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.Gender;
+import com.vacation.platform.stayfinder.user.entity.Role;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.entity.UserStatus;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.user.service.UserService;
 import com.vacation.platform.stayfinder.util.AES256Util;
-import com.vacation.platform.stayfinder.util.SHA256Util;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -45,17 +46,21 @@ public class UserServiceImpl implements UserService {
 
     private final SequenceService sequenceService;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     public UserServiceImpl(UserRepository userRepository,
                            RedisTemporaryStorageService redisTemporaryStorageService,
                            CertifyRepository certifyRepository,
                            TermsUserAgreementRepository termsUserAgreementRepository,
-                           SequenceService sequenceService) {
+                           SequenceService sequenceService,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.redisTemporaryStorageService = redisTemporaryStorageService;
         this.certifyRepository = certifyRepository;
         this.termsUserAgreementRepository = termsUserAgreementRepository;
         this.sequenceService = sequenceService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -119,18 +124,18 @@ public class UserServiceImpl implements UserService {
         User user = modelMapper.map(userDTO, User.class);
 
         try {
-            user.setPassword(SHA256Util.encrypt(userDTO.getPassword()));
+            user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
             user.setGender(Gender.getCode(userDTO.getGender()));
             user.setUserStatus(UserStatus.REGISTERED);
+            user.setRole(Role.USER);
             log.info("user {}", user);
             userRepository.saveAndFlush(user);
 
-            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow( () -> {
-                throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        userDTO.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                        null);
-            });
+            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow(
+                    () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
+                    userDTO.getPhoneNumber(),
+                    x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
+                    null));
 
             CertifyReq certifyReq =  new CertifyReq();
             Long certifyReqId = sequenceService.getNextCertifyReqId();
@@ -160,6 +165,8 @@ public class UserServiceImpl implements UserService {
                     e);
         }
     }
+
+
 
 //    @Override
 //    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {

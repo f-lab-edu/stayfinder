@@ -13,6 +13,7 @@ import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.user.dto.UserDTO;
 import com.vacation.platform.stayfinder.user.entity.Gender;
+import com.vacation.platform.stayfinder.user.entity.Role;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.entity.UserStatus;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
@@ -126,15 +127,15 @@ public class UserServiceImpl implements UserService {
             user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
             user.setGender(Gender.getCode(userDTO.getGender()));
             user.setUserStatus(UserStatus.REGISTERED);
+            user.setRole(Role.USER);
             log.info("user {}", user);
             userRepository.saveAndFlush(user);
 
-            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow( () -> {
-                throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        userDTO.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                        null);
-            });
+            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow(
+                    () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
+                    userDTO.getPhoneNumber(),
+                    x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
+                    null));
 
             CertifyReq certifyReq =  new CertifyReq();
             Long certifyReqId = sequenceService.getNextCertifyReqId();

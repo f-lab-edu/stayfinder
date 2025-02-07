@@ -7,6 +7,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class JwtTokenResponse {
-    private String token;
-    private LocalDateTime expiryDate;
+    private String Token;
+    private LocalDateTime TokenExpiryDate;
 }

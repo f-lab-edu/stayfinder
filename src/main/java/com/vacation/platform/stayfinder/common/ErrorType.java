@@ -27,6 +27,9 @@ public enum ErrorType {
     USER_EMAIL_NOT_EXIST(HttpStatus.BAD_REQUEST, "1018", "이메일이 없습니다.", "요청값을 확인해주세요."),
     VALID_ERROR(HttpStatus.BAD_REQUEST, "1019", "잘못된 값입니다.", "요청값을 확인해주세요."),
     USER_AUTH_DUPLICATION(HttpStatus.BAD_REQUEST, "1020", "Refresh Token은 한개만 사용 가능합니다.", "요청값을 확인해주세요."),
+    REFRESH_TOKEN_NOT_VALID(HttpStatus.BAD_REQUEST, "1021", "Refresh Token이 존재하지 않습니다.", "요청값을 확인해 주세요."),
+    ACCESS_TOKEN_NOT_VALID(HttpStatus.BAD_REQUEST, "1022", "Access Token이 유효하지 않습니다.", "요청값을 확인해 주세요."),
+    TOKEN_IS_NOT_VALID(HttpStatus.BAD_REQUEST, "1023", "Token과 email의 값이 맞지 않습니다.", "요청값을 확인해 주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요.")
 

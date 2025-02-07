@@ -47,6 +47,10 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
+    @Column(name = "role", nullable = false, columnDefinition = "권한")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(mappedBy = "userId")
     private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LoginService {
 
-    ResponseEntity<StayFinderResponseDTO<?>> login(LoginDTO loginDTO);
+    StayFinderResponseDTO<?> login(LoginDTO loginDTO);
 
-    ResponseEntity<StayFinderResponseDTO<?>> logout(String token, LogOutDTO logOutDTO);
+    StayFinderResponseDTO<?> logout(String token, LogOutDTO logOutDTO);
 
-    ResponseEntity<StayFinderResponseDTO<?>> refreshToken(String email);
+    StayFinderResponseDTO<?> refreshToken(String email);
 
 }

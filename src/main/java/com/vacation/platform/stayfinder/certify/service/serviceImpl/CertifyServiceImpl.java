@@ -63,7 +63,7 @@ public class CertifyServiceImpl implements CertifyService {
     }
 
     @Transactional
-    public ResponseEntity<StayFinderResponseDTO<?>> reqSend(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> reqSend(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
         int tryNumber = getTryNumber(certifyRequestDto, certifyDtoResult);
@@ -123,7 +123,7 @@ public class CertifyServiceImpl implements CertifyService {
             redisTemporaryStorageService.saveTemporaryData(phoneNumber, certifyRequestDto, 3600);
         }
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(responseDto));
+        return StayFinderResponseDTO.success(responseDto);
 
     }
 
@@ -141,7 +141,7 @@ public class CertifyServiceImpl implements CertifyService {
     }
 
     @Transactional
-    public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
         try {
@@ -178,13 +178,13 @@ public class CertifyServiceImpl implements CertifyService {
             redisTemporaryStorageService.saveTemporaryData(certifyRequestDto.getPhoneNumber(), certifyDtoResult, 3600);
         }
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(certifyRequestDto.getPhoneNumber()));
+        return StayFinderResponseDTO.success(certifyRequestDto.getPhoneNumber());
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> certifyDelete(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> certifyDelete(CertifyRequestDto certifyRequestDto) {
         redisTemporaryStorageService.deleteTemporaryData(certifyRequestDto.getPhoneNumber());
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
     private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException, NurigoMessageNotReceivedException, NurigoEmptyResponseException, NurigoUnknownException {

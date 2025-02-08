@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CertifyService {
 
-    ResponseEntity<StayFinderResponseDTO<?>> reqSend(CertifyRequestDto certifyRequestDto);
+    StayFinderResponseDTO<?> reqSend(CertifyRequestDto certifyRequestDto);
 
-    ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto);
+    StayFinderResponseDTO<?> certifyNumberProve(CertifyRequestDto certifyRequestDto);
 
-    ResponseEntity<StayFinderResponseDTO<?>> certifyDelete(CertifyRequestDto certifyRequestDto);
+    StayFinderResponseDTO<?> certifyDelete(CertifyRequestDto certifyRequestDto);
 
 }

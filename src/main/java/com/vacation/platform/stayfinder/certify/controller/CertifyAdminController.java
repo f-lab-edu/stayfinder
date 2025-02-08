@@ -21,7 +21,7 @@ public class CertifyAdminController {
     private final CertifyService certifyService;
 
     @DeleteMapping("/delete")
-    public ResponseEntity<StayFinderResponseDTO<?>> deleteCertify(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> deleteCertify(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         return certifyService.certifyDelete(certifyRequestDto);
     }
 

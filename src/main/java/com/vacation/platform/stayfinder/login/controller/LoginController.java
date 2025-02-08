@@ -17,17 +17,17 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<StayFinderResponseDTO<?>> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public StayFinderResponseDTO<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         return loginService.login(loginDTO);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<StayFinderResponseDTO<?>> logout(@RequestHeader("Authorization")  String token, @Valid @RequestBody LogOutDTO logOutDTO) {
+    public StayFinderResponseDTO<?> logout(@RequestHeader("Authorization")  String token, @Valid @RequestBody LogOutDTO logOutDTO) {
         return loginService.logout(token, logOutDTO);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<StayFinderResponseDTO<?>> refresh(/*@Valid @RequestBody LoginDTO loginDTO*/) {
+    public StayFinderResponseDTO<?> refresh(/*@Valid @RequestBody LoginDTO loginDTO*/) {
         return null;
     }
 

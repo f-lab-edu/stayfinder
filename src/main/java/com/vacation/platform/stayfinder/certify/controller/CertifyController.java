@@ -29,20 +29,12 @@ public class CertifyController {
     * */
 
     @PostMapping("/req/send")
-    public ResponseEntity<StayFinderResponseDTO<?>> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
-        if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                null,
-                x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
-                null);
+    public StayFinderResponseDTO<?> reqSend(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         return certifyService.reqSend(certifyRequestDto);
     }
 
     @PostMapping("/num/prove")
-    public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
-        if(certifyRequestDto == null) throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                null,
-                x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
-                null);
+    public StayFinderResponseDTO<?> certifyNumberProve(@Valid @RequestBody CertifyRequestDto certifyRequestDto) {
         return certifyService.certifyNumberProve(certifyRequestDto);
     }
 

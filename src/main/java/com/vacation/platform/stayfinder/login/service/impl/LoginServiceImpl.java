@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> login(LoginDTO loginDTO) {
+    public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
         userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
                 () -> new StayFinderException(
                         ErrorType.USER_EMAIL_NOT_EXIST,
@@ -58,13 +58,14 @@ public class LoginServiceImpl implements LoginService {
         JwtTokenResponse accessTokenResponse = jwtUtil.generateAccessToken(loginDTO.getEmail());
         JwtTokenResponse refreshTokenResponse = jwtUtil.generateRefreshToken(loginDTO.getEmail());
 
-        refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken());
+        refreshTokenRedisService.saveToken(loginDTO.getEmail().concat("_accessToken"), accessTokenResponse.getToken());
+        refreshTokenRedisService.saveToken(loginDTO.getEmail().concat("_refreshToken"), refreshTokenResponse.getToken());
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken())));
+        return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> logout(String token, LogOutDTO logOutDTO) {
+    public StayFinderResponseDTO<?> logout(String token, LogOutDTO logOutDTO) {
         if(!jwtUtil.validateToken(token)) {
             throw new StayFinderException(ErrorType.ACCESS_TOKEN_NOT_VALID,
                     Map.of("token", token),
@@ -85,14 +86,14 @@ public class LoginServiceImpl implements LoginService {
 
         refreshTokenRedisService.deleteToken(logOutDTO.getEmail());
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> refreshToken(String email) {
+    public StayFinderResponseDTO<?> refreshToken(String email) {
 
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
 }

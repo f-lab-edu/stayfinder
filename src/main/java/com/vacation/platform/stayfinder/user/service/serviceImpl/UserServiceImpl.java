@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
             User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow(
                     () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
                             Map.of("phoneNumber", userDTO.getPhoneNumber()),
-                    log::error));
+                            log::error));
 
             CertifyReq certifyReq =  new CertifyReq();
             Long certifyReqId = sequenceService.getNextCertifyReqId();
@@ -161,12 +161,4 @@ public class UserServiceImpl implements UserService {
                     e);
         }
     }
-
-
-
-//    @Override
-//    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {
-//        return ResponseEntity.ok(StayFinderResponseDTO.success());
-//    }
-
 }

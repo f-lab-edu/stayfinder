@@ -9,6 +9,4 @@ public interface  UserService {
 
     void saveUser(UserDTO.saveDTO user);
 
-//    ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO);
-
 }

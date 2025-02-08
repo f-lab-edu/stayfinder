@@ -23,7 +23,6 @@ import net.nurigo.sdk.message.response.MessageListResponse;
 import net.nurigo.sdk.message.response.MultipleDetailMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,7 +62,7 @@ public class CertifyServiceImpl implements CertifyService {
     }
 
     @Transactional
-    public ResponseEntity<StayFinderResponseDTO<?>> reqSend(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> reqSend(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
         int tryNumber = getTryNumber(certifyRequestDto, certifyDtoResult);
@@ -77,17 +76,14 @@ public class CertifyServiceImpl implements CertifyService {
 
             if(dto == null) {
                 throw new StayFinderException(ErrorType.TERMS_NOT_AGREEMENT,
-                        terms.getTermsMainTitle(),
-                        x -> log.error("{}", ErrorType.TERMS_NOT_AGREEMENT.getInternalMessage()),
-                        null
-                        );
+                        Map.of("TermsMainTitle", terms.getTermsMainTitle()),
+                        log::error);
             }
 
             if(Boolean.TRUE.equals(terms.getIsTermsRequired()) && Boolean.FALSE.equals(dto.getIsAgreement())) {
                 throw new StayFinderException(ErrorType.TERMS_DIDNT_AGREEMENT,
-                        terms.getTermsMainTitle(),
-                        x -> log.error("{}", ErrorType.TERMS_DIDNT_AGREEMENT.getInternalMessage()),
-                        null);
+                        Map.of("TermsMainTitle", terms.getTermsMainTitle()),
+                        log::error);
             }
 
         }
@@ -111,13 +107,13 @@ public class CertifyServiceImpl implements CertifyService {
             certifyRequestDto.setPhoneNumber(AES256Util.encrypt(certifyRequestDto.getPhoneNumber(), key, iv));
         } catch (NurigoMessageNotReceivedException | NurigoEmptyResponseException | NurigoUnknownException nuri) {
             throw new StayFinderException(ErrorType.Nurigo_ERROR,
-                    Objects.requireNonNull(responseDto),
-                    x -> log.error("{}", nuri.getMessage()),
+                    Map.of("responseDto", Objects.requireNonNull(responseDto)),
+                    log::error,
                     nuri);
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
-                    certifyRequestDto,
-                    x -> log.error("{}", e.getMessage()),
+                    Map.of("certifyRequestDto", certifyRequestDto),
+                    log::error,
                     e);
         } finally {
             certifyRequestDto.setIsCertify(false);
@@ -126,7 +122,7 @@ public class CertifyServiceImpl implements CertifyService {
             redisTemporaryStorageService.saveTemporaryData(phoneNumber, certifyRequestDto, 3600);
         }
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(responseDto));
+        return StayFinderResponseDTO.success(responseDto);
 
     }
 
@@ -135,9 +131,8 @@ public class CertifyServiceImpl implements CertifyService {
         if(certifyDtoResult != null) {
             if (certifyDtoResult.getTryNumber() >= 5) {
                 throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER,
-                        certifyRequestDto.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_TRY_NUMBER.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
             tryNumber = certifyDtoResult.getTryNumber() == 0 ? 0 : certifyDtoResult.getTryNumber();
         }
@@ -145,7 +140,7 @@ public class CertifyServiceImpl implements CertifyService {
     }
 
     @Transactional
-    public ResponseEntity<StayFinderResponseDTO<?>> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
         try {
@@ -153,16 +148,14 @@ public class CertifyServiceImpl implements CertifyService {
 
             if(certifyDtoResult.getIsCertify()) {
                 throw new StayFinderException(ErrorType.CERTIFY_IS_COMPLETE,
-                        certifyRequestDto.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_IS_COMPLETE.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
 
             if(!certifyDtoResult.getReqCertifyNumber().equals(certifyRequestDto.getReqCertifyNumber())) {
                 throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        certifyRequestDto.getReqCertifyNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
 
             String decPhoneNum = AES256Util.decrypt(certifyDtoResult.getPhoneNumber(), key, iv);
@@ -172,8 +165,8 @@ public class CertifyServiceImpl implements CertifyService {
             }
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.CERTIFY_NOT_VALID,
-                    certifyRequestDto.getPhoneNumber(),
-                    x -> log.error("{}", ErrorType.CERTIFY_NOT_VALID),
+                    Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                    log::error,
                     e);
         } finally {
             Objects.requireNonNull(certifyDtoResult).setIsCertify(true);
@@ -184,13 +177,13 @@ public class CertifyServiceImpl implements CertifyService {
             redisTemporaryStorageService.saveTemporaryData(certifyRequestDto.getPhoneNumber(), certifyDtoResult, 3600);
         }
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(certifyRequestDto.getPhoneNumber()));
+        return StayFinderResponseDTO.success(certifyRequestDto.getPhoneNumber());
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> certifyDelete(CertifyRequestDto certifyRequestDto) {
+    public StayFinderResponseDTO<?> certifyDelete(CertifyRequestDto certifyRequestDto) {
         redisTemporaryStorageService.deleteTemporaryData(certifyRequestDto.getPhoneNumber());
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
     private CertifyResponseDto sendMessage(String phoneNum, int certifyNumber) throws StayFinderException, NurigoMessageNotReceivedException, NurigoEmptyResponseException, NurigoUnknownException {

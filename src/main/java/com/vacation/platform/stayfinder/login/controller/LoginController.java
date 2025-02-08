@@ -6,7 +6,6 @@ import com.vacation.platform.stayfinder.login.service.LoginService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,18 +16,20 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<StayFinderResponseDTO<?>> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public StayFinderResponseDTO<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         return loginService.login(loginDTO);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<StayFinderResponseDTO<?>> logout(@RequestHeader("Authorization")  String token, @Valid @RequestBody LogOutDTO logOutDTO) {
+    public StayFinderResponseDTO<?> logout(@RequestHeader("Authorization")  String token, @Valid @RequestBody LogOutDTO logOutDTO) {
         return loginService.logout(token, logOutDTO);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<StayFinderResponseDTO<?>> refresh(/*@Valid @RequestBody LoginDTO loginDTO*/) {
-        return null;
+    public StayFinderResponseDTO<?> refresh(@RequestBody String refreshToken) {
+
+
+        return loginService.refreshToken(refreshToken);
     }
 
 }

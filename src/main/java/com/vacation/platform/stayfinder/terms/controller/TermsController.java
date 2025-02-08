@@ -11,10 +11,13 @@ import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /*
 * 약관 컨트롤러
@@ -34,17 +37,16 @@ public class TermsController {
     //메인 동의 api 에서 응답으로 필수 동의를 전체 동의 한 경우에 휴대폰 인증으로 넘어감
 
     @GetMapping("/main")
-    public ResponseEntity<StayFinderResponseDTO<List<Terms>>> getMain() {
+    public StayFinderResponseDTO<List<Terms>> getMain() {
         return termsService.getTermsMain();
     }
 
     @GetMapping("/sub")
-    public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getSub(@Valid @RequestBody TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                    "null pointer",
-                    x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
-                    null);
+                    Map.of("error", "termsDto 가 존재하지 않습니다."),
+                    log::error);
 
         return termsService.getTermsSub(termsDto);
     }

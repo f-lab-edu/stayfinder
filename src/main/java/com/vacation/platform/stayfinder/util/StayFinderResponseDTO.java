@@ -24,15 +24,4 @@ public class StayFinderResponseDTO<T> {
     public static <T> StayFinderResponseDTO<T> success() {
         return new StayFinderResponseDTO<>("0000", ResponseCode.SUCCESS.getCustomMessage(), null);
     }
-
-    public static <T> StayFinderResponseDTO<T> fail(String code, String message, T data) {
-        return new StayFinderResponseDTO<>(code, message, data);
-    }
-
-    public static <T> StayFinderResponseDTO<T> fail(String code, String message) {
-        return new StayFinderResponseDTO<>(code, message, null);
-    }
-
-
-
 }

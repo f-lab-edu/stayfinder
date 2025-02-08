@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -70,17 +72,15 @@ public class UserServiceImpl implements UserService {
         userRepository.findByNickName(userDTO.getNickName())
                 .ifPresent(user -> {
                     throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME,
-                            userDTO,
-                            x -> log.error("{}", ErrorType.DUPLICATE_NICK_NAME.getInternalMessage()),
-                            null);
+                            Map.of("userDTO", userDTO),
+                            log::error);
                 });
 
         userRepository.findByEmail(userDTO.getEmail())
                 .ifPresent(user -> {
                     throw new StayFinderException(ErrorType.DUPLICATE_EMAIL,
-                            userDTO,
-                            x -> log.error("{}", ErrorType.DUPLICATE_EMAIL.getInternalMessage()),
-                            null);
+                            Map.of("userDTO", userDTO),
+                            log::error);
                 });
 
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(userDTO.getPhoneNumber());
@@ -89,17 +89,15 @@ public class UserServiceImpl implements UserService {
 
         if(certifyDtoResult == null) {
             throw new StayFinderException(ErrorType.USER_PHONE_NUM_NOT_MATCHED,
-                    userDTO,
-                    x -> log.error("{}", ErrorType.USER_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                    null);
+                    Map.of("userDTO", userDTO),
+                    log::error);
         }
 
 
         if(!certifyDtoResult.getIsCertify()) {
             throw new StayFinderException(ErrorType.CERTIFY_IS_NOT_COMPLETE,
-                    userDTO,
-                    x -> log.error("{}", ErrorType.CERTIFY_IS_NOT_COMPLETE.getInternalMessage()),
-                    null);
+                    Map.of("userDTO", userDTO),
+                    log::error);
         }
 
         try {
@@ -107,15 +105,14 @@ public class UserServiceImpl implements UserService {
 
             if(!decPhoneNum.equals(userDTO.getPhoneNumber())) {
                 throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        userDTO.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                        null);
+                        Map.of("phoneNumber", userDTO.getPhoneNumber()),
+                        log::error);
             }
 
         } catch(Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
-                    userDTO.getPhoneNumber(),
-                    x -> log.error("{}", e.getMessage()),
+                    Map.of("phoneNumber", userDTO.getPhoneNumber()),
+                    log::error,
                     e);
         }
 
@@ -133,9 +130,8 @@ public class UserServiceImpl implements UserService {
 
             User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow(
                     () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                    userDTO.getPhoneNumber(),
-                    x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                    null));
+                            Map.of("phoneNumber", userDTO.getPhoneNumber()),
+                            log::error));
 
             CertifyReq certifyReq =  new CertifyReq();
             Long certifyReqId = sequenceService.getNextCertifyReqId();
@@ -160,17 +156,9 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
-                    userDTO,
-                    x -> log.error("{}", e.getMessage()),
+                    Map.of("userDTO", userDTO),
+                    log::error,
                     e);
         }
     }
-
-
-
-//    @Override
-//    public ResponseEntity<StayFinderResponseDTO<?>> modifyUser(UserDTO.saveDTO modifyDTO) {
-//        return ResponseEntity.ok(StayFinderResponseDTO.success());
-//    }
-
 }

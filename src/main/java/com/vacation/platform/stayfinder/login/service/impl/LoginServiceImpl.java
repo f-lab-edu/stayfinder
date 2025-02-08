@@ -8,15 +8,16 @@ import com.vacation.platform.stayfinder.login.dto.LoginDTO;
 import com.vacation.platform.stayfinder.login.dto.LoginResponseDTO;
 import com.vacation.platform.stayfinder.login.service.LoginService;
 import com.vacation.platform.stayfinder.login.service.RefreshTokenRedisService;
-import com.vacation.platform.stayfinder.login.service.TokenBlocklistService;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.util.JwtUtil;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -29,17 +30,18 @@ public class LoginServiceImpl implements LoginService {
 
     private final RefreshTokenRedisService refreshTokenRedisService;
 
-    private final TokenBlocklistService tokenBlocklistService;
-
     private final UserRepository userRepository;
 
+    private final long ACCESS_TOKEN_TIME = 1000 * 60 * 15L;
+
+
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> login(LoginDTO loginDTO) {
+    public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
         userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
                 () -> new StayFinderException(
                         ErrorType.USER_EMAIL_NOT_EXIST,
-                        loginDTO.getEmail(),
-                        x -> log.error("{}", ErrorType.USER_EMAIL_NOT_EXIST.getInternalMessage()),
+                        Map.of("email", loginDTO.getEmail()),
+                        log::error,
                         null
                 ));
 
@@ -47,50 +49,51 @@ public class LoginServiceImpl implements LoginService {
 
         if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(), encodePassword)) {
             throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
-                    loginDTO.getPassword(),
-                    x -> log.error("{}", ErrorType.USER_PASSWORD_NOT_MATCHED.getInternalMessage()),
+                    Map.of("password", loginDTO.getPassword()),
+                    log::error,
                     null
             );
         }
 
-        JwtTokenResponse accessTokenResponse = jwtUtil.generateAccessToken(loginDTO.getEmail());
-        JwtTokenResponse refreshTokenResponse = jwtUtil.generateRefreshToken(loginDTO.getEmail());
+        long refreshTokenTime = 1000 * 60 * 60 * 24 * 7L;
 
-        refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken());
+        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME);
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken())));
+        JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime);
+
+        refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+        refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
+
+        return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> logout(String token, LogOutDTO logOutDTO) {
-        if(!jwtUtil.validateToken(token)) {
-            throw new StayFinderException(ErrorType.ACCESS_TOKEN_NOT_VALID,
-                    token,
-                    x -> log.error("{}", x),
-                    null);
-        }
-
+    public StayFinderResponseDTO<?> logout(String token, LogOutDTO logOutDTO) {
         if(!jwtUtil.validateToken(token, logOutDTO.getEmail())) {
             throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID,
-                    logOutDTO,
-                    x -> log.error("{}", x),
-                    null);
+                    Map.of("logOutDTO", logOutDTO),
+                    log::error);
         }
 
-        long expiration = 1000 * 60 * 15; // Access Token 만료 시간 (15분)
-
-        tokenBlocklistService.addToBlocklist(token, expiration);
-
         refreshTokenRedisService.deleteToken(logOutDTO.getEmail());
+        refreshTokenRedisService.deleteToken(token);
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<?>> refreshToken(String email) {
+    public StayFinderResponseDTO<?> refreshToken(String refreshToken) {
+
+        if(jwtUtil.validateToken(refreshToken)) {
+            String email = jwtUtil.getUserEmail(refreshToken);
+            JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME);
 
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+            refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), email, ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+            return StayFinderResponseDTO.success(accessTokenResponse.getToken());
+        }
+
+        throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID, Map.of("refreshToken", refreshToken), log::error);
     }
 
 }

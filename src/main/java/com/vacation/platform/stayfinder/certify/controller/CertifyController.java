@@ -2,13 +2,10 @@ package com.vacation.platform.stayfinder.certify.controller;
 
 import com.vacation.platform.stayfinder.certify.dto.CertifyRequestDto;
 import com.vacation.platform.stayfinder.certify.service.CertifyService;
-import com.vacation.platform.stayfinder.common.ErrorType;
-import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

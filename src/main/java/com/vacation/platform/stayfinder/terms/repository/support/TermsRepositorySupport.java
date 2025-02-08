@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.vacation.platform.stayfinder.terms.entity.QTerms.*;
-import static com.vacation.platform.stayfinder.terms.entity.QTermsSub.*;
+import static com.vacation.platform.stayfinder.terms.entity.QTerms.terms;
+import static com.vacation.platform.stayfinder.terms.entity.QTermsSub.termsSub;
 
 @Repository
 public class TermsRepositorySupport extends QuerydslRepositorySupport {

@@ -1,14 +1,11 @@
 package com.vacation.platform.stayfinder.common.jwt.filter;
 
-import com.vacation.platform.stayfinder.common.ErrorType;
-import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.login.service.TokenBlocklistService;
 import com.vacation.platform.stayfinder.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -16,7 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j

@@ -8,7 +8,6 @@ import com.vacation.platform.stayfinder.login.dto.LoginDTO;
 import com.vacation.platform.stayfinder.login.dto.LoginResponseDTO;
 import com.vacation.platform.stayfinder.login.service.LoginService;
 import com.vacation.platform.stayfinder.login.service.RefreshTokenRedisService;
-import com.vacation.platform.stayfinder.login.service.TokenBlocklistService;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.util.JwtUtil;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
@@ -31,11 +30,9 @@ public class LoginServiceImpl implements LoginService {
 
     private final RefreshTokenRedisService refreshTokenRedisService;
 
-    private final TokenBlocklistService tokenBlocklistService;
-
     private final UserRepository userRepository;
 
-
+    private final long ACCESS_TOKEN_TIME = 1000 * 60 * 15L;
 
 
     @Override
@@ -58,13 +55,13 @@ public class LoginServiceImpl implements LoginService {
             );
         }
 
-        long accessTokenTime = 1000 * 60 * 15L;
         long refreshTokenTime = 1000 * 60 * 60 * 24 * 7L;
 
-        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), accessTokenTime);
+        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME);
+
         JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime);
 
-        refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), accessTokenTime, TimeUnit.DAYS);
+        refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
         refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
 
         return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
@@ -72,24 +69,14 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public StayFinderResponseDTO<?> logout(String token, LogOutDTO logOutDTO) {
-        if(!jwtUtil.validateToken(token)) {
-            throw new StayFinderException(ErrorType.ACCESS_TOKEN_NOT_VALID,
-                    Map.of("token", token),
-                    log::error,
-                    null);
-        }
-
         if(!jwtUtil.validateToken(token, logOutDTO.getEmail())) {
             throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID,
                     Map.of("logOutDTO", logOutDTO),
-                    log::error,
-                    null);
+                    log::error);
         }
-        long expiration = 1000 * 60 * 15; // Access Token 만료 시간 (15분)
-
-        tokenBlocklistService.addToBlocklist(token, expiration);
 
         refreshTokenRedisService.deleteToken(logOutDTO.getEmail());
+        refreshTokenRedisService.deleteToken(token);
 
         return StayFinderResponseDTO.success();
     }
@@ -97,9 +84,16 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public StayFinderResponseDTO<?> refreshToken(String refreshToken) {
 
+        if(jwtUtil.validateToken(refreshToken)) {
+            String email = jwtUtil.getUserEmail(refreshToken);
+            JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME);
 
 
-        return StayFinderResponseDTO.success();
+            refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), email, ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+            return StayFinderResponseDTO.success(accessTokenResponse.getToken());
+        }
+
+        throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID, Map.of("refreshToken", refreshToken), log::error);
     }
 
 }

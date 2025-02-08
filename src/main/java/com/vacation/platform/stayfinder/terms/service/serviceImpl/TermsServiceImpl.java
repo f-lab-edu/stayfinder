@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -35,12 +37,11 @@ public class TermsServiceImpl implements TermsService {
 
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
-        if(termsList.size() < 1) {
+        if(termsList.isEmpty()) {
             throw new StayFinderException(
                     ErrorType.TERMS_NOT_FOUND,
-                    termsList,
-                    x -> log.error("{}", x),
-                    null);
+                    Map.of("termsList", termsList),
+                    log::error);
         }
         return ResponseEntity.ok(StayFinderResponseDTO.success(termsList));
     }
@@ -49,12 +50,11 @@ public class TermsServiceImpl implements TermsService {
     public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getTermsSub(TermsDto termsDto) {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
-        if(termsSubList.size() < 1) {
+        if(termsSubList.isEmpty()) {
             throw new StayFinderException(
                     ErrorType.TERMS_NOT_FOUND,
-                    termsSubList,
-                    x -> log.error("{}", x),
-                    null);
+                    Map.of("termsSubList", termsSubList),
+                    log::error);
         }
 
         return  ResponseEntity.ok(StayFinderResponseDTO.success(termsSubList));
@@ -68,9 +68,8 @@ public class TermsServiceImpl implements TermsService {
         if(!termsDto.getIsCompulsion() && terms != null) {
             throw new StayFinderException(
                     ErrorType.DUPLICATE_TERMS_TITLE,
-                    terms,
-                    x -> log.error("{}", x),
-                    null);
+                    Map.of("terms", terms),
+                    log::error);
         }
 
         try {
@@ -81,14 +80,14 @@ public class TermsServiceImpl implements TermsService {
         } catch (StayFinderException st) {
             throw new StayFinderException(
                     st.getErrorType(),
-                    terms,
-                    x -> log.error("{}",x),
-                    null);
+                    Map.of("terms", Objects.requireNonNull(terms)),
+                    log::error,
+                    st);
         } catch (Exception e) {
             throw new StayFinderException(
                     ErrorType.DB_ERROR,
-                    terms,
-                    x -> log.error("{}", e.getMessage()),
+                    Map.of("terms", Objects.requireNonNull(terms)),
+                    log::error,
                     e);
         }
     }
@@ -99,9 +98,8 @@ public class TermsServiceImpl implements TermsService {
         TermsSub sub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(
                 reqTerms.getTermsId())
                 .orElseThrow(() -> new StayFinderException(ErrorType.DB_ERROR,
-                        null,
-                        x -> log.error("{}", x),
-                        null));
+                        Map.of("", reqTerms),
+                        log::error));
 
         reqTerms.setIsTermsRequired(termsDto.getIsCompulsion());
         reqTerms.setTermsMainTitle(termsDto.getMainTitle());
@@ -113,7 +111,7 @@ public class TermsServiceImpl implements TermsService {
     }
 
     @Transactional
-    private void termsSave(TermsDto termsDto){
+    protected void termsSave(TermsDto termsDto){
         Terms terms = new Terms();
 
         terms.setTermsMainTitle(termsDto.getMainTitle());
@@ -125,9 +123,8 @@ public class TermsServiceImpl implements TermsService {
         Terms term = termsRepository.findByTermsMainTitle(
                         termsDto.getMainTitle())
                 .orElseThrow(() -> new StayFinderException(ErrorType.TERMS_NOT_FOUND,
-                        terms,
-                        x -> log.error("{}", x),
-                        null));
+                        Map.of("terms", terms),
+                        log::error));
 
         TermsSub termsSub = new TermsSub();
         TermsSubId id = new TermsSubId();

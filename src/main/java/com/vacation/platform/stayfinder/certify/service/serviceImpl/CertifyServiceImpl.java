@@ -77,17 +77,14 @@ public class CertifyServiceImpl implements CertifyService {
 
             if(dto == null) {
                 throw new StayFinderException(ErrorType.TERMS_NOT_AGREEMENT,
-                        terms.getTermsMainTitle(),
-                        x -> log.error("{}", ErrorType.TERMS_NOT_AGREEMENT.getInternalMessage()),
-                        null
-                        );
+                        Map.of("TermsMainTitle", terms.getTermsMainTitle()),
+                        log::error);
             }
 
             if(Boolean.TRUE.equals(terms.getIsTermsRequired()) && Boolean.FALSE.equals(dto.getIsAgreement())) {
                 throw new StayFinderException(ErrorType.TERMS_DIDNT_AGREEMENT,
-                        terms.getTermsMainTitle(),
-                        x -> log.error("{}", ErrorType.TERMS_DIDNT_AGREEMENT.getInternalMessage()),
-                        null);
+                        Map.of("TermsMainTitle", terms.getTermsMainTitle()),
+                        log::error);
             }
 
         }
@@ -111,13 +108,13 @@ public class CertifyServiceImpl implements CertifyService {
             certifyRequestDto.setPhoneNumber(AES256Util.encrypt(certifyRequestDto.getPhoneNumber(), key, iv));
         } catch (NurigoMessageNotReceivedException | NurigoEmptyResponseException | NurigoUnknownException nuri) {
             throw new StayFinderException(ErrorType.Nurigo_ERROR,
-                    Objects.requireNonNull(responseDto),
-                    x -> log.error("{}", nuri.getMessage()),
+                    Map.of("responseDto", Objects.requireNonNull(responseDto)),
+                    log::error,
                     nuri);
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
-                    certifyRequestDto,
-                    x -> log.error("{}", e.getMessage()),
+                    Map.of("certifyRequestDto", certifyRequestDto),
+                    log::error,
                     e);
         } finally {
             certifyRequestDto.setIsCertify(false);
@@ -135,9 +132,8 @@ public class CertifyServiceImpl implements CertifyService {
         if(certifyDtoResult != null) {
             if (certifyDtoResult.getTryNumber() >= 5) {
                 throw new StayFinderException(ErrorType.CERTIFY_TRY_NUMBER,
-                        certifyRequestDto.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_TRY_NUMBER.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
             tryNumber = certifyDtoResult.getTryNumber() == 0 ? 0 : certifyDtoResult.getTryNumber();
         }
@@ -153,16 +149,14 @@ public class CertifyServiceImpl implements CertifyService {
 
             if(certifyDtoResult.getIsCertify()) {
                 throw new StayFinderException(ErrorType.CERTIFY_IS_COMPLETE,
-                        certifyRequestDto.getPhoneNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_IS_COMPLETE.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
 
             if(!certifyDtoResult.getReqCertifyNumber().equals(certifyRequestDto.getReqCertifyNumber())) {
                 throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        certifyRequestDto.getReqCertifyNumber(),
-                        x -> log.error("{}", ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED.getInternalMessage()),
-                        null);
+                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                        log::error);
             }
 
             String decPhoneNum = AES256Util.decrypt(certifyDtoResult.getPhoneNumber(), key, iv);
@@ -172,8 +166,8 @@ public class CertifyServiceImpl implements CertifyService {
             }
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.CERTIFY_NOT_VALID,
-                    certifyRequestDto.getPhoneNumber(),
-                    x -> log.error("{}", ErrorType.CERTIFY_NOT_VALID),
+                    Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                    log::error,
                     e);
         } finally {
             Objects.requireNonNull(certifyDtoResult).setIsCertify(true);

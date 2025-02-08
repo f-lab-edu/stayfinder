@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -36,9 +38,8 @@ public class UserController {
 
         if(!users.getPassword().equals(users.getPasswordCheck())) {
             throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
-                    users,
-                    x -> log.error("{}", ErrorType.USER_PASSWORD_NOT_MATCHED.getInternalMessage()),
-                    null);
+                    Map.of("users", users),
+                    log::error);
         }
 
         if(users.getEmail() != null) {
@@ -46,9 +47,8 @@ public class UserController {
 
             if(emailValid.matches(users.getEmail())) {
                 throw new StayFinderException(ErrorType.USER_EMAIL_NOT_VALID,
-                        users,
-                        x -> log.error("{}", ErrorType.USER_EMAIL_NOT_VALID),
-                        null);
+                        Map.of("users", users),
+                        log::error);
             }
         }
 

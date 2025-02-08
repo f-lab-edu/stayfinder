@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 
 @Slf4j
 @RestController
@@ -30,9 +32,8 @@ public class AdminTermsController {
     public ResponseEntity<StayFinderResponseDTO<?>> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                    "null pointer",
-                    x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
-                    null);
+                    Map.of("error", "termsDto 가 존재하지 않습니다."),
+                    log::error);
 
         termsService.registerTerms(termsDto);
 

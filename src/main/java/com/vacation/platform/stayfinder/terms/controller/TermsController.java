@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /*
 * 약관 컨트롤러
@@ -42,9 +43,8 @@ public class TermsController {
     public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getSub(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
-                    "null pointer",
-                    x -> log.error("{}", ErrorType.DTO_NOT_FOUND.getInternalMessage()),
-                    null);
+                    Map.of("error", "termsDto 가 존재하지 않습니다."),
+                    log::error);
 
         return termsService.getTermsSub(termsDto);
     }

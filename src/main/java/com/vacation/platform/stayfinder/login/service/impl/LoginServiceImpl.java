@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,8 +40,8 @@ public class LoginServiceImpl implements LoginService {
         userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
                 () -> new StayFinderException(
                         ErrorType.USER_EMAIL_NOT_EXIST,
-                        loginDTO.getEmail(),
-                        x -> log.error("{}", ErrorType.USER_EMAIL_NOT_EXIST.getInternalMessage()),
+                        Map.of("email", loginDTO.getEmail()),
+                        log::error,
                         null
                 ));
 
@@ -47,8 +49,8 @@ public class LoginServiceImpl implements LoginService {
 
         if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(), encodePassword)) {
             throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
-                    loginDTO.getPassword(),
-                    x -> log.error("{}", ErrorType.USER_PASSWORD_NOT_MATCHED.getInternalMessage()),
+                    Map.of("password", loginDTO.getPassword()),
+                    log::error,
                     null
             );
         }
@@ -65,15 +67,15 @@ public class LoginServiceImpl implements LoginService {
     public ResponseEntity<StayFinderResponseDTO<?>> logout(String token, LogOutDTO logOutDTO) {
         if(!jwtUtil.validateToken(token)) {
             throw new StayFinderException(ErrorType.ACCESS_TOKEN_NOT_VALID,
-                    token,
-                    x -> log.error("{}", x),
+                    Map.of("token", token),
+                    log::error,
                     null);
         }
 
         if(!jwtUtil.validateToken(token, logOutDTO.getEmail())) {
             throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID,
-                    logOutDTO,
-                    x -> log.error("{}", x),
+                    Map.of("logOutDTO", logOutDTO),
+                    log::error,
                     null);
         }
 

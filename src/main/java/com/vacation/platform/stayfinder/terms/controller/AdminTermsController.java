@@ -6,9 +6,7 @@ import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.terms.service.serviceImpl.TermsServiceImpl;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +27,7 @@ public class AdminTermsController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<StayFinderResponseDTO<?>> termsRegistration(@Valid @RequestBody TermsDto termsDto) {
+    public StayFinderResponseDTO<?> termsRegistration(@RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     Map.of("error", "termsDto 가 존재하지 않습니다."),
@@ -37,7 +35,7 @@ public class AdminTermsController {
 
         termsService.registerTerms(termsDto);
 
-        return ResponseEntity.ok(StayFinderResponseDTO.success());
+        return StayFinderResponseDTO.success();
     }
 
 }

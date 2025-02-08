@@ -12,9 +12,9 @@ import java.util.List;
 @Service
 public interface TermsService {
 
-    ResponseEntity<StayFinderResponseDTO<List<Terms>>> getTermsMain();
+    StayFinderResponseDTO<List<Terms>> getTermsMain();
 
-    ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getTermsSub(TermsDto termsDto);
+    StayFinderResponseDTO<List<TermsSub>> getTermsSub(TermsDto termsDto);
 
     void registerTerms (TermsDto termsDto);
 

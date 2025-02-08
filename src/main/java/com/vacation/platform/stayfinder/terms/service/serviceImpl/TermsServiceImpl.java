@@ -33,7 +33,7 @@ public class TermsServiceImpl implements TermsService {
     private final TermsRepositorySupport termsRepositorySupport;
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<List<Terms>>> getTermsMain() {
+    public StayFinderResponseDTO<List<Terms>> getTermsMain() {
 
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
@@ -43,11 +43,11 @@ public class TermsServiceImpl implements TermsService {
                     Map.of("termsList", termsList),
                     log::error);
         }
-        return ResponseEntity.ok(StayFinderResponseDTO.success(termsList));
+        return StayFinderResponseDTO.success(termsList);
     }
 
     @Override
-    public ResponseEntity<StayFinderResponseDTO<List<TermsSub>>> getTermsSub(TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsSub>> getTermsSub(TermsDto termsDto) {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
         if(termsSubList.isEmpty()) {
@@ -57,7 +57,7 @@ public class TermsServiceImpl implements TermsService {
                     log::error);
         }
 
-        return  ResponseEntity.ok(StayFinderResponseDTO.success(termsSubList));
+        return StayFinderResponseDTO.success(termsSubList);
     }
 
     @Override

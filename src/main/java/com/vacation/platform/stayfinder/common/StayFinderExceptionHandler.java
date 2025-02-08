@@ -23,7 +23,7 @@ public class StayFinderExceptionHandler {
         ErrorType error = e.getErrorType();
 
         return ResponseEntity.status(error.getHttpStatus())
-                .body(new StayFinderResponseDTO<>(error.getCode(), error.getExternalMessage(), null));
+                .body(new StayFinderResponseDTO<>(error.getCode(), error.getExternalMessage(), e.getParameter()));
     }
 
     @Order(2)
@@ -39,7 +39,7 @@ public class StayFinderExceptionHandler {
                 .body(new StayFinderResponseDTO<>(
                         ErrorType.VALID_ERROR.getCode(),
                         errorMessages.get(0), // 첫 번째 에러 메시지만 응답
-                        null
+                        e
                 ));
     }
 

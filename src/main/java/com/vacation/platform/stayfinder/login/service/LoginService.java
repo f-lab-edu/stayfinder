@@ -12,6 +12,6 @@ public interface LoginService {
 
     StayFinderResponseDTO<?> logout(String token, LogOutDTO logOutDTO);
 
-    StayFinderResponseDTO<?> refreshToken(String email);
+    StayFinderResponseDTO<?> refreshToken(String refreshToken);
 
 }

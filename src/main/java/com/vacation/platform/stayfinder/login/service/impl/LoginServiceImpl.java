@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -33,6 +34,9 @@ public class LoginServiceImpl implements LoginService {
     private final TokenBlocklistService tokenBlocklistService;
 
     private final UserRepository userRepository;
+
+
+
 
     @Override
     public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
@@ -54,11 +58,14 @@ public class LoginServiceImpl implements LoginService {
             );
         }
 
-        JwtTokenResponse accessTokenResponse = jwtUtil.generateAccessToken(loginDTO.getEmail());
-        JwtTokenResponse refreshTokenResponse = jwtUtil.generateRefreshToken(loginDTO.getEmail());
+        long accessTokenTime = 1000 * 60 * 15L;
+        long refreshTokenTime = 1000 * 60 * 60 * 24 * 7L;
 
-        refreshTokenRedisService.saveToken(loginDTO.getEmail().concat("_accessToken"), accessTokenResponse.getToken());
-        refreshTokenRedisService.saveToken(loginDTO.getEmail().concat("_refreshToken"), refreshTokenResponse.getToken());
+        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), accessTokenTime);
+        JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime);
+
+        refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), accessTokenTime, TimeUnit.DAYS);
+        refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
 
         return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
@@ -78,7 +85,6 @@ public class LoginServiceImpl implements LoginService {
                     log::error,
                     null);
         }
-
         long expiration = 1000 * 60 * 15; // Access Token 만료 시간 (15분)
 
         tokenBlocklistService.addToBlocklist(token, expiration);
@@ -89,7 +95,8 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public StayFinderResponseDTO<?> refreshToken(String email) {
+    public StayFinderResponseDTO<?> refreshToken(String refreshToken) {
+
 
 
         return StayFinderResponseDTO.success();

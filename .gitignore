@@ -19,6 +19,12 @@ bin/
 
 *.properties
 
+# Docker Compose 관련 파일 무시
+docker-compose.yml
+docker-compose.override.yml
+.env
+
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

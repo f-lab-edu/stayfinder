@@ -4,7 +4,6 @@ package com.vacation.platform.stayfinder.terms.controller;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
@@ -41,7 +40,7 @@ public class TermsController {
     }
 
     @GetMapping("/sub")
-    public StayFinderResponseDTO<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getSub(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     Map.of("error", "termsDto 가 존재하지 않습니다."),

@@ -68,7 +68,7 @@ public class TermsServiceImpl implements TermsService {
     }
 
     @Override
-    public StayFinderResponseDTO<List<TermsSub>> getTermsSub(TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getTermsSub(TermsDto termsDto) {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
         if(termsSubList.isEmpty()) {
@@ -78,7 +78,25 @@ public class TermsServiceImpl implements TermsService {
                     log::error);
         }
 
-        return StayFinderResponseDTO.success(termsSubList);
+        List<TermsDto.SubResponseDto> result = new ArrayList<>(20);
+
+        try {
+
+            for(TermsSub ts : termsSubList) {
+                TermsDto.SubResponseDto subResponseDto = EntityToDtoConverter.convertEntityToDto(ts, TermsDto.SubResponseDto.class);
+                result.add(subResponseDto);
+            }
+
+        } catch (Exception e) {
+            log.info("{}", e.getMessage());
+            throw new StayFinderException(ErrorType.DB_ERROR,
+                    Map.of("termsSubList", termsSubList),
+                    log::error,
+                    e
+            );
+        }
+
+        return StayFinderResponseDTO.success(result);
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.vacation.platform.stayfinder.terms.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor
@@ -24,5 +27,16 @@ public class TermsDto {
         private Long termsId;
         private String termsMainTitle;
         private Boolean isTermsRequired;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SubResponseDto {
+        private String termsDetailsTitle;
+        private String termsDetailsContent;
+        private Boolean isActive;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime createAt;
     }
 }

@@ -4,8 +4,6 @@ package com.vacation.platform.stayfinder.terms.controller;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.terms.entity.Terms;
-import com.vacation.platform.stayfinder.terms.entity.TermsSub;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.validation.Valid;
@@ -37,12 +35,12 @@ public class TermsController {
     //메인 동의 api 에서 응답으로 필수 동의를 전체 동의 한 경우에 휴대폰 인증으로 넘어감
 
     @GetMapping("/main")
-    public StayFinderResponseDTO<List<Terms>> getMain() {
+    public StayFinderResponseDTO<List<TermsDto.MainResponseDto>> getMain() {
         return termsService.getTermsMain();
     }
 
     @GetMapping("/sub")
-    public StayFinderResponseDTO<List<TermsSub>> getSub(@Valid @RequestBody TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getSub(@Valid @RequestBody TermsDto termsDto) {
         if(termsDto == null)
             throw new StayFinderException(ErrorType.DTO_NOT_FOUND,
                     Map.of("error", "termsDto 가 존재하지 않습니다."),

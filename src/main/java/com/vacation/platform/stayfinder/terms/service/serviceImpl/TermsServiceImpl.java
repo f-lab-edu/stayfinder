@@ -1,5 +1,6 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
+import com.vacation.platform.stayfinder.common.EntityToDtoConverter;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
@@ -16,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class TermsServiceImpl implements TermsService {
     private final TermsRepositorySupport termsRepositorySupport;
 
     @Override
-    public StayFinderResponseDTO<List<Terms>> getTermsMain() {
+    public StayFinderResponseDTO<List<TermsDto.MainResponseDto>> getTermsMain() {
 
         List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
@@ -42,11 +44,31 @@ public class TermsServiceImpl implements TermsService {
                     Map.of("termsList", termsList),
                     log::error);
         }
-        return StayFinderResponseDTO.success(termsList);
+
+
+        List<TermsDto.MainResponseDto> result = new ArrayList<>(20);
+        try {
+
+            for(Terms t : termsList) {
+                TermsDto.MainResponseDto  mainResponseDto = EntityToDtoConverter.convertEntityToDto(t, TermsDto.MainResponseDto.class);
+                result.add(mainResponseDto);
+            }
+
+        } catch (Exception e) {
+            log.info("{}", e.getMessage());
+            throw new StayFinderException(ErrorType.DB_ERROR,
+                    Map.of("termsList", termsList),
+                    log::error,
+                    e
+            );
+        }
+
+
+        return StayFinderResponseDTO.success(result);
     }
 
     @Override
-    public StayFinderResponseDTO<List<TermsSub>> getTermsSub(TermsDto termsDto) {
+    public StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getTermsSub(TermsDto termsDto) {
         List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
 
         if(termsSubList.isEmpty()) {
@@ -56,7 +78,25 @@ public class TermsServiceImpl implements TermsService {
                     log::error);
         }
 
-        return StayFinderResponseDTO.success(termsSubList);
+        List<TermsDto.SubResponseDto> result = new ArrayList<>(20);
+
+        try {
+
+            for(TermsSub ts : termsSubList) {
+                TermsDto.SubResponseDto subResponseDto = EntityToDtoConverter.convertEntityToDto(ts, TermsDto.SubResponseDto.class);
+                result.add(subResponseDto);
+            }
+
+        } catch (Exception e) {
+            log.info("{}", e.getMessage());
+            throw new StayFinderException(ErrorType.DB_ERROR,
+                    Map.of("termsSubList", termsSubList),
+                    log::error,
+                    e
+            );
+        }
+
+        return StayFinderResponseDTO.success(result);
     }
 
     @Override

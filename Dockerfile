@@ -12,10 +12,7 @@ FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache docker docker-compose
-RUN rm -rf /var/cache/apk/*
-
-COPY --from=builder app/build/libs/stayfinder.jar stayfinder.jar
+COPY --from=builder /app/build/libs/stayfinder.jar stayfinder.jar
 
 EXPOSE 8080
 

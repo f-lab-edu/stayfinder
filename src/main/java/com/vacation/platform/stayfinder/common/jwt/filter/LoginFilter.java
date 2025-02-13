@@ -8,10 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +28,7 @@ public class LoginFilter extends OncePerRequestFilter {
     private final RefreshTokenRedisService refreshTokenRedisService;
 
     private static final List<String> FILTERED_URLS = List.of("/api/v1/certify/", "/api/v1/terms/",
-            "/api/v1/users/", "/api/v1/user/login");
+            "/api/v1/users/", "/api/v1/user/login", "/api/v1/actuator/health");
 
     public LoginFilter(JwtUtil jwtUtil, RefreshTokenRedisService refreshTokenRedisService) {
         this.jwtUtil = jwtUtil;
@@ -32,8 +36,9 @@ public class LoginFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-       return FILTERED_URLS.stream().anyMatch(request.getServletPath()::startsWith);
+    protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
+        return FILTERED_URLS.stream()
+                .anyMatch(url -> request.getServletPath().startsWith(url));
     }
 
     @Override
@@ -53,6 +58,15 @@ public class LoginFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 유효하지 않습니다.");
             return;
         }
+
+        String email = jwtUtil.getUserEmail(token);
+        String role = jwtUtil.getUserRole(token);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                email, null, Collections.singleton(new SimpleGrantedAuthority(role))
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

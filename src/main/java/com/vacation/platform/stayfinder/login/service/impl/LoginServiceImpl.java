@@ -8,6 +8,7 @@ import com.vacation.platform.stayfinder.login.dto.LoginDTO;
 import com.vacation.platform.stayfinder.login.dto.LoginResponseDTO;
 import com.vacation.platform.stayfinder.login.service.LoginService;
 import com.vacation.platform.stayfinder.login.service.RefreshTokenRedisService;
+import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.util.JwtUtil;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
@@ -37,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
-        userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
+       User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
                 () -> new StayFinderException(
                         ErrorType.USER_EMAIL_NOT_EXIST,
                         Map.of("email", loginDTO.getEmail()),
@@ -57,9 +58,9 @@ public class LoginServiceImpl implements LoginService {
 
         long refreshTokenTime = 1000 * 60 * 60 * 24 * 7L;
 
-        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME);
+        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME, Map.of("role", user.getRole()));
 
-        JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime);
+        JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime, Map.of("role", user.getRole()));
 
         refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
         refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
@@ -86,7 +87,16 @@ public class LoginServiceImpl implements LoginService {
 
         if(jwtUtil.validateToken(refreshToken)) {
             String email = jwtUtil.getUserEmail(refreshToken);
-            JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME);
+
+            User user = userRepository.findByEmail(email).orElseThrow(
+                    () -> new StayFinderException(
+                            ErrorType.USER_EMAIL_NOT_EXIST,
+                            Map.of("email", email),
+                            log::error,
+                            null
+                    ));
+
+            JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME, Map.of("role", user.getRole()));
 
 
             refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), email, ACCESS_TOKEN_TIME, TimeUnit.DAYS);

@@ -72,14 +72,14 @@ public class UserServiceImpl implements UserService {
         userRepository.findByNickName(userDTO.getNickName())
                 .ifPresent(user -> {
                     throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME,
-                            Map.of("userDTO", userDTO),
+                            Map.of("NickName", user.getNickName()),
                             log::error);
                 });
 
         userRepository.findByEmail(userDTO.getEmail())
                 .ifPresent(user -> {
                     throw new StayFinderException(ErrorType.DUPLICATE_EMAIL,
-                            Map.of("userDTO", userDTO),
+                            Map.of("Email", user.getEmail()),
                             log::error);
                 });
 

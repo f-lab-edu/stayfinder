@@ -27,8 +27,6 @@ public class LoginController {
 
     @PostMapping("/refresh")
     public StayFinderResponseDTO<?> refresh(@RequestBody String refreshToken) {
-
-
         return loginService.refreshToken(refreshToken);
     }
 

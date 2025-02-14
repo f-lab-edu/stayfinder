@@ -9,6 +9,7 @@ import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.repository.support.TermsRepositorySupport;
+import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.util.AES256Util;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
@@ -51,14 +52,18 @@ public class CertifyServiceImpl implements CertifyService {
 
     private final TermsRepositorySupport termsRepositorySupport;
 
+    private final UserRepository userRepository;
+
     public CertifyServiceImpl(@Value("${nurigo.app.apikey}") String apiKey,
                               @Value("${nurigo.app.secret_key}") String secretKey,
                               @Value("${nurigo.app.domain}") String domain,
                               RedisTemporaryStorageService redisTemporaryStorageService,
-                              TermsRepositorySupport termsRepositorySupport) {
+                              TermsRepositorySupport termsRepositorySupport,
+                              UserRepository userRepository) {
         this.defaultMessageService = NurigoApp.INSTANCE.initialize(apiKey, secretKey, domain);
         this.redisTemporaryStorageService = redisTemporaryStorageService;
         this.termsRepositorySupport = termsRepositorySupport;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -87,6 +92,14 @@ public class CertifyServiceImpl implements CertifyService {
             }
 
         }
+
+        userRepository.findByPhoneNumber(certifyRequestDto.getPhoneNumber()).ifPresent(
+                user -> {
+                    throw new StayFinderException(ErrorType.USER_PHONE_NUMBER_DUPLICATION,
+                            Map.of("phoneNumber", user.getPhoneNumber()),
+                            log::error);
+                }
+        );
 
         Integer certifyNumber = generateRandomNumber();
 

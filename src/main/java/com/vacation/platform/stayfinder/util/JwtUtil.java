@@ -1,6 +1,7 @@
 package com.vacation.platform.stayfinder.util;
 
 import com.vacation.platform.stayfinder.login.dto.JwtTokenResponse;
+import com.vacation.platform.stayfinder.user.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -15,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -29,7 +31,7 @@ public class JwtUtil {
                 .build();
     }
 
-    public JwtTokenResponse generateToken(String email, long expiresInSeconds) {
+    public JwtTokenResponse generateToken(String email, long expiresInSeconds, Map<String, Role> roles) {
 
         Instant expiryInstant = Instant.now().plusMillis(expiresInSeconds);
         LocalDateTime expiryDateTime = LocalDateTime.ofInstant(expiryInstant, ZoneId.systemDefault());
@@ -38,6 +40,7 @@ public class JwtUtil {
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(Date.from(expiryInstant))
+                .claims(roles)
                 .signWith(secretKey)
                 .compact();
 
@@ -67,6 +70,10 @@ public class JwtUtil {
 
     private Claims getClaims(String token) {
         return jwtParser.parseSignedClaims(token).getPayload();
+    }
+
+    public String getUserRole(String token) {
+        return getClaims(token).get("role", String.class); // ✅ Role 정보 추출
     }
 
 }

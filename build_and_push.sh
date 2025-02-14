@@ -2,6 +2,7 @@
 
 IMAGE_NAME="stayfinder"
 TAG="latest"
+# shellcheck disable=SC2034
 CONTAINER_NAME="stayfinder"
 
 echo "📌 기존 컨테이너 중지 및 삭제..."
@@ -24,6 +25,3 @@ docker-compose up -d --build
 
 echo "📜 실행 중인 컨테이너 확인..."
 docker ps -a
-
-echo "📡 실시간 로그 확인 (중지하려면 Ctrl+C)..."
-docker-compose logs -f

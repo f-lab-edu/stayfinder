@@ -125,6 +125,7 @@ public class UserServiceImpl implements UserService {
             user.setGender(Gender.getCode(userDTO.getGender()));
             user.setUserStatus(UserStatus.REGISTERED);
             user.setRole(Role.USER);
+
             log.info("user {}", user);
             userRepository.saveAndFlush(user);
 

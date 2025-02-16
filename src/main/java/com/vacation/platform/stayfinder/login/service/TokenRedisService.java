@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenRedisService {
+public class TokenRedisService {
 
     private final StringRedisTemplate stringRedisTemplate;
 

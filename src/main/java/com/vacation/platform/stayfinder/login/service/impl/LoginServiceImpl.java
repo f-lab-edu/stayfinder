@@ -89,8 +89,7 @@ public class LoginServiceImpl implements LoginService {
                     () -> new StayFinderException(
                             ErrorType.USER_EMAIL_NOT_EXIST,
                             Map.of("email", email),
-                            log::error,
-                            null
+                            log::error
                     ));
 
             JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME, Map.of("role", user.getRole()));

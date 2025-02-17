@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
             user.setGender(Gender.getCode(userDTO.getGender()));
             user.setUserStatus(UserStatus.REGISTERED);
-            user.setRole(Role.USER);
+            user.setRole(Role.ROLE_USER);
 
             log.info("user {}", user);
             userRepository.saveAndFlush(user);

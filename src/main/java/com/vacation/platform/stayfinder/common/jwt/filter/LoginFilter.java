@@ -55,7 +55,7 @@ public class LoginFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String token = Objects.requireNonNull(authHeader).substring(7);
+            String token = Objects.requireNonNull(authHeader);
             if (!jwtUtil.validateToken(token) || tokenRedisService.getToken(token).isEmpty()) {
                 log.error("Access Token이 유효하지 않습니다.");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 유효하지 않습니다.");

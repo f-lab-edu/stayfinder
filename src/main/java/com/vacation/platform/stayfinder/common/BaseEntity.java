@@ -14,23 +14,22 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @CreatedDate
-    @Column(name = "create_at")
-    private Long createAt;
+    @Column(name = "created_at")
+    private LocalDateTime createAt;
 
     @LastModifiedDate
     @Column(name = "modify_at")
-    private Long modifyAt;
+    private LocalDateTime modifyAt;
 
     @PrePersist
     public void prePersist() {
-        long currentTimeMillis = System.currentTimeMillis();
-        this.createAt = currentTimeMillis;
-        this.modifyAt = currentTimeMillis;
+        this.createAt = LocalDateTime.now();
+        this.modifyAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.modifyAt = System.currentTimeMillis();
+        this.modifyAt = LocalDateTime.now();
     }
 
 }

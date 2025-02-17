@@ -10,8 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TermsUserAgreementId implements Serializable {
-    private Integer id;
-    private Integer userId;
-    private Integer termsId;
-    private Integer version;
+    private Long id;
+    private Long userId;
+    private Long termsId;
 }

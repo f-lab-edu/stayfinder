@@ -1,97 +1,181 @@
 package com.vacation.platform.stayfinder.terms.service.serviceImpl;
 
-import com.vacation.platform.stayfinder.certify.repository.TermsUserAgreementRepository;
+import com.vacation.platform.stayfinder.common.EntityToDtoConverter;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
 import com.vacation.platform.stayfinder.terms.entity.Terms;
 import com.vacation.platform.stayfinder.terms.entity.TermsSub;
+import com.vacation.platform.stayfinder.terms.entity.TermsSubId;
 import com.vacation.platform.stayfinder.terms.repository.TermsRepository;
 import com.vacation.platform.stayfinder.terms.repository.TermsSubRepository;
+import com.vacation.platform.stayfinder.terms.repository.support.TermsRepositorySupport;
 import com.vacation.platform.stayfinder.terms.service.TermsService;
-import com.vacation.platform.stayfinder.util.ResponseCode;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TermsServiceImpl implements TermsService {
 
     private final TermsRepository termsRepository;
 
     private final TermsSubRepository termsSubRepository;
 
-    public TermsServiceImpl(TermsRepository termsRepository, TermsSubRepository termsSubRepository, TermsUserAgreementRepository termsUserAgreementRepository) {
-        this.termsRepository = termsRepository;
-        this.termsSubRepository = termsSubRepository;
-    }
+    private final TermsRepositorySupport termsRepositorySupport;
 
     @Override
-    public Result<List<Terms>> getTermsMain() {
+    public StayFinderResponseDTO<List<TermsDto.MainResponseDto>> getTermsMain() {
 
-        List<Terms> termsList = termsRepository.findAll();
+        List<Terms> termsList = termsRepositorySupport.selectTermsMain();
 
-        if(termsList.size() > 0) {
-            return Result.success(termsList);
+        if(termsList.isEmpty()) {
+            throw new StayFinderException(
+                    ErrorType.TERMS_NOT_FOUND,
+                    Map.of("termsList", termsList),
+                    log::error);
         }
 
-        return Result.success();
-    }
 
-    @Override
-    public Result<List<TermsSub>> getTermsSub() {
-        return null;
-    }
-
-    // 약관 저장 하는것부터 처리해야함
-    // 필요한것은 약관 메인 타이틀, 약관 서브 타이틀
-    // 약관 내용
-    // 약관 버전
-
-    @Override
-    @Transactional
-    public Result<?> registerTerms(TermsDto termsDto) {
-        Terms terms = termsRepository.findByTermsMainTile(termsDto.getMainTitle());
-
-        if(!termsDto.isCompulsion() && terms != null) {
-//            return Result.fail(ResponseCode.SUCCESS, "해당 제목은 내용이 존재합니다.", termsDto.getMainTitle());
-        } else if(termsDto.isCompulsion() && terms != null) {
-            // 수정 서비스로 토스
-        }
-
-        return termsSave(termsDto);
-    }
-
-
-    @Transactional
-    private Result<?> termsSave(TermsDto termsDto) {
+        List<TermsDto.MainResponseDto> result = new ArrayList<>(20);
         try {
-            Terms terms = new Terms();
 
-            terms.setTermsMainTile(termsDto.getMainTitle());
-//            terms.setTermsRequired(TermsRequired.getIsRequired(termsDto.getIsRequired()));
-//            terms.setActive(true);
+            for(Terms t : termsList) {
+                TermsDto.MainResponseDto  mainResponseDto = EntityToDtoConverter.convertEntityToDto(t, TermsDto.MainResponseDto.class);
+                result.add(mainResponseDto);
+            }
 
-            termsRepository.save(terms);
-
-            Terms newTerms = termsRepository.findByTermsMainTile(terms.getTermsMainTile());
-
-            TermsSub termsSub = new TermsSub();
-//            termsSub.setTermsMainId(newTerms);
-            termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
-            termsSub.setTermsDetailsContent(termsDto.getDetailContent());
-            termsSub.setVersion(1);
-//            termsSub.setActive(true);
-
-            termsSubRepository.save(termsSub);
-
-            return Result.success();
         } catch (Exception e) {
-            throw new StayFinderException(ErrorType.SYSTEM_ERROR);
+            log.info("{}", e.getMessage());
+            throw new StayFinderException(ErrorType.DB_ERROR,
+                    Map.of("termsList", termsList),
+                    log::error,
+                    e
+            );
         }
+
+
+        return StayFinderResponseDTO.success(result);
+    }
+
+    @Override
+    public StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getTermsSub(TermsDto termsDto) {
+        List<TermsSub> termsSubList = termsRepositorySupport.selectTermsSub(termsDto);
+
+        if(termsSubList.isEmpty()) {
+            throw new StayFinderException(
+                    ErrorType.TERMS_NOT_FOUND,
+                    Map.of("termsSubList", termsSubList),
+                    log::error);
+        }
+
+        List<TermsDto.SubResponseDto> result = new ArrayList<>(20);
+
+        try {
+
+            for(TermsSub ts : termsSubList) {
+                TermsDto.SubResponseDto subResponseDto = EntityToDtoConverter.convertEntityToDto(ts, TermsDto.SubResponseDto.class);
+                result.add(subResponseDto);
+            }
+
+        } catch (Exception e) {
+            log.info("{}", e.getMessage());
+            throw new StayFinderException(ErrorType.DB_ERROR,
+                    Map.of("termsSubList", termsSubList),
+                    log::error,
+                    e
+            );
+        }
+
+        return StayFinderResponseDTO.success(result);
+    }
+
+    @Override
+    @Transactional
+    public void registerTerms(TermsDto termsDto) {
+        Terms terms = termsRepository.findByTermsMainTitleAndIsTermsRequired(termsDto.getMainTitle(), termsDto.getIsCompulsion()).orElse(null);
+
+        if(!termsDto.getIsCompulsion() && terms != null) {
+            throw new StayFinderException(
+                    ErrorType.DUPLICATE_TERMS_TITLE,
+                    Map.of("terms", terms),
+                    log::error);
+        }
+
+        try {
+            if(terms != null) {
+                termsUpdate(termsDto, terms);
+            }
+            termsSave(termsDto);
+        } catch (StayFinderException st) {
+            throw new StayFinderException(
+                    st.getErrorType(),
+                    Map.of("terms", Objects.requireNonNull(terms)),
+                    log::error,
+                    st);
+        } catch (Exception e) {
+            throw new StayFinderException(
+                    ErrorType.DB_ERROR,
+                    Map.of("terms", Objects.requireNonNull(terms)),
+                    log::error,
+                    e);
+        }
+    }
+
+    @Transactional
+    public void termsUpdate(TermsDto termsDto, Terms reqTerms){
+
+        TermsSub sub = termsSubRepository.findByTermsIdOrderByModifyAtDesc(
+                reqTerms.getTermsId())
+                .orElseThrow(() -> new StayFinderException(ErrorType.DB_ERROR,
+                        Map.of("", reqTerms),
+                        log::error));
+
+        reqTerms.setIsTermsRequired(termsDto.getIsCompulsion());
+        reqTerms.setTermsMainTitle(termsDto.getMainTitle());
+
+        sub.setVersion(sub.getVersion());
+        sub.setTermsDetailsTitle(termsDto.getSubTitle());
+        sub.setTermsDetailsContent(termsDto.getDetailContent());
+        sub.setIsActive(false);
+    }
+
+    @Transactional
+    protected void termsSave(TermsDto termsDto){
+        Terms terms = new Terms();
+
+        terms.setTermsMainTitle(termsDto.getMainTitle());
+        terms.setIsTermsRequired(termsDto.getIsCompulsion());
+        terms.setSortSeq(termsDto.getSortSeq());
+
+        termsRepository.save(terms);
+
+        Terms term = termsRepository.findByTermsMainTitle(
+                        termsDto.getMainTitle())
+                .orElseThrow(() -> new StayFinderException(ErrorType.TERMS_NOT_FOUND,
+                        Map.of("terms", terms),
+                        log::error));
+
+        TermsSub termsSub = new TermsSub();
+        TermsSubId id = new TermsSubId();
+
+        id.setTermsId(term.getTermsId());
+
+        termsSub.setTermsDetailsTitle(termsDto.getSubTitle());
+        termsSub.setTermsDetailsContent(termsDto.getDetailContent());
+        termsSub.setIsActive(true);
+        termsSub.setTerms(term);
+        termsSub.setVersion(id.getTermsId());
+        termsSub.setTermsId(id.getTermsId());
+        termsSubRepository.save(termsSub);
     }
 }

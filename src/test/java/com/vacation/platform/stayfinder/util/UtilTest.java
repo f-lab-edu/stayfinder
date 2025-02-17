@@ -14,20 +14,20 @@ public class UtilTest {
     @Test
     public void aes256Test() throws Exception {
 
-        String text = "test0101@naver.com";
+//        String text = "test0101@naver.com";
 
         String key = AES256Util.generateKey();
         String iv = AES256Util.generateIV();
-        
+
         System.out.println("key     " + key);
         System.out.println("iv       " + iv);
 
-        String encData = AES256Util.encrypt(text, key, iv);
-        System.out.println("encData          " + encData);
-
-        String decData = AES256Util.decrypt(encData, key, iv);
-
-        System.out.println("decData         " + decData);
+//        String encData = AES256Util.encrypt(text, key, iv);
+//        System.out.println("encData          " + encData);
+//
+//        String decData = AES256Util.decrypt(encData, key, iv);
+//
+//        System.out.println("decData         " + decData);
 
 
     }

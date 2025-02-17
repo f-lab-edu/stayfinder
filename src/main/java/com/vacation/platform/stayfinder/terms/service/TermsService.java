@@ -1,9 +1,7 @@
 package com.vacation.platform.stayfinder.terms.service;
 
 import com.vacation.platform.stayfinder.terms.dto.TermsDto;
-import com.vacation.platform.stayfinder.terms.entity.Terms;
-import com.vacation.platform.stayfinder.terms.entity.TermsSub;
-import com.vacation.platform.stayfinder.util.Result;
+import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +9,10 @@ import java.util.List;
 @Service
 public interface TermsService {
 
-    Result<List<Terms>> getTermsMain();
+    StayFinderResponseDTO<List<TermsDto.MainResponseDto>> getTermsMain();
 
-    Result<List<TermsSub>> getTermsSub();
+    StayFinderResponseDTO<List<TermsDto.SubResponseDto>> getTermsSub(TermsDto termsDto);
 
-    Result<?> registerTerms (TermsDto termsDto);
+    void registerTerms (TermsDto termsDto);
 
 }

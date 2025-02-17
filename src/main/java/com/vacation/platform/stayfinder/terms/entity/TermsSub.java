@@ -1,13 +1,12 @@
 package com.vacation.platform.stayfinder.terms.entity;
 
 
-import com.vacation.platform.stayfinder.certify.entity.TermsUserAgreement;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @ToString
 @Entity
@@ -22,24 +21,23 @@ import java.util.List;
 public class TermsSub extends BaseEntity {
 
     @Id
+    @Column(name = "terms_id")
+    private Long termsId;
+
     @ManyToOne
-    @JoinColumn(name = "terms_id")
-    private Terms termsId;
+    @JoinColumn(name = "terms_id", insertable = false, updatable = false)
+    private Terms terms;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
-    private Integer version;
+    @Column(name = "version", nullable = false, unique = true, columnDefinition = "약관의 버전")
+    private Long version;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "terms_details_title", nullable = false, length = 100, columnDefinition = "상세 약관의 타이틀")
     private String termsDetailsTitle;
 
-    @Column(nullable = false, length = 10000)
+    @Column(name = "terms_details_content", nullable = false, length = 10000, columnDefinition = "상세 약관의 내용")
     private String termsDetailsContent;
 
-    @Column(nullable = false, length = 1)
+    @Column(name = "is_active", nullable = false, length = 1, columnDefinition = "약관의 상태")
     private Boolean isActive;
-
-    @OneToMany(mappedBy = "version")
-    private List<TermsUserAgreement> termsUserAgreementList = new ArrayList<>();
 }

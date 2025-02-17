@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/user/login").permitAll()
                                 .requestMatchers("/api/v1/user/logout").hasAnyRole("USER", "ADMIN", "CORP_USER")
                                 .requestMatchers("/api/v1/corp/user/creat").hasRole("ADMIN")
-                                .requestMatchers("/api/v1/corp/request/approval").hasRole("USER")
+                                .requestMatchers("/api/v1/corp/request/approval").permitAll()
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().denyAll()

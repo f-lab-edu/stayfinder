@@ -28,7 +28,7 @@ public class LoginFilter extends OncePerRequestFilter {
     private final TokenRedisService tokenRedisService;
 
     private static final List<String> FILTERED_URLS = List.of("/api/v1/certify/", "/api/v1/terms/",
-            "/api/v1/users/", "/api/v1/user/login");
+            "/api/v1/users/", "/api/v1/user/login", "/api/v1/corp/user/creat");
 
     public LoginFilter(JwtUtil jwtUtil, TokenRedisService tokenRedisService) {
         this.jwtUtil = jwtUtil;

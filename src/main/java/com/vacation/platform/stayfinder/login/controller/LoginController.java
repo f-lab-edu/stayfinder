@@ -21,12 +21,12 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public StayFinderResponseDTO<?> logout(@RequestHeader("Authorization")  String token, @Valid @RequestBody LogOutDTO logOutDTO) {
+    public StayFinderResponseDTO<?> logout(@RequestHeader("Authorization") String token, @Valid @RequestBody LogOutDTO logOutDTO) {
         return loginService.logout(token, logOutDTO);
     }
 
     @PostMapping("/refresh")
-    public StayFinderResponseDTO<?> refresh(@RequestBody String refreshToken) {
+    public StayFinderResponseDTO<?> refresh(@RequestHeader("Authorization") String refreshToken) {
         return loginService.refreshToken(refreshToken);
     }
 

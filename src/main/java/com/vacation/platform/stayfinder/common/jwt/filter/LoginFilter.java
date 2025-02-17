@@ -17,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Component
@@ -55,15 +54,22 @@ public class LoginFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String token = Objects.requireNonNull(authHeader).substring(7);
-            if (!jwtUtil.validateToken(token) || tokenRedisService.getToken(token).isEmpty()) {
+            String email = jwtUtil.getUserEmail(authHeader);
+            String role = jwtUtil.getUserRole(authHeader);
+
+            if (!jwtUtil.validateToken(authHeader)) {
                 log.error("Access Token이 유효하지 않습니다.");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 유효하지 않습니다.");
                 return;
             }
 
-            String email = jwtUtil.getUserEmail(token);
-            String role = jwtUtil.getUserRole(token);
+            if(!request.getServletPath().equals("/api/v1/user/refresh")) {
+                if(tokenRedisService.getToken(authHeader).isEmpty()) {
+                    log.error("Access Token이 존재하지 않습니다.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 존재하지 않습니다.");
+                    return;
+                }
+            }
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     email, null, Collections.singleton(new SimpleGrantedAuthority(role))

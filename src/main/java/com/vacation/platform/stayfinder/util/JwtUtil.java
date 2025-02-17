@@ -34,7 +34,7 @@ public class JwtUtil {
     public JwtTokenResponse generateToken(String email, long expiresInSeconds, Map<String, Role> roles) {
 
         Instant expiryInstant = Instant.now().plusMillis(expiresInSeconds);
-        LocalDateTime expiryDateTime = LocalDateTime.ofInstant(expiryInstant, ZoneId.systemDefault());
+        LocalDateTime expiryDateTime = LocalDateTime.ofInstant(expiryInstant, ZoneId.of("Asia/Seoul"));
 
         String accessToke = Jwts.builder()
                 .subject(email)

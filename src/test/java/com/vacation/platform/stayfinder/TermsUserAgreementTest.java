@@ -12,6 +12,13 @@ import java.time.format.DateTimeFormatter;
 @AutoConfigureMockMvc
 public class TermsUserAgreementTest {
 
+    @Test
+    public void testMethod2() {
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
+        System.out.println(now.format(formatter));
+    }
+
 
     @Test
     public void testMethod() {

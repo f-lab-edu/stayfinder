@@ -36,8 +36,8 @@ public class TokenRedisService {
                 });
     }
 
-    public void deleteToken(String email) {
-        stringRedisTemplate.delete(email);
+    public void deleteToken(String data) {
+        stringRedisTemplate.delete(data);
     }
 
 }

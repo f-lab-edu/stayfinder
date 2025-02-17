@@ -3,6 +3,7 @@ package com.vacation.platform.stayfinder.corpuser.service.impl;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.corpuser.dto.CorpUserRequestDTO;
+import com.vacation.platform.stayfinder.corpuser.entity.BusinessCategory;
 import com.vacation.platform.stayfinder.corpuser.entity.CorpUserRequest;
 import com.vacation.platform.stayfinder.corpuser.entity.RequestStatus;
 import com.vacation.platform.stayfinder.corpuser.repository.CorpUserRequestRepository;
@@ -25,16 +26,22 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
     @Override
     public StayFinderResponseDTO<?> approvalRequest(CorpUserRequestDTO corpUserRequestDTO) {
 
-        corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense(), RequestStatus.REJECTED).orElseThrow(
-                () -> new StayFinderException(ErrorType.CORP_USER_REQUEST_DUPLICATION,
-                        Map.of("businessLicense", corpUserRequestDTO.getBusinessLicense()),
-                        log::error)
-        );
+        corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense(), RequestStatus.REJECTED)
+                .ifPresent(request -> {
+                    throw new StayFinderException(
+                            ErrorType.CORP_USER_REQUEST_DUPLICATION,
+                            Map.of("businessLicense", corpUserRequestDTO.getBusinessLicense()),
+                            log::error
+                    );
+                });
+
 
         try {
             ModelMapper modelMapper = new ModelMapper();
 
             CorpUserRequest corpUserRequest = modelMapper.map(corpUserRequestDTO, CorpUserRequest.class);
+
+            corpUserRequest.setBusinessCategory(BusinessCategory.getByDesc(corpUserRequestDTO.getBusinessCategory()));
 
             corpUserRequestRepository.save(corpUserRequest);
         } catch(Exception ex) {

@@ -1,17 +1,20 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
-import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
-@EqualsAndHashCode(callSuper = true)
+import java.time.LocalDateTime;
+
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Data
 @Table(name = "corp_user_request")
 @RequiredArgsConstructor
-public class CorpUserRequest  extends BaseEntity {
+public class CorpUserRequest{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +33,23 @@ public class CorpUserRequest  extends BaseEntity {
     @Column(nullable = false)
     private RequestStatus status = RequestStatus.PENDING;
 
-    @Column(nullable = false, columnDefinition = "대표자명")
-    private String rprsName;
+    @Column(nullable = false, columnDefinition = "숙박업소 상호명")
+    private String businessTitle;
+
+    @Column(nullable = false, columnDefinition = "숙박업 카테고리")
+    @Enumerated(EnumType.STRING)
+    private BusinessCategory businessCategory;
+
+    @CreatedDate
+    @Column(columnDefinition = "생성일자")
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(columnDefinition = "승인일자")
+    private  LocalDateTime approvedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

@@ -16,6 +16,9 @@ public class CorpUserRequestDTO {
     @NotBlank(message = "사업자 주소는 필수 입니다.")
     private String businessAddress;
 
-    @NotBlank(message = "대표자명은 필수 입니다.")
-    private String rprsName;
+    @NotBlank(message = "숙박업 상호명은 필수 입니다.")
+    private String businessTitle;
+
+    @NotBlank(message = "숙박업 카테고리는 필수 입니다.")
+    private String businessCategory;
 }

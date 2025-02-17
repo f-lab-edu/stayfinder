@@ -93,13 +93,12 @@ public class CertifyServiceImpl implements CertifyService {
 
         }
 
-        userRepository.findByPhoneNumber(certifyRequestDto.getPhoneNumber()).ifPresent(
-                user -> {
-                    throw new StayFinderException(ErrorType.USER_PHONE_NUMBER_DUPLICATION,
-                            Map.of("phoneNumber", user.getPhoneNumber()),
-                            log::error);
-                }
-        );
+        if (userRepository.findByPhoneNumber(certifyRequestDto.getPhoneNumber()).isPresent()) {
+            throw new StayFinderException(ErrorType.USER_PHONE_NUMBER_DUPLICATION,
+                    Map.of("phoneNumber", certifyRequestDto.getPhoneNumber()),
+                    log::error);
+        }
+
 
         Integer certifyNumber = generateRandomNumber();
 
@@ -156,34 +155,35 @@ public class CertifyServiceImpl implements CertifyService {
     public StayFinderResponseDTO<?> certifyNumberProve(CertifyRequestDto certifyRequestDto) {
         CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(certifyRequestDto.getPhoneNumber());
 
+        if(certifyDtoResult != null && certifyDtoResult.getIsCertify()) {
+            throw new StayFinderException(ErrorType.CERTIFY_IS_COMPLETE,
+                    Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                    log::error);
+        }
+
+        if(certifyDtoResult != null && !certifyDtoResult.getReqCertifyNumber().equals(certifyRequestDto.getReqCertifyNumber())) {
+            throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
+                    Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+                    log::error);
+        }
+
         try {
+
             if(certifyDtoResult == null) throw new Exception();
-
-            if(certifyDtoResult.getIsCertify()) {
-                throw new StayFinderException(ErrorType.CERTIFY_IS_COMPLETE,
-                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
-                        log::error);
-            }
-
-            if(!certifyDtoResult.getReqCertifyNumber().equals(certifyRequestDto.getReqCertifyNumber())) {
-                throw new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                        Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
-                        log::error);
-            }
 
             String decPhoneNum = AES256Util.decrypt(certifyDtoResult.getPhoneNumber(), key, iv);
 
             if(!certifyRequestDto.getPhoneNumber().equals(decPhoneNum)) {
                 throw new Exception();
             }
+            Objects.requireNonNull(certifyDtoResult).setIsCertify(true);
         } catch (Exception e) {
-            throw new StayFinderException(ErrorType.CERTIFY_NOT_VALID,
-                    Map.of("PhoneNumber", certifyRequestDto.getPhoneNumber()),
+            log.info("certifyNumberProve error", e);
+            throw new StayFinderException(ErrorType.SYSTEM_ERROR,
+                    Map.of("", ""),
                     log::error,
                     e);
         } finally {
-            Objects.requireNonNull(certifyDtoResult).setIsCertify(true);
-
             log.info("certifyNumberProve certifyDtoResult {}", certifyDtoResult);
             log.info("certifyNumberProve certifyRequestDto.getPhoneNumber(){}", certifyRequestDto.getPhoneNumber());
 

@@ -1,6 +1,6 @@
 package com.vacation.platform.stayfinder.common.jwt.filter;
 
-import com.vacation.platform.stayfinder.login.service.RefreshTokenRedisService;
+import com.vacation.platform.stayfinder.login.service.TokenRedisService;
 import com.vacation.platform.stayfinder.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,14 +25,14 @@ public class LoginFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-    private final RefreshTokenRedisService refreshTokenRedisService;
+    private final TokenRedisService tokenRedisService;
 
     private static final List<String> FILTERED_URLS = List.of("/api/v1/certify/", "/api/v1/terms/",
-            "/api/v1/users/", "/api/v1/user/login");
+            "/api/v1/users/", "/api/v1/user/login", "/api/v1/corp/request/approval");
 
-    public LoginFilter(JwtUtil jwtUtil, RefreshTokenRedisService refreshTokenRedisService) {
+    public LoginFilter(JwtUtil jwtUtil, TokenRedisService tokenRedisService) {
         this.jwtUtil = jwtUtil;
-        this.refreshTokenRedisService  = refreshTokenRedisService;
+        this.tokenRedisService = tokenRedisService;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LoginFilter extends OncePerRequestFilter {
             }
 
             String token = Objects.requireNonNull(authHeader).substring(7);
-            if (!jwtUtil.validateToken(token) || refreshTokenRedisService.getToken(token).isEmpty()) {
+            if (!jwtUtil.validateToken(token) || tokenRedisService.getToken(token).isEmpty()) {
                 log.error("Access Token이 유효하지 않습니다.");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 유효하지 않습니다.");
                 return;

@@ -29,11 +29,12 @@ public class StayFinderExceptionHandler {
     @Order(2)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StayFinderResponseDTO<?>> handleValidationException(MethodArgumentNotValidException e) {
+
+        getStackTrace(e);
+
         List<String> errorMessages = e.getBindingResult().getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage).toList();
-
-        log.info("MethodArgumentNotValidException {}", errorMessages.get(0));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new StayFinderResponseDTO<>(
@@ -47,8 +48,7 @@ public class StayFinderExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StayFinderResponseDTO<?>> handleGenericException(Exception e) {
 
-        log.error("Exception StackTrace {}", (Object) e.getStackTrace());
-        log.error("Exception Message {}", e.getMessage());
+        getStackTrace(e);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new StayFinderResponseDTO<>(
@@ -56,5 +56,13 @@ public class StayFinderExceptionHandler {
                         ErrorType.SYSTEM_ERROR.getExternalMessage(),
                         null
                 ));
+    }
+
+    private void getStackTrace(Exception e) {
+        log.error("Validation Exception Message: {}", e.getMessage());
+
+        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+            log.error(stackTraceElement.toString());
+        }
     }
 }

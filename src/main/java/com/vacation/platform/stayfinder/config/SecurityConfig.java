@@ -42,10 +42,13 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/certify/**").permitAll()
                                 .requestMatchers("/api/v1/terms/**").permitAll()
                                 .requestMatchers("/api/v1/users/**").permitAll()
-                                .requestMatchers("/api/v1/user/**").permitAll()
+                                .requestMatchers("/api/v1/user/login").permitAll()
+                                .requestMatchers("/api/v1/user/logout").hasAnyRole("USER", "ADMIN", "CORP_USER")
+                                .requestMatchers("/api/v1/corp/user/creat").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/corp/request/approval").permitAll()
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                .anyRequest().denyAll()
                 );
         http
                 .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);

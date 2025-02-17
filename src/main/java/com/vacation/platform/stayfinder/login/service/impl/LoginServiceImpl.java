@@ -7,7 +7,7 @@ import com.vacation.platform.stayfinder.login.dto.LogOutDTO;
 import com.vacation.platform.stayfinder.login.dto.LoginDTO;
 import com.vacation.platform.stayfinder.login.dto.LoginResponseDTO;
 import com.vacation.platform.stayfinder.login.service.LoginService;
-import com.vacation.platform.stayfinder.login.service.RefreshTokenRedisService;
+import com.vacation.platform.stayfinder.login.service.TokenRedisService;
 import com.vacation.platform.stayfinder.user.entity.User;
 import com.vacation.platform.stayfinder.user.repository.UserRepository;
 import com.vacation.platform.stayfinder.util.JwtUtil;
@@ -29,12 +29,11 @@ public class LoginServiceImpl implements LoginService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private final RefreshTokenRedisService refreshTokenRedisService;
+    private final TokenRedisService tokenRedisService;
 
     private final UserRepository userRepository;
 
     private final long ACCESS_TOKEN_TIME = 1000 * 60 * 15L;
-
 
     @Override
     public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
@@ -42,8 +41,7 @@ public class LoginServiceImpl implements LoginService {
                 () -> new StayFinderException(
                         ErrorType.USER_EMAIL_NOT_EXIST,
                         Map.of("email", loginDTO.getEmail()),
-                        log::error,
-                        null
+                        log::error
                 ));
 
         String encodePassword = bCryptPasswordEncoder.encode(loginDTO.getPassword());
@@ -51,8 +49,7 @@ public class LoginServiceImpl implements LoginService {
         if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(), encodePassword)) {
             throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
                     Map.of("password", loginDTO.getPassword()),
-                    log::error,
-                    null
+                    log::error
             );
         }
 
@@ -62,8 +59,8 @@ public class LoginServiceImpl implements LoginService {
 
         JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime, Map.of("role", user.getRole()));
 
-        refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
-        refreshTokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
+        tokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+        tokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
 
         return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
@@ -76,8 +73,8 @@ public class LoginServiceImpl implements LoginService {
                     log::error);
         }
 
-        refreshTokenRedisService.deleteToken(logOutDTO.getEmail());
-        refreshTokenRedisService.deleteToken(token);
+        tokenRedisService.deleteToken(logOutDTO.getEmail());
+        tokenRedisService.deleteToken(token);
 
         return StayFinderResponseDTO.success();
     }
@@ -92,14 +89,13 @@ public class LoginServiceImpl implements LoginService {
                     () -> new StayFinderException(
                             ErrorType.USER_EMAIL_NOT_EXIST,
                             Map.of("email", email),
-                            log::error,
-                            null
+                            log::error
                     ));
 
             JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(email, ACCESS_TOKEN_TIME, Map.of("role", user.getRole()));
 
 
-            refreshTokenRedisService.saveToken(accessTokenResponse.getToken(), email, ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+            tokenRedisService.saveToken(accessTokenResponse.getToken(), email, ACCESS_TOKEN_TIME, TimeUnit.DAYS);
             return StayFinderResponseDTO.success(accessTokenResponse.getToken());
         }
 

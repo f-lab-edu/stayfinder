@@ -59,5 +59,4 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "userId")
     private List<UserAuth> userAuth = new ArrayList<>();
-
 }

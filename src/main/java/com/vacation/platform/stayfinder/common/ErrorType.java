@@ -32,6 +32,7 @@ public enum ErrorType {
     TOKEN_IS_NOT_VALID(HttpStatus.BAD_REQUEST, "1023", "Token과 email의 값이 맞지 않습니다.", "요청값을 확인해 주세요."),
     TOKEN_IS_EMPTY(HttpStatus.BAD_REQUEST, "1024", "Token이 존재하지 않습니다.", "요청값을 확인해 주세요."),
     USER_PHONE_NUMBER_DUPLICATION(HttpStatus.BAD_REQUEST, "1025", "가입된 핸드폰번호가 존재합니다.", "요청값을 확인해 주세요."),
+    CORP_USER_REQUEST_DUPLICATION(HttpStatus.BAD_REQUEST, "1026", "이미 기신청된 사업자 번호가 존재합니다.", "요청값을 확인해주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요.")
 

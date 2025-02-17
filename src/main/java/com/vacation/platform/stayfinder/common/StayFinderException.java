@@ -23,6 +23,8 @@ public class StayFinderException extends RuntimeException{
         this.cause = null;
 
         logLevel.accept(errorType.getInternalMessage() + "\n" + getMessage());
+
+        logLevel.accept(errorType.getInternalMessage() + "\n");
     }
 
     public StayFinderException(ErrorType errorType, Map<String, Object> parameter, Consumer<String> logLevel, Exception cause) {
@@ -32,7 +34,10 @@ public class StayFinderException extends RuntimeException{
         this.logLevel = logLevel;
         this.cause = cause;
 
-        logLevel.accept(errorType.getInternalMessage() + "\n" + Arrays.toString(cause.getStackTrace()));
+        StringBuilder stackTraceBuilder = new StringBuilder(errorType.getInternalMessage()).append("\n");
+        Arrays.stream(cause.getStackTrace()).forEach(stack -> stackTraceBuilder.append(stack).append("\n"));
+
+        logLevel.accept(stackTraceBuilder.toString());
     }
 
 }

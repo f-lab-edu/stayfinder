@@ -18,7 +18,7 @@ public class CorpUserRequestController {
 
     @PostMapping("/approval")
     public StayFinderResponseDTO<?> approvalRequest(@RequestBody CorpUserRequestDTO corpUserRequestDTO) {
-        return StayFinderResponseDTO.success();
+        return corpUserRequestService.approvalRequest(corpUserRequestDTO);
     }
 
 }

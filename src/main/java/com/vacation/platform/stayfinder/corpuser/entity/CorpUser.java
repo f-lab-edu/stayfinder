@@ -16,15 +16,19 @@ public class CorpUser extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "corp_user_id")
+    @Column()
     private Long corpUserId;
 
-    @Column(name = "business_name", nullable = false)
+    @Column(nullable = false)
     private String businessName;
 
-    @Column(name = "business_license", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String businessLicense;
 
-    @Column(name = "business_address", nullable = false)
+    @Column(nullable = false)
     private String businessAddress;
+
+    @Column(nullable = false)
+    private String rprsName;
+
 }

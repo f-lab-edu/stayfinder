@@ -1,7 +1,6 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
-import com.vacation.platform.stayfinder.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,10 +17,6 @@ public class CorpUserRequest  extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @Column(nullable = false, columnDefinition = "사업자명")
     private String businessName;
 
@@ -34,4 +29,7 @@ public class CorpUserRequest  extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status = RequestStatus.PENDING;
+
+    @Column(nullable = false, columnDefinition = "대표자명")
+    private String rprsName;
 }

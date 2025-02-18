@@ -8,6 +8,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Entity
@@ -52,4 +54,7 @@ public class CorpUserRequest{
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "corpUserRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BusinessLicenseFile> businessLicenseFiles = new ArrayList<>();
 }

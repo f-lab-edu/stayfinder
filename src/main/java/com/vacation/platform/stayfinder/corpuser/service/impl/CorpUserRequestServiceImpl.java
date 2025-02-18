@@ -3,17 +3,19 @@ package com.vacation.platform.stayfinder.corpuser.service.impl;
 import com.vacation.platform.stayfinder.common.ErrorType;
 import com.vacation.platform.stayfinder.common.StayFinderException;
 import com.vacation.platform.stayfinder.corpuser.dto.CorpUserRequestDTO;
-import com.vacation.platform.stayfinder.corpuser.entity.BusinessCategory;
 import com.vacation.platform.stayfinder.corpuser.entity.CorpUserRequest;
 import com.vacation.platform.stayfinder.corpuser.entity.RequestStatus;
 import com.vacation.platform.stayfinder.corpuser.repository.CorpUserRequestRepository;
 import com.vacation.platform.stayfinder.corpuser.service.CorpUserRequestService;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -23,8 +25,14 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
 
     private final CorpUserRequestRepository corpUserRequestRepository;
 
+    private final CorpUserDBService corpUserDBService;
+
     @Override
-    public StayFinderResponseDTO<?> approvalRequest(CorpUserRequestDTO corpUserRequestDTO) {
+    @Transactional
+    public StayFinderResponseDTO<?> approvalRequest(CorpUserRequestDTO corpUserRequestDTO, List<MultipartFile> files) {
+
+        log.info("쿼리 실행 - businessLicense: {}", corpUserRequestDTO.getBusinessLicense());
+        log.info("쿼리 실행 - status: {}", RequestStatus.REJECTED);
 
         corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense(), RequestStatus.REJECTED)
                 .ifPresent(request -> {
@@ -35,21 +43,29 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
                     );
                 });
 
-
+        List<String> result;
         try {
-            ModelMapper modelMapper = new ModelMapper();
+            corpUserDBService.corpUserRequestSave(corpUserRequestDTO);
 
-            CorpUserRequest corpUserRequest = modelMapper.map(corpUserRequestDTO, CorpUserRequest.class);
+            CorpUserRequest corpUser = corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense())
+                    .orElseThrow(
+                            () ->  new StayFinderException(
+                                    ErrorType.DB_ERROR,
+                                    Map.of("businessLicense", corpUserRequestDTO.getBusinessLicense()),
+                                    log::error
+                            ));
 
-            corpUserRequest.setBusinessCategory(BusinessCategory.getByDesc(corpUserRequestDTO.getBusinessCategory()));
-
-            corpUserRequestRepository.save(corpUserRequest);
+           result = corpUserDBService.corpUserBusinessLicenseFileSave(files, corpUser.getRequestId());
+        } catch (IOException io) {
+            throw new StayFinderException(ErrorType.FILE_ERROR,
+                    Map.of("files", files),
+                    log::error);
         } catch(Exception ex) {
             throw new StayFinderException(ErrorType.DB_ERROR,
                     Map.of("corpUserRequestDTO", corpUserRequestDTO),
                     log::error);
         }
 
-        return StayFinderResponseDTO.success();
+        return StayFinderResponseDTO.success(result);
     }
 }

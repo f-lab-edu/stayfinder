@@ -68,37 +68,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(UserDTO.saveDTO userDTO) {
+        this.userDTOValidation(userDTO);
 
-        userRepository.findByNickName(userDTO.getNickName())
-                .ifPresent(user -> {
-                    throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME,
-                            Map.of("NickName", user.getNickName()),
-                            log::error);
-                });
-
-        userRepository.findByEmail(userDTO.getEmail())
-                .ifPresent(user -> {
-                    throw new StayFinderException(ErrorType.DUPLICATE_EMAIL,
-                            Map.of("Email", user.getEmail()),
-                            log::error);
-                });
-
-        CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(userDTO.getPhoneNumber());
-
-        log.info("certifyDtoResult {}", certifyDtoResult);
-
-        if(certifyDtoResult == null) {
-            throw new StayFinderException(ErrorType.USER_PHONE_NUM_NOT_MATCHED,
-                    Map.of("userDTO", userDTO),
-                    log::error);
-        }
-
-
-        if(!certifyDtoResult.getIsCertify()) {
-            throw new StayFinderException(ErrorType.CERTIFY_IS_NOT_COMPLETE,
-                    Map.of("userDTO", userDTO),
-                    log::error);
-        }
+        CertifyRequestDto certifyDtoResult = this.certifyRequestValidation(userDTO);
 
         try {
             String decPhoneNum = AES256Util.decrypt(certifyDtoResult.getPhoneNumber(), key, iv);
@@ -116,50 +88,102 @@ public class UserServiceImpl implements UserService {
                     e);
         }
 
-        ModelMapper modelMapper = new ModelMapper();
-
-        User user = modelMapper.map(userDTO, User.class);
-
         try {
-            user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-            user.setGender(Gender.getCode(userDTO.getGender()));
-            user.setUserStatus(UserStatus.REGISTERED);
-            user.setRole(Role.ROLE_USER);
 
-            log.info("user {}", user);
-            userRepository.saveAndFlush(user);
+            User resultUser = this.userSave(userDTO);
 
-            User resultUser = userRepository.findByNickName(user.getNickName()).orElseThrow(
-                    () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
-                            Map.of("phoneNumber", userDTO.getPhoneNumber()),
-                            log::error));
+            this.certifyReqSave(resultUser, certifyDtoResult);
 
-            CertifyReq certifyReq =  new CertifyReq();
-            Long certifyReqId = sequenceService.getNextCertifyReqId();
-            certifyReq.setId(certifyReqId);
-            certifyReq.setUserId(resultUser.getUserId());
-            certifyReq.setCertifyNumber(CertifyType.PHONE);
-            certifyReq.setReqCertifyNumber(String.valueOf(certifyDtoResult.getReqCertifyNumber()));
-            certifyReq.setTryNumber(certifyDtoResult.getTryNumber());
-            log.info("certifyReq {}", certifyReq);
-            certifyRepository.saveAndFlush(certifyReq);
-
-            for(TermsDto terms : certifyDtoResult.getTermsDtoList()) {
-                log.info("terms {}", terms);
-                TermsUserAgreement termsUserAgreement = new TermsUserAgreement();
-                Long termsUserAgreementId = sequenceService.getNextTermsUserAgreementId();
-                termsUserAgreement.setId(termsUserAgreementId);
-                termsUserAgreement.setUserId(resultUser.getUserId());
-                termsUserAgreement.setTermsId(terms.getTermsMainId());
-                termsUserAgreement.setIsAgreement(terms.getIsAgreement());
-                log.info("termsUserAgreement {}", termsUserAgreement);
-                termsUserAgreementRepository.saveAndFlush(termsUserAgreement);
-            }
+            certifyDtoResult.getTermsDtoList().forEach((termsDto) -> {
+                termsUserAgreementSave(resultUser, termsDto);
+            });
         } catch (Exception e) {
             throw new StayFinderException(ErrorType.SYSTEM_ERROR,
                     Map.of("userDTO", userDTO),
                     log::error,
                     e);
         }
+    }
+
+    private void userDTOValidation(UserDTO.saveDTO userDTO) {
+        userRepository.findByNickName(userDTO.getNickName())
+                .ifPresent(user -> {
+                    throw new StayFinderException(ErrorType.DUPLICATE_NICK_NAME,
+                            Map.of("NickName", user.getNickName()),
+                            log::error);
+                });
+
+        userRepository.findByEmail(userDTO.getEmail())
+                .ifPresent(user -> {
+                    throw new StayFinderException(ErrorType.DUPLICATE_EMAIL,
+                            Map.of("Email", user.getEmail()),
+                            log::error);
+                });
+    }
+
+    private CertifyRequestDto certifyRequestValidation(UserDTO.saveDTO userDTO) {
+        CertifyRequestDto certifyDtoResult = (CertifyRequestDto) redisTemporaryStorageService.getTemporaryData(userDTO.getPhoneNumber());
+
+        log.info("certifyDtoResult {}", certifyDtoResult);
+
+        if(certifyDtoResult == null) {
+            throw new StayFinderException(ErrorType.USER_PHONE_NUM_NOT_MATCHED,
+                    Map.of("userDTO", userDTO),
+                    log::error);
+        }
+
+
+        if(!certifyDtoResult.getIsCertify()) {
+            throw new StayFinderException(ErrorType.CERTIFY_IS_NOT_COMPLETE,
+                    Map.of("userDTO", userDTO),
+                    log::error);
+        }
+
+        return certifyDtoResult;
+    }
+
+    protected User userSave(UserDTO.saveDTO userDTO) throws Exception {
+        ModelMapper modelMapper = new ModelMapper();
+
+        User user = modelMapper.map(userDTO, User.class);
+
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        user.setGender(Gender.getCode(userDTO.getGender()));
+        user.setUserStatus(UserStatus.REGISTERED);
+        user.setRole(Role.ROLE_USER);
+
+        log.info("user {}", user);
+        userRepository.saveAndFlush(user);
+
+        userRepository.flush();
+
+        return userRepository.findByNickName(user.getNickName()).orElseThrow(
+                () -> new StayFinderException(ErrorType.CERTIFY_PHONE_NUM_NOT_MATCHED,
+                        Map.of("phoneNumber", userDTO.getPhoneNumber()),
+                        log::error));
+    }
+
+    protected void certifyReqSave (User user, CertifyRequestDto certifyDtoResult) {
+        CertifyReq certifyReq =  new CertifyReq();
+        Long certifyReqId = sequenceService.getNextCertifyReqId();
+        certifyReq.setId(certifyReqId);
+        certifyReq.setUserId(user.getUserId());
+        certifyReq.setCertifyNumber(CertifyType.PHONE);
+        certifyReq.setReqCertifyNumber(String.valueOf(certifyDtoResult.getReqCertifyNumber()));
+        certifyReq.setTryNumber(certifyDtoResult.getTryNumber());
+        log.info("certifyReq {}", certifyReq);
+        certifyRepository.saveAndFlush(certifyReq);
+    }
+
+    protected void termsUserAgreementSave(User user, TermsDto termsDto) {
+        log.info("terms {}", termsDto);
+        TermsUserAgreement termsUserAgreement = new TermsUserAgreement();
+        Long termsUserAgreementId = sequenceService.getNextTermsUserAgreementId();
+        termsUserAgreement.setId(termsUserAgreementId);
+        termsUserAgreement.setUserId(user.getUserId());
+        termsUserAgreement.setTermsId(termsDto.getTermsMainId());
+        termsUserAgreement.setIsAgreement(termsDto.getIsAgreement());
+        log.info("termsUserAgreement {}", termsUserAgreement);
+        termsUserAgreementRepository.saveAndFlush(termsUserAgreement);
     }
 }

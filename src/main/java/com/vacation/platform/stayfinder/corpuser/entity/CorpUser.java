@@ -16,19 +16,26 @@ public class CorpUser extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column()
+    @Column(nullable = false, unique = true)
     private Long corpUserId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "사업자 명")
     private String businessName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "사업자 번호")
     private String businessLicense;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "사업자 주소")
     private String businessAddress;
 
-    @Column(nullable = false)
-    private String rprsName;
+    @Column(nullable = false, columnDefinition = "숙박업소 상호명")
+    private String businessTitle;
 
+    @Column(nullable = false, columnDefinition = "숙박업 카테고리")
+    @Enumerated(EnumType.STRING)
+    private BusinessCategory businessCategory;
+
+    @Column(nullable = false, name = "status")
+    @Enumerated(EnumType.STRING)
+    private CorpStatus corpStatus;
 }

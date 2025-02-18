@@ -1,6 +1,7 @@
 package com.vacation.platform.stayfinder.admin.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +21,11 @@ public class AdminRequestDTO {
     @Data
     @RequiredArgsConstructor
     public static class CorpUserRequestApprovedDTO {
-        private Integer corpUserId;
-        private String requestStatus;
+        @NotNull(message = "상태 변경할 기업은 필수 입니다.")
+        private Long corpUserId;
+
+        @NotNull(message = "변경할 상태는 필수 입니다.")
+        private Integer requestStatus;
     }
 
 }

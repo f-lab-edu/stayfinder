@@ -35,6 +35,8 @@ public enum ErrorType {
     CORP_USER_REQUEST_DUPLICATION(HttpStatus.BAD_REQUEST, "1026", "이미 기신청된 사업자 번호가 존재합니다.", "요청값을 확인해주세요."),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "1027", "조회 종료 날짜는 조회 시작 날짜보다 과거 일수 없습니다.", "요청값을 확인해주세요."),
     BUSINESS_LICENSE_NOT_VALID(HttpStatus.BAD_REQUEST, "1028", "사업자 등록증은 필수 입니다.", "요청값을 확인해주세요."),
+    BUSINESS_LICENSE_IS_EMPTY(HttpStatus.BAD_REQUEST, "1029", "가입 요청한 사업자 번호가 존재하지 않습니다.", "요청값을 확인해주세요."),
+    REQUEST_STATUS_IS_NOT_PENDING(HttpStatus.BAD_REQUEST, "1030", "사업자 회원의 상태는 승인, 거절만 가능합니다.", "요청값을 확인해주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요."),
     FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9003", "파일 저장 에러가 발생했습니다.", "관리자에게 문의해주세요.")

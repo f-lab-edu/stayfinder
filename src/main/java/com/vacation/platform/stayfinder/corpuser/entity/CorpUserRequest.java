@@ -1,5 +1,6 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,6 +56,7 @@ public class CorpUserRequest{
         this.createdAt = LocalDateTime.now();
     }
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "corpUserRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BusinessLicenseFile> businessLicenseFiles = new ArrayList<>();
 }

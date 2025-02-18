@@ -1,5 +1,6 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class BusinessLicenseFile {
     }
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "corp_user_request_id", insertable = false, updatable = false)
     private CorpUserRequest corpUserRequest;
 

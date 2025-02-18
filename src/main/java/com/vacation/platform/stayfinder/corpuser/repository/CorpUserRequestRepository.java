@@ -20,7 +20,7 @@ public interface CorpUserRequestRepository extends JpaRepository<CorpUserRequest
     @Query("SELECT r FROM CorpUserRequest r WHERE r.businessLicense = :businessLicense")
     Optional<CorpUserRequest> findByBusinessLicense(@Param("businessLicense") String businessLicense);
 
-    @Query("SELECT c FROM CorpUserRequest c WHERE (c.createdAt >= :startDate) AND (c.createdAt <= :endDate) AND c.status = :requestStatus")
+    @Query("SELECT DISTINCT c FROM CorpUserRequest c LEFT JOIN FETCH c.businessLicenseFiles WHERE (c.createdAt >= :startDate) AND (c.createdAt <= :endDate) AND c.status = :requestStatus")
     List<CorpUserRequest> findByCorpUserRequests(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("requestStatus") RequestStatus requestStatus);
 
 }

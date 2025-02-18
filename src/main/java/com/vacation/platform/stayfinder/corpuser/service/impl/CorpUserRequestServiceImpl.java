@@ -30,10 +30,6 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
     @Override
     @Transactional
     public StayFinderResponseDTO<?> approvalRequest(CorpUserRequestDTO corpUserRequestDTO, List<MultipartFile> files) {
-
-        log.info("쿼리 실행 - businessLicense: {}", corpUserRequestDTO.getBusinessLicense());
-        log.info("쿼리 실행 - status: {}", RequestStatus.REJECTED);
-
         corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense(), RequestStatus.REJECTED)
                 .ifPresent(request -> {
                     throw new StayFinderException(
@@ -44,6 +40,7 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
                 });
 
         List<String> result;
+
         try {
             corpUserDBService.corpUserRequestSave(corpUserRequestDTO);
 

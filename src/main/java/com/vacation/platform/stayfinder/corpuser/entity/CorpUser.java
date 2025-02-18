@@ -34,4 +34,8 @@ public class CorpUser extends BaseEntity {
     @Column(nullable = false, columnDefinition = "숙박업 카테고리")
     @Enumerated(EnumType.STRING)
     private BusinessCategory businessCategory;
+
+    @Column(nullable = false, name = "status")
+    @Enumerated(EnumType.STRING)
+    private CorpStatus corpStatus;
 }

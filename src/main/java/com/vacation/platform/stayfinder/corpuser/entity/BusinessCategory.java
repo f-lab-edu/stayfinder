@@ -24,4 +24,5 @@ public enum BusinessCategory {
                 .findFirst().orElseThrow(Exception::new);
     }
 
+
 }

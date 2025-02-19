@@ -36,10 +36,10 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", nullable = false, unique = true, columnDefinition = "전화번호")
     private String phoneNumber;
 
-    @Column(name = "birthday", nullable = false, columnDefinition = "생년월일")
+    @Column(name = "birthday", columnDefinition = "생년월일")
     private String birthday;
 
-    @Column(name = "gender", nullable = false, columnDefinition = "성별")
+    @Column(name = "gender", columnDefinition = "성별")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

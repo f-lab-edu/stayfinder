@@ -23,5 +23,4 @@ public class SearchController {
 
         return StayFinderResponseDTO.success();
     }
-
 }

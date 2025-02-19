@@ -19,8 +19,6 @@ public class SearchController {
 
     @GetMapping("/search")
     public StayFinderResponseDTO<?> searchByQuery(@RequestParam String query) {
-        searchService.searchByQuery(query);
-
-        return StayFinderResponseDTO.success();
+        return searchService.searchByQuery(query);
     }
 }

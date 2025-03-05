@@ -11,4 +11,5 @@ public class CorpUserDTO {
     private String passwordConfirm;
     private String corpName;
     private String corpPhoneNumber;
+    private String businessLicense;
 }

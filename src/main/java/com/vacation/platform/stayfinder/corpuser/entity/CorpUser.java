@@ -1,15 +1,11 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.vacation.platform.stayfinder.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -43,8 +39,6 @@ public class CorpUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CorpStatus corpStatus;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "corpUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Room> rooms = new ArrayList<>();
-
+    @OneToOne(mappedBy = "corpUser")
+    private CorporateUser corporateUser; // 기업회원의 로그인 정보와 연결
 }

@@ -21,9 +21,6 @@ public class Room extends BaseEntity {
 	@Column(nullable = false, unique = true, updatable = false)
 	private Long roomId;
 
-	@Column(nullable = false, name = "corp_user_id")
-	private Long corpUserId;
-
 	@Column(nullable = false)
 	private String roomName;
 
@@ -36,6 +33,6 @@ public class Room extends BaseEntity {
 
 	@ManyToOne
 	@JsonBackReference
-	@JoinColumn(name = "corp_user_id", insertable = false, updatable = false)
-	private CorpUser corpUser;
+	@JoinColumn(name = "corp_user_id", nullable = false)
+	private CorporateUser corporateUser;
 }

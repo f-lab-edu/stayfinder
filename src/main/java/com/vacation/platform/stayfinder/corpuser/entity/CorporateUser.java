@@ -1,12 +1,16 @@
 package com.vacation.platform.stayfinder.corpuser.entity;
 
 import com.vacation.platform.stayfinder.common.BaseEntity;
+import com.vacation.platform.stayfinder.reservation.entity.Reservation;
 import com.vacation.platform.stayfinder.user.entity.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -45,4 +49,14 @@ public class CorporateUser extends BaseEntity {
 
 	@Column(nullable = false, columnDefinition = "사업자 상호명")
 	private String businessTitle;
+
+	@OneToOne
+	@JoinColumn(name = "corp_user_id")
+	private CorpUser corpUser;
+
+	@OneToMany(mappedBy = "corporateUser", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Room> rooms = new ArrayList<>();
+
+	@OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL)
+	private List<Reservation> confirmedReservations = new ArrayList<>();
 }

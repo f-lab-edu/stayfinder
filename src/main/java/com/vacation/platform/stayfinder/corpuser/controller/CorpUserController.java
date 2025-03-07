@@ -23,4 +23,9 @@ public class CorpUserController {
         return corpUserService.createCorpUser(CorpUserDTO);
     }
 
+    @PostMapping("/login")
+    public StayFinderResponseDTO<?> login(@RequestBody CorpUserDTO CorpUserDTO) {
+        return corpUserService.login(CorpUserDTO);
+    }
+
 }

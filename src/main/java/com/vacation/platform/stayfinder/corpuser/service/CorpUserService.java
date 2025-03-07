@@ -7,5 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public interface CorpUserService {
-    StayFinderResponseDTO<?> createCorpUser(@RequestBody CorpUserDTO CorpUserDTO);
+    StayFinderResponseDTO<?> createCorpUser(@RequestBody CorpUserDTO corpUserDTO);
+
+    StayFinderResponseDTO<?> login(@RequestBody CorpUserDTO corpUserDTO);
 }

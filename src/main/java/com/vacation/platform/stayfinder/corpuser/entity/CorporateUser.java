@@ -34,21 +34,12 @@ public class CorporateUser extends BaseEntity {
 	@Column(name = "phone_number", nullable = false, unique = true, columnDefinition = "전화번호")
 	private String phoneNumber;
 
-	@Column(columnDefinition = "성별")
+	@Column(columnDefinition = "권한")
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
 	@Column(nullable = false, columnDefinition = "사업자번호")
 	private String businessLicense;
-
-	@Column(nullable = false, columnDefinition = "사업자 명")
-	private String businessName;
-
-	@Column(nullable = false, columnDefinition = "사업자 주소")
-	private String businessAddress;
-
-	@Column(nullable = false, columnDefinition = "사업자 상호명")
-	private String businessTitle;
 
 	@OneToOne
 	@JoinColumn(name = "corp_user_id")

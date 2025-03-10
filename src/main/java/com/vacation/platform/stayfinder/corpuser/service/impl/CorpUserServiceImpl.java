@@ -8,6 +8,8 @@ import com.vacation.platform.stayfinder.corpuser.entity.CorporateUser;
 import com.vacation.platform.stayfinder.corpuser.repository.CorpUserRepository;
 import com.vacation.platform.stayfinder.corpuser.repository.CorporateUserRepository;
 import com.vacation.platform.stayfinder.corpuser.service.CorpUserService;
+import com.vacation.platform.stayfinder.login.dto.LogOutDTO;
+import com.vacation.platform.stayfinder.login.dto.LoginDTO;
 import com.vacation.platform.stayfinder.user.entity.Role;
 import com.vacation.platform.stayfinder.util.StayFinderResponseDTO;
 import jakarta.transaction.Transactional;
@@ -52,7 +54,17 @@ public class CorpUserServiceImpl implements CorpUserService {
     }
 
     @Override
-    public StayFinderResponseDTO<?> login(CorpUserDTO corpUserDTO) {
+    public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
+        return StayFinderResponseDTO.success();
+    }
+
+    @Override
+    public StayFinderResponseDTO<?> logout(LogOutDTO logOutDTO) {
+        return StayFinderResponseDTO.success();
+    }
+
+    @Override
+    public StayFinderResponseDTO<?> refreshToken(String refreshToken) {
         return StayFinderResponseDTO.success();
     }
 }

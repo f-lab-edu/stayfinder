@@ -38,4 +38,7 @@ public class CorpUser extends BaseEntity {
     @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
     private CorpStatus corpStatus;
+
+    @OneToOne(mappedBy = "corpUser")
+    private CorporateUser corporateUser; // 기업회원의 로그인 정보와 연결
 }

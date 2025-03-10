@@ -63,7 +63,7 @@ public class LoginFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if(!request.getServletPath().equals("/api/v1/user/refresh")) {
+            if(!request.getServletPath().equals("/api/v1/user/refresh") || !request.getServletPath().equals("/api/v1/corp/user/refresh")) {
                 if(tokenRedisService.getToken(authHeader).isEmpty()) {
                     log.error("Access Token이 존재하지 않습니다.");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token이 존재하지 않습니다.");

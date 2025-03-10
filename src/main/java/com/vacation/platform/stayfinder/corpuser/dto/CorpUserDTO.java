@@ -9,6 +9,6 @@ public class CorpUserDTO {
     private String email;
     private String password;
     private String passwordConfirm;
-    private String corpName;
     private String corpPhoneNumber;
+    private String businessLicense;
 }

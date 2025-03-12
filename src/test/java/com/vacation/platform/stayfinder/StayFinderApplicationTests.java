@@ -1,17 +1,17 @@
-package com.vacation.platform.stayfinder;
-
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class StayFinderApplicationTests {
-
-
-//	@Test
-//	void contextLoads() {
-//		RedisTemporaryStorageService redisTemporaryStorageService = new RedisTemporaryStorageService(new RedisTemplate<>());
+//package com.vacation.platform.stayfinder;
 //
-//		redisTemporaryStorageService.deleteTemporaryData("01094901115");
+//import org.springframework.boot.test.context.SpringBootTest;
 //
-//	}
-
-}
+//@SpringBootTest
+//class StayFinderApplicationTests {
+//
+//
+////	@Test
+////	void contextLoads() {
+////		RedisTemporaryStorageService redisTemporaryStorageService = new RedisTemporaryStorageService(new RedisTemplate<>());
+////
+////		redisTemporaryStorageService.deleteTemporaryData("01094901115");
+////
+////	}
+//
+//}

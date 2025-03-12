@@ -44,7 +44,6 @@ public class CorpUserServiceImpl implements CorpUserService {
         CorporateUser corporateUser = new CorporateUser();
         corporateUser.setEmail(corpUserDTO.getEmail());
         corporateUser.setPassword(corpUserDTO.getPassword());
-        corporateUser.setBusinessLicense(corpUserDTO.getBusinessLicense());
         corporateUser.setPhoneNumber(corpUserDTO.getCorpPhoneNumber());
         corporateUser.setRole(Role.ROLE_CORP_USER);
 

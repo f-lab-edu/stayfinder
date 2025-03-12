@@ -34,5 +34,9 @@ public class Room extends BaseEntity {
 	@ManyToOne
 	@JsonBackReference
 	@JoinColumn(name = "corp_user_id", nullable = false)
-	private CorporateUser corporateUser;
+	private CorpUser corpUser;
+
+	@ManyToOne
+	@JoinColumn(name = "id", nullable = false) // `CorporateUser`와 연결
+	private CorporateUser corporateUser; // 객실을 소유한 기업회원
 }

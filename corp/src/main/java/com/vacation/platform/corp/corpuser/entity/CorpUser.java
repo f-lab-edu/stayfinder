@@ -40,5 +40,5 @@ public class CorpUser extends BaseEntity {
     private CorpStatus corpStatus;
 
     @OneToOne(mappedBy = "corpUser")
-    private CorporateUser corporateUser; // 기업회원의 로그인 정보와 연결
+    private CorporateUser corporateUser;
 }

@@ -23,7 +23,7 @@ public class CorporateUser extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, unique = true)
-	private Long corpUserId;
+	private Long id;
 
 	@Column(name = "email", nullable = false, unique = true, columnDefinition = "이메일")
 	private String email;
@@ -38,11 +38,8 @@ public class CorporateUser extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@Column(nullable = false, columnDefinition = "사업자번호")
-	private String businessLicense;
-
 	@OneToOne
-	@JoinColumn(name = "corp_user_id")
+	@JoinColumn(name = "corp_user_id", referencedColumnName = "corpUserId")
 	private CorpUser corpUser;
 
 	@OneToMany(mappedBy = "corporateUser", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -50,4 +47,5 @@ public class CorporateUser extends BaseEntity {
 
 	@OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL)
 	private List<Reservation> confirmedReservations = new ArrayList<>();
+
 }

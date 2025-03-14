@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -17,28 +17,29 @@ import java.util.Date;
 @Entity
 @RequiredArgsConstructor
 public class Reservation extends BaseEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(nullable = false, unique = true, updatable = false)
 	private Long reservationId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "room_id", nullable = false)
-	private Room room;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(nullable = false)
-	private Date reservationDate;
+	@ManyToOne
+	@JoinColumn(name = "product_id", nullable = false)
+	private Product product;
+
+	@ManyToOne
+	@JoinColumn(name = "room_id", nullable = false)
+	private Room room;
+
+	@Column(name = "reservation_date", nullable = false)
+	private LocalDate reservationDate;
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private ReservationStatus status;
+	private String status = "PENDING";
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "confirmed_by")
 	private CorporateUser confirmedBy;
 }

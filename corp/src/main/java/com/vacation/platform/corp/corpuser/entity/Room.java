@@ -31,6 +31,9 @@ public class Room extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private RoomCategory category;
 
+	@Column(nullable = false)
+	private int capacity;  // 수용 인원
+
 	@ManyToOne
 	@JsonBackReference
 	@JoinColumn(name = "corp_user_id", nullable = false)

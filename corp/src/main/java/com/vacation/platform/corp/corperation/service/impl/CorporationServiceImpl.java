@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.service.impl;
+package com.vacation.platform.corp.corperation.service.impl;
 
 import com.vacation.platform.api.common.ErrorType;
 import com.vacation.platform.api.common.StayFinderException;
@@ -6,12 +6,12 @@ import com.vacation.platform.api.login.dto.LogOutDTO;
 import com.vacation.platform.api.login.dto.LoginDTO;
 import com.vacation.platform.api.user.entity.Role;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
-import com.vacation.platform.corp.corpuser.dto.CorpUserDTO;
-import com.vacation.platform.corp.corpuser.entity.CorpStatus;
-import com.vacation.platform.corp.corpuser.entity.CorporateUser;
-import com.vacation.platform.corp.corpuser.repository.CorpUserRepository;
-import com.vacation.platform.corp.corpuser.repository.CorporateUserRepository;
-import com.vacation.platform.corp.corpuser.service.CorpUserService;
+import com.vacation.platform.corp.corperation.dto.CorpUserDTO;
+import com.vacation.platform.corp.corperation.entity.CorpStatus;
+import com.vacation.platform.corp.corperation.entity.CorporateUser;
+import com.vacation.platform.corp.corperation.repository.CorporateUserRepository;
+import com.vacation.platform.corp.corperation.repository.corporationRepository;
+import com.vacation.platform.corp.corperation.service.CorporationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +22,16 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CorpUserServiceImpl implements CorpUserService {
+public class CorporationServiceImpl implements CorporationService {
 
-    private final CorpUserRepository corpUserRepository;
+    private final corporationRepository corporationRepository;
 
     private final CorporateUserRepository corporateUserRepository;
 
     @Override
     @Transactional
     public StayFinderResponseDTO<?> createCorpUser(CorpUserDTO corpUserDTO) {
-         corpUserRepository.findByBusinessLicense(corpUserDTO.getBusinessLicense(), CorpStatus.REGISTERED)
+         corporationRepository.findByBusinessLicense(corpUserDTO.getBusinessLicense(), CorpStatus.REGISTERED)
                 .orElseThrow( () -> new StayFinderException(ErrorType.BUSINESS_LICENSE_IS_NOT_VALID,
                         Map.of("businessLicense", corpUserDTO.getBusinessLicense()), log::error));
 

@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 public enum RoomCategory {
 	STANDARD,

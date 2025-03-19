@@ -2,8 +2,8 @@ package com.vacation.platform.corp.reservation.entity;
 
 import com.vacation.platform.api.common.BaseEntity;
 import com.vacation.platform.api.user.entity.User;
-import com.vacation.platform.corp.corpuser.entity.CorporateUser;
-import com.vacation.platform.corp.corpuser.entity.Room;
+import com.vacation.platform.corp.corperation.entity.CorporateUser;
+import com.vacation.platform.corp.corperation.entity.Room;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,7 +27,7 @@ public class Reservation extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
-	private Product product;
+	private RoomProducts roomProducts;
 
 	@ManyToOne
 	@JoinColumn(name = "room_id", nullable = false)

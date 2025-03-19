@@ -5,7 +5,7 @@ import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
 import com.vacation.platform.corp.admin.dto.AdminRequestDTO;
 import com.vacation.platform.corp.admin.service.AdminService;
-import com.vacation.platform.corp.corpuser.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.entity.RequestStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,21 +23,21 @@ public class AdminController {
 
     // 사업자 회원 요청 목록 조회
     @GetMapping( "/authority/inquiry")
-    public StayFinderResponseDTO<?> authorityInquiry(@Valid @RequestBody AdminRequestDTO.CorpUserRequestInquiryDTO corpUserRequestInquiryDTO) {
-        return adminService.authorityInquiry(corpUserRequestInquiryDTO);
+    public StayFinderResponseDTO<?> authorityInquiry(@Valid @RequestBody AdminRequestDTO.CorporationRequestInquiryDTO corporationRequestInquiryDTO) {
+        return adminService.authorityInquiry(corporationRequestInquiryDTO);
     }
 
     // 사업자 회원 승인, 거절 처리
     @PostMapping("/authority/approved")
-    public StayFinderResponseDTO<?> approved(@Valid @RequestBody AdminRequestDTO.CorpUserRequestApprovedDTO corpUserRequestApprovedDTO) {
-        RequestStatus requestStatus = RequestStatus.getRequestStatus(corpUserRequestApprovedDTO.getRequestStatus());
+    public StayFinderResponseDTO<?> approved(@Valid @RequestBody AdminRequestDTO.CorporationRequestApprovedDTO corporationRequestApprovedDTO) {
+        RequestStatus requestStatus = RequestStatus.getRequestStatus(corporationRequestApprovedDTO.getRequestStatus());
         if(requestStatus.equals(RequestStatus.PENDING)){
             throw new StayFinderException(ErrorType.REQUEST_STATUS_IS_NOT_PENDING,
-                    Map.of("requestStatus", corpUserRequestApprovedDTO.getRequestStatus()),
+                    Map.of("requestStatus", corporationRequestApprovedDTO.getRequestStatus()),
                     log::error);
         }
 
-        return adminService.approved(corpUserRequestApprovedDTO);
+        return adminService.approved(corporationRequestApprovedDTO);
     }
 
 }

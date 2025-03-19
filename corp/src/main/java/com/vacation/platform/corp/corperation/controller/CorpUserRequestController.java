@@ -1,10 +1,10 @@
-package com.vacation.platform.corp.corpuser.controller;
+package com.vacation.platform.corp.corperation.controller;
 
 import com.vacation.platform.api.common.ErrorType;
 import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
-import com.vacation.platform.corp.corpuser.dto.CorpUserRequestDTO;
-import com.vacation.platform.corp.corpuser.service.CorpUserRequestService;
+import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
+import com.vacation.platform.corp.corperation.service.CorpUserRequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

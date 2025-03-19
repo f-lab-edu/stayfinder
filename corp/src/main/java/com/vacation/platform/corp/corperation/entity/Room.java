@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.vacation.platform.api.common.BaseEntity;
@@ -28,18 +28,18 @@ public class Room extends BaseEntity {
 	private BigDecimal price;
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private RoomCategory category;
-
-	@Column(nullable = false)
 	private int capacity;  // 수용 인원
 
 	@ManyToOne
 	@JsonBackReference
 	@JoinColumn(name = "corp_user_id", nullable = false)
-	private CorpUser corpUser;
+	private Corporation corporation;
 
 	@ManyToOne
 	@JoinColumn(name = "id", nullable = false) // `CorporateUser`와 연결
 	private CorporateUser corporateUser; // 객실을 소유한 기업회원
+
+	@ManyToOne
+	@JoinColumn(name = "room_type_id", nullable = false)
+	private RoomType roomType;
 }

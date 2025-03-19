@@ -1,12 +1,12 @@
-package com.vacation.platform.corp.corpuser.service.impl;
+package com.vacation.platform.corp.corperation.service.impl;
 
-import com.vacation.platform.corp.corpuser.dto.CorpUserRequestDTO;
-import com.vacation.platform.corp.corpuser.entity.BusinessCategory;
-import com.vacation.platform.corp.corpuser.entity.BusinessLicenseFile;
-import com.vacation.platform.corp.corpuser.entity.CorpUserRequest;
-import com.vacation.platform.corp.corpuser.entity.RequestStatus;
-import com.vacation.platform.corp.corpuser.repository.BusinessLicenseFileRepository;
-import com.vacation.platform.corp.corpuser.repository.CorpUserRequestRepository;
+import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
+import com.vacation.platform.corp.corperation.entity.BusinessCategory;
+import com.vacation.platform.corp.corperation.entity.BusinessLicenseFile;
+import com.vacation.platform.corp.corperation.entity.CorporationRequest;
+import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.repository.BusinessLicenseFileRepository;
+import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CorpUserDBService {
+public class CorporationDBService {
 
     private final CorpUserRequestRepository corpUserRequestRepository;
 
@@ -37,12 +37,12 @@ public class CorpUserDBService {
     protected void corpUserRequestSave(CorpUserRequestDTO corpUserRequestDTO) throws Exception {
         ModelMapper modelMapper = new ModelMapper();
 
-        CorpUserRequest corpUserRequest = modelMapper.map(corpUserRequestDTO, CorpUserRequest.class);
+        CorporationRequest corporationRequest = modelMapper.map(corpUserRequestDTO, CorporationRequest.class);
 
-        corpUserRequest.setBusinessCategory(BusinessCategory.getByDesc(corpUserRequestDTO.getBusinessCategory()));
-        corpUserRequest.setStatus(RequestStatus.PENDING);
+        corporationRequest.setBusinessCategory(BusinessCategory.getByDesc(corpUserRequestDTO.getBusinessCategory()));
+        corporationRequest.setStatus(RequestStatus.PENDING);
 
-        corpUserRequestRepository.saveAndFlush(corpUserRequest);
+        corpUserRequestRepository.saveAndFlush(corporationRequest);
     }
 
     @Transactional

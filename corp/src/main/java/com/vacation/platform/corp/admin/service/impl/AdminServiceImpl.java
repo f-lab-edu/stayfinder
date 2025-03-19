@@ -6,12 +6,12 @@ import com.vacation.platform.api.util.DateTimeUtil;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
 import com.vacation.platform.corp.admin.dto.AdminRequestDTO;
 import com.vacation.platform.corp.admin.service.AdminService;
-import com.vacation.platform.corp.corpuser.entity.CorpStatus;
-import com.vacation.platform.corp.corpuser.entity.CorpUser;
-import com.vacation.platform.corp.corpuser.entity.CorpUserRequest;
-import com.vacation.platform.corp.corpuser.entity.RequestStatus;
-import com.vacation.platform.corp.corpuser.repository.CorpUserRepository;
-import com.vacation.platform.corp.corpuser.repository.CorpUserRequestRepository;
+import com.vacation.platform.corp.corperation.entity.CorpStatus;
+import com.vacation.platform.corp.corperation.entity.Corporation;
+import com.vacation.platform.corp.corperation.entity.CorporationRequest;
+import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
+import com.vacation.platform.corp.corperation.repository.corporationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,27 +28,27 @@ public class AdminServiceImpl implements AdminService {
 
     private final CorpUserRequestRepository corpUserRequestRepository;
 
-    private final CorpUserRepository corpUserRepository;
+    private final corporationRepository corporationRepository;
 
 
     @Override
-    public StayFinderResponseDTO<?> authorityInquiry(AdminRequestDTO.CorpUserRequestInquiryDTO corpUserRequestInquiryDTO) {
+    public StayFinderResponseDTO<?> authorityInquiry(AdminRequestDTO.CorporationRequestInquiryDTO corporationRequestInquiryDTO) {
 
-        LocalDateTime startDate = corpUserRequestInquiryDTO.getStartDate() != null ?
-                DateTimeUtil.parseStartDate(corpUserRequestInquiryDTO.getStartDate()) : LocalDateTime.now();
+        LocalDateTime startDate = corporationRequestInquiryDTO.getStartDate() != null ?
+                DateTimeUtil.parseStartDate(corporationRequestInquiryDTO.getStartDate()) : LocalDateTime.now();
 
-        LocalDateTime endDate = corpUserRequestInquiryDTO.getEndDate() != null ?
-                DateTimeUtil.parseEndDate(corpUserRequestInquiryDTO.getEndDate()) : LocalDateTime.now();
+        LocalDateTime endDate = corporationRequestInquiryDTO.getEndDate() != null ?
+                DateTimeUtil.parseEndDate(corporationRequestInquiryDTO.getEndDate()) : LocalDateTime.now();
 
         if(startDate.isAfter(endDate)) {
             throw new StayFinderException(ErrorType.INVALID_DATE_RANGE,
-                    Map.of("corpUserRequestInquiryDTO", corpUserRequestInquiryDTO),
+                    Map.of("corpUserRequestInquiryDTO", corporationRequestInquiryDTO),
                     log::error);
         }
 
-        List<CorpUserRequest> resultList
+        List<CorporationRequest> resultList
                 = corpUserRequestRepository.findByCorpUserRequests(startDate, endDate,
-                corpUserRequestInquiryDTO.getRequestStatus() == null ? RequestStatus.PENDING : RequestStatus.getRequestStatus(corpUserRequestInquiryDTO.getRequestStatus()));
+                corporationRequestInquiryDTO.getRequestStatus() == null ? RequestStatus.PENDING : RequestStatus.getRequestStatus(corporationRequestInquiryDTO.getRequestStatus()));
 
         if(resultList.isEmpty()) {
             return StayFinderResponseDTO.success("데이터가 존재하지 않습니다.");
@@ -59,22 +59,22 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public StayFinderResponseDTO<?> approved(AdminRequestDTO.CorpUserRequestApprovedDTO corpUserRequestApprovedDTO) {
-        CorpUserRequest corpUserRequest = corpUserRequestRepository.findById(corpUserRequestApprovedDTO.getCorpUserId())
+    public StayFinderResponseDTO<?> approved(AdminRequestDTO.CorporationRequestApprovedDTO corporationRequestApprovedDTO) {
+        CorporationRequest corporationRequest = corpUserRequestRepository.findById(corporationRequestApprovedDTO.getCorpUserId())
                 .orElseThrow( () -> new StayFinderException(ErrorType.BUSINESS_LICENSE_IS_EMPTY,
-                        Map.of("businessLicenseId", corpUserRequestApprovedDTO.getCorpUserId()),
+                        Map.of("businessLicenseId", corporationRequestApprovedDTO.getCorpUserId()),
                         log::error));
 
-        RequestStatus requestStatus = RequestStatus.getRequestStatus(corpUserRequestApprovedDTO.getRequestStatus());
+        RequestStatus requestStatus = RequestStatus.getRequestStatus(corporationRequestApprovedDTO.getRequestStatus());
 
-        corpUserRequest.setStatus(requestStatus);
-        corpUserRequest.setApprovedAt(LocalDateTime.now());
+        corporationRequest.setStatus(requestStatus);
+        corporationRequest.setApprovedAt(LocalDateTime.now());
         if(requestStatus.compareTo(RequestStatus.APPROVED) == 0) {
             try {
-                saveCorpUser(corpUserRequest);
+                saveCorpUser(corporationRequest);
             } catch (Exception e) {
                 throw new StayFinderException(ErrorType.DB_ERROR,
-                        Map.of("corpUser", corpUserRequest),
+                        Map.of("corpUser", corporationRequest),
                         log::error,
                         e);
             }
@@ -83,16 +83,16 @@ public class AdminServiceImpl implements AdminService {
         return StayFinderResponseDTO.success();
     }
 
-    private void saveCorpUser(CorpUserRequest corpUserRequest) {
-        CorpUser corpUser = new CorpUser();
-        corpUser.setBusinessAddress(corpUserRequest.getBusinessAddress());
-        corpUser.setBusinessCategory(corpUserRequest.getBusinessCategory());
-        corpUser.setBusinessName(corpUserRequest.getBusinessName());
-        corpUser.setBusinessLicense(corpUserRequest.getBusinessLicense());
-        corpUser.setBusinessTitle(corpUserRequest.getBusinessTitle());
-        corpUser.setCorpStatus(CorpStatus.REGISTERED);
-        log.info("Saving corpUser: {}", corpUser);
+    private void saveCorpUser(CorporationRequest corporationRequest) {
+        Corporation corporation = new Corporation();
+        corporation.setBusinessAddress(corporationRequest.getBusinessAddress());
+        corporation.setBusinessCategory(corporationRequest.getBusinessCategory());
+        corporation.setBusinessName(corporationRequest.getBusinessName());
+        corporation.setBusinessLicense(corporationRequest.getBusinessLicense());
+        corporation.setBusinessTitle(corporationRequest.getBusinessTitle());
+        corporation.setCorpStatus(CorpStatus.REGISTERED);
+        log.info("Saving corporation: {}", corporation);
 
-        corpUserRepository.save(corpUser);
+        corporationRepository.save(corporation);
     }
 }

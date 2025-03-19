@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 
 import com.vacation.platform.api.common.BaseEntity;
@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "corp_user")
+@Table(name = "corporation")
 @Data
 @RequiredArgsConstructor
-public class CorpUser extends BaseEntity {
+public class Corporation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +39,7 @@ public class CorpUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CorpStatus corpStatus;
 
-    @OneToOne(mappedBy = "corpUser")
+    @OneToOne
+    @JoinColumn(name = "corp_user_id")
     private CorporateUser corporateUser;
 }

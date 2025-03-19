@@ -1,6 +1,6 @@
 package com.vacation.platform.corp.reservation.entity;
 
-import com.vacation.platform.corp.corpuser.entity.Room;
+import com.vacation.platform.corp.corperation.entity.Room;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor
-@Table(name = "PRODUCTS")
+@Table(name = "ROOM_PRODUCTS")
 @Entity
-public class Product {
+public class RoomProducts {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

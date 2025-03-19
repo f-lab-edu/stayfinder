@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -45,6 +45,6 @@ public class BusinessLicenseFile {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "corp_user_request_id", insertable = false, updatable = false)
-    private CorpUserRequest corpUserRequest;
+    private CorporationRequest corporationRequest;
 
 }

@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -15,9 +15,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Data
-@Table(name = "corp_user_request")
+@Table(name = "corporation_request")
 @RequiredArgsConstructor
-public class CorpUserRequest{
+public class CorporationRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +57,6 @@ public class CorpUserRequest{
     }
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "corpUserRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "corporationRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BusinessLicenseFile> businessLicenseFiles = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
-package com.vacation.platform.corp.corpuser.repository;
+package com.vacation.platform.corp.corperation.repository;
 
-import com.vacation.platform.corp.corpuser.entity.CorporateUser;
+import com.vacation.platform.corp.corperation.entity.CorporateUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

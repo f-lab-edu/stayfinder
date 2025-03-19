@@ -1,7 +1,7 @@
-package com.vacation.platform.corp.corpuser.service;
+package com.vacation.platform.corp.corperation.service;
 
 import com.vacation.platform.api.util.StayFinderResponseDTO;
-import com.vacation.platform.corp.corpuser.dto.CorpUserRequestDTO;
+import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

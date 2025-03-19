@@ -1,13 +1,13 @@
-package com.vacation.platform.corp.corpuser.service.impl;
+package com.vacation.platform.corp.corperation.service.impl;
 
 import com.vacation.platform.api.common.ErrorType;
 import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
-import com.vacation.platform.corp.corpuser.dto.CorpUserRequestDTO;
-import com.vacation.platform.corp.corpuser.entity.CorpUserRequest;
-import com.vacation.platform.corp.corpuser.entity.RequestStatus;
-import com.vacation.platform.corp.corpuser.repository.CorpUserRequestRepository;
-import com.vacation.platform.corp.corpuser.service.CorpUserRequestService;
+import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
+import com.vacation.platform.corp.corperation.entity.CorporationRequest;
+import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
+import com.vacation.platform.corp.corperation.service.CorpUserRequestService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
 
     private final CorpUserRequestRepository corpUserRequestRepository;
 
-    private final CorpUserDBService corpUserDBService;
+    private final CorporationDBService corporationDBService;
 
     @Override
     @Transactional
@@ -42,9 +42,9 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
         List<String> result;
 
         try {
-            corpUserDBService.corpUserRequestSave(corpUserRequestDTO);
+            corporationDBService.corpUserRequestSave(corpUserRequestDTO);
 
-            CorpUserRequest corpUser = corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense())
+            CorporationRequest corpUser = corpUserRequestRepository.findByBusinessLicense(corpUserRequestDTO.getBusinessLicense())
                     .orElseThrow(
                             () ->  new StayFinderException(
                                     ErrorType.DB_ERROR,
@@ -52,7 +52,7 @@ public class CorpUserRequestServiceImpl implements CorpUserRequestService {
                                     log::error
                             ));
 
-           result = corpUserDBService.corpUserBusinessLicenseFileSave(files, corpUser.getRequestId());
+           result = corporationDBService.corpUserBusinessLicenseFileSave(files, corpUser.getRequestId());
         } catch (IOException io) {
             throw new StayFinderException(ErrorType.FILE_ERROR,
                     Map.of("files", files),

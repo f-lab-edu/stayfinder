@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.dto;
+package com.vacation.platform.corp.corperation.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

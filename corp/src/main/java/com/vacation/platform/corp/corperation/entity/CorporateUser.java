@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corpuser.entity;
+package com.vacation.platform.corp.corperation.entity;
 
 import com.vacation.platform.api.common.BaseEntity;
 import com.vacation.platform.api.user.entity.Role;
@@ -39,8 +39,8 @@ public class CorporateUser extends BaseEntity {
 	private Role role;
 
 	@OneToOne
-	@JoinColumn(name = "corp_user_id", referencedColumnName = "corpUserId")
-	private CorpUser corpUser;
+	@JoinColumn(name = "corp_user_id")
+	private Corporation corporation;
 
 	@OneToMany(mappedBy = "corporateUser", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Room> rooms = new ArrayList<>();

@@ -2,8 +2,11 @@ package com.vacation.platform.corp.corperation.service.impl;
 
 import com.vacation.platform.api.common.ErrorType;
 import com.vacation.platform.api.common.StayFinderException;
+import com.vacation.platform.api.login.dto.JwtTokenResponse;
 import com.vacation.platform.api.login.dto.LogOutDTO;
 import com.vacation.platform.api.login.dto.LoginDTO;
+import com.vacation.platform.api.login.dto.LoginResponseDTO;
+import com.vacation.platform.api.login.service.impl.LoginServiceImpl;
 import com.vacation.platform.api.user.entity.Role;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
 import com.vacation.platform.corp.corperation.dto.CorpUserDTO;
@@ -28,9 +31,11 @@ public class CorporationServiceImpl implements CorporationService {
 
     private final CorporateUserRepository corporateUserRepository;
 
+    private final LoginServiceImpl loginServiceImpl;
+
     @Override
     @Transactional
-    public StayFinderResponseDTO<?> createCorpUser(CorpUserDTO corpUserDTO) {
+    public StayFinderResponseDTO<?> createCorporationUser(CorpUserDTO corpUserDTO) {
          corporationRepository.findByBusinessLicense(corpUserDTO.getBusinessLicense(), CorpStatus.REGISTERED)
                 .orElseThrow( () -> new StayFinderException(ErrorType.BUSINESS_LICENSE_IS_NOT_VALID,
                         Map.of("businessLicense", corpUserDTO.getBusinessLicense()), log::error));
@@ -54,7 +59,21 @@ public class CorporationServiceImpl implements CorporationService {
 
     @Override
     public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
-        return StayFinderResponseDTO.success();
+        CorporateUser corporateUser = corporateUserRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow( () ->
+                    new StayFinderException(ErrorType.DUPLICATE_EMAIL,
+                            Map.of("email", loginDTO.getEmail()), log::error)
+                );
+
+        loginServiceImpl.passwordValidate(loginDTO);
+
+        JwtTokenResponse accessTokenResponse = loginServiceImpl.getAccessToken(loginDTO, Map.of("role", corporateUser.getRole()));
+
+        JwtTokenResponse refreshTokenResponse = loginServiceImpl.getRefreshToken(loginDTO, Map.of("role", corporateUser.getRole()));
+
+        loginServiceImpl.TokenSaves(accessTokenResponse, refreshTokenResponse, loginDTO);
+
+        return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
 
     @Override

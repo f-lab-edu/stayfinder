@@ -22,7 +22,7 @@ public class CorporationController {
 
     @PostMapping("/create")
     public StayFinderResponseDTO<?> createCorpUser(@RequestBody CorpUserDTO corpUserDTO) {
-        return corporationService.createCorpUser(corpUserDTO);
+        return corporationService.createCorporationUser(corpUserDTO);
     }
 
     @PostMapping("/user/login")

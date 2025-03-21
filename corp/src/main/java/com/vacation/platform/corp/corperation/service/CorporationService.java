@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public interface CorporationService {
-    StayFinderResponseDTO<?> createCorpUser(@RequestBody CorpUserDTO corpUserDTO);
+    StayFinderResponseDTO<?> createCorporationUser(@RequestBody CorpUserDTO corpUserDTO);
 
     StayFinderResponseDTO<?> login(@RequestBody LoginDTO loginDTO);
 

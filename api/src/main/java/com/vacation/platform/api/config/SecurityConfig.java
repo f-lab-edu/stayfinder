@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/search/**").permitAll()
                                 .requestMatchers("/api/v1/corp/**").permitAll()
                                 .requestMatchers("/api/v1/corp/user/**").hasRole("CORP_USER")
+                                .requestMatchers("/api/v1/room/**").hasRole("CORP_USER")
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().denyAll()

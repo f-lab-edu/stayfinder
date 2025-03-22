@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 @Registered
-public interface corporationRepository extends CrudRepository<Corporation,String> {
+public interface CorporationRepository extends CrudRepository<Corporation,String> {
 
 	@Query("SELECT c FROM Corporation c WHERE c.businessLicense = :businessLicense AND c.corpStatus = :corpStatus")
 	Optional<Corporation> findByBusinessLicense(String businessLicense, CorpStatus corpStatus);

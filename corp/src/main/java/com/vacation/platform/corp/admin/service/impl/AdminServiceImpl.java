@@ -11,7 +11,7 @@ import com.vacation.platform.corp.corperation.entity.Corporation;
 import com.vacation.platform.corp.corperation.entity.CorporationRequest;
 import com.vacation.platform.corp.corperation.entity.RequestStatus;
 import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
-import com.vacation.platform.corp.corperation.repository.corporationRepository;
+import com.vacation.platform.corp.corperation.repository.CorporationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final CorpUserRequestRepository corpUserRequestRepository;
 
-    private final corporationRepository corporationRepository;
+    private final CorporationRepository corporationRepository;
 
 
     @Override

@@ -13,7 +13,7 @@ import com.vacation.platform.corp.corperation.dto.CorpUserDTO;
 import com.vacation.platform.corp.corperation.entity.CorpStatus;
 import com.vacation.platform.corp.corperation.entity.CorporateUser;
 import com.vacation.platform.corp.corperation.repository.CorporateUserRepository;
-import com.vacation.platform.corp.corperation.repository.corporationRepository;
+import com.vacation.platform.corp.corperation.repository.CorporationRepository;
 import com.vacation.platform.corp.corperation.service.CorporationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CorporationServiceImpl implements CorporationService {
 
-    private final corporationRepository corporationRepository;
+    private final CorporationRepository corporationRepository;
 
     private final CorporateUserRepository corporateUserRepository;
 

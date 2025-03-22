@@ -42,9 +42,6 @@ public class CorporateUser extends BaseEntity {
 	@JoinColumn(name = "corp_user_id")
 	private Corporation corporation;
 
-	@OneToMany(mappedBy = "corporateUser", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Room> rooms = new ArrayList<>();
-
 	@OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL)
 	private List<Reservation> confirmedReservations = new ArrayList<>();
 

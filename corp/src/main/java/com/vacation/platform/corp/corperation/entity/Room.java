@@ -22,22 +22,21 @@ public class Room extends BaseEntity {
 	private Long roomId;
 
 	@Column(nullable = false)
-	private String roomName;
+	private String name;
 
 	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal price;
 
 	@Column(nullable = false)
-	private int capacity;  // 수용 인원
+	private int capacity;
+
+	@Column(nullable = false)
+	private String room_number;
 
 	@ManyToOne
 	@JsonBackReference
 	@JoinColumn(name = "corp_user_id", nullable = false)
 	private Corporation corporation;
-
-	@ManyToOne
-	@JoinColumn(name = "id", nullable = false) // `CorporateUser`와 연결
-	private CorporateUser corporateUser; // 객실을 소유한 기업회원
 
 	@ManyToOne
 	@JoinColumn(name = "room_type_id", nullable = false)

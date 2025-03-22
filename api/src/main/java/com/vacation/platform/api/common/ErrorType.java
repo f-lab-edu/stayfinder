@@ -41,7 +41,10 @@ public enum ErrorType {
     EMAIL_IS_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "1032", "이미 가입된 이메일이 존재합니다.", "요청값을 확인해주세요."),
     SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
     DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요."),
-    FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9003", "파일 저장 에러가 발생했습니다.", "관리자에게 문의해주세요.")
+    FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9003", "파일 저장 에러가 발생했습니다.", "관리자에게 문의해주세요."),
+    BUSINESS_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "9004", "가입된 사업자 회원이 존재하지 않습니다.", "요청값을 확인해주세요"),
+    ROOM_NUMBER_IS_EXIST(HttpStatus.BAD_REQUEST, "9005", "이미 존재하는 객실 호수 입니다.", "요청값을 확인해주세요"),
+    ROOM_TYPE_NAME_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "9006", "객실 타입을 잘못 입력했습니다.", "요청값을 확인해주세요"),
 
     ;
 

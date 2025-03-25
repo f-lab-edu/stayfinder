@@ -1,6 +1,5 @@
 package com.vacation.platform.corp.corperation.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.vacation.platform.api.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,21 +23,22 @@ public class Room extends BaseEntity {
 	@Column(nullable = false)
 	private String name;
 
+	@Column(name = "room_type", nullable = false)
+	private String roomType;
+
 	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal price;
 
 	@Column(nullable = false)
-	private int capacity;
+	private Integer capacity;
 
 	@Column(nullable = false)
-	private String room_number;
+	private String roomNumber;
 
-	@ManyToOne
-	@JsonBackReference
-	@JoinColumn(name = "corp_user_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "corp_user_id")
 	private Corporation corporation;
 
-	@ManyToOne
-	@JoinColumn(name = "room_type_id", nullable = false)
-	private RoomType roomType;
+//	@OneToMany(mappedBy = "room")
+//	private List<RoomProductStock> productStocks;
 }

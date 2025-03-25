@@ -2,10 +2,14 @@ package com.vacation.platform.corp.corperation.entity;
 
 
 import com.vacation.platform.api.common.BaseEntity;
+import com.vacation.platform.corp.reservation.entity.RoomProducts;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -42,4 +46,10 @@ public class Corporation extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "corp_user_id")
     private CorporateUser corporateUser;
+
+    @OneToMany(mappedBy = "corporation", cascade = CascadeType.ALL)
+    private List<Room> rooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "corporation", cascade = CascadeType.ALL)
+    private List<RoomProducts> roomProducts = new ArrayList<>();
 }

@@ -13,6 +13,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -34,7 +39,6 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         http
                 .authorizeHttpRequests((authorizationManagerRequestMatcherRegistry) ->
                         authorizationManagerRequestMatcherRegistry
@@ -49,6 +53,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/search/**").permitAll()
                                 .requestMatchers("/api/v1/corp/**").permitAll()
                                 .requestMatchers("/api/v1/corp/user/**").hasRole("CORP_USER")
+                                .requestMatchers("/api/v1/room/**").hasRole("CORP_USER")
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().denyAll()
@@ -56,6 +61,16 @@ public class SecurityConfig {
         http
                 .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8083", "http://localhost:8082"));  // 8083 포트에서 오는 요청 허용
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 CORS 적용
+        return source;
     }
 
     @Bean

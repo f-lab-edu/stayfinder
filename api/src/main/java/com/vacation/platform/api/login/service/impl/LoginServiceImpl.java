@@ -8,6 +8,7 @@ import com.vacation.platform.api.login.dto.LoginDTO;
 import com.vacation.platform.api.login.dto.LoginResponseDTO;
 import com.vacation.platform.api.login.service.LoginService;
 import com.vacation.platform.api.login.service.TokenRedisService;
+import com.vacation.platform.api.user.entity.Role;
 import com.vacation.platform.api.user.entity.User;
 import com.vacation.platform.api.user.repository.UserRepository;
 import com.vacation.platform.api.util.JwtUtil;
@@ -35,6 +36,8 @@ public class LoginServiceImpl implements LoginService {
 
     private final long ACCESS_TOKEN_TIME = 1000 * 60 * 15L;
 
+    private final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 7L;
+
     @Override
     public StayFinderResponseDTO<?> login(LoginDTO loginDTO) {
        User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(
@@ -44,23 +47,13 @@ public class LoginServiceImpl implements LoginService {
                         log::error
                 ));
 
-        String encodePassword = bCryptPasswordEncoder.encode(loginDTO.getPassword());
+        this.passwordValidate(loginDTO);
 
-        if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(), encodePassword)) {
-            throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
-                    Map.of("password", loginDTO.getPassword()),
-                    log::error
-            );
-        }
+        JwtTokenResponse accessTokenResponse = this.getAccessToken(loginDTO, Map.of("role", user.getRole()));
 
-        long refreshTokenTime = 1000 * 60 * 60 * 24 * 7L;
+        JwtTokenResponse refreshTokenResponse = this.getRefreshToken(loginDTO, Map.of("role", user.getRole()));
 
-        JwtTokenResponse accessTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME, Map.of("role", user.getRole()));
-
-        JwtTokenResponse refreshTokenResponse = jwtUtil.generateToken(loginDTO.getEmail(), refreshTokenTime, Map.of("role", user.getRole()));
-
-        tokenRedisService.saveToken(accessTokenResponse.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
-        tokenRedisService.saveToken(loginDTO.getEmail(), refreshTokenResponse.getToken(), refreshTokenTime, TimeUnit.DAYS);
+        this.TokenSaves(accessTokenResponse, refreshTokenResponse, loginDTO);
 
         return StayFinderResponseDTO.success(new LoginResponseDTO(accessTokenResponse.getToken(), refreshTokenResponse.getToken()));
     }
@@ -100,6 +93,30 @@ public class LoginServiceImpl implements LoginService {
         }
 
         throw new StayFinderException(ErrorType.TOKEN_IS_NOT_VALID, Map.of("refreshToken", refreshToken), log::error);
+    }
+
+    public void passwordValidate(LoginDTO loginDTO) {
+        String encodePassword = bCryptPasswordEncoder.encode(loginDTO.getPassword());
+
+        if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(), encodePassword)) {
+            throw new StayFinderException(ErrorType.USER_PASSWORD_NOT_MATCHED,
+                    Map.of("password", loginDTO.getPassword()),
+                    log::error
+            );
+        }
+    }
+
+    public JwtTokenResponse getAccessToken(LoginDTO loginDTO, Map<String, Role> roles) {
+        return jwtUtil.generateToken(loginDTO.getEmail(), ACCESS_TOKEN_TIME, roles);
+    }
+
+    public JwtTokenResponse getRefreshToken(LoginDTO loginDTO, Map<String, Role> roles) {
+        return jwtUtil.generateToken(loginDTO.getEmail(), REFRESH_TOKEN_TIME, roles);
+    }
+
+    public void TokenSaves(JwtTokenResponse accessToken,  JwtTokenResponse refreshToken, LoginDTO loginDTO) {
+        tokenRedisService.saveToken(accessToken.getToken(), loginDTO.getEmail(), ACCESS_TOKEN_TIME, TimeUnit.DAYS);
+        tokenRedisService.saveToken(loginDTO.getEmail(), refreshToken.getToken(), REFRESH_TOKEN_TIME, TimeUnit.DAYS);
     }
 
 }

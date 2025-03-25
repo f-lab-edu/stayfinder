@@ -7,6 +7,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorType {
+    SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
+    DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요."),
+    FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9003", "파일 저장 에러가 발생했습니다.", "관리자에게 문의해주세요."),
+
+
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "1001", "유저가 존재하지 않습니다.", "요청값이 존재하지 않습니다."),
     DUPLICATE_NICK_NAME(HttpStatus.CONFLICT, "1002", "동일한 닉네임이 사용중입니다.", "다른 값을 입력해주세요."),
     DUPLICATE_TERMS_TITLE(HttpStatus.CONFLICT, "1003", "동일한 타이틀 이름이 존재합니다.", "다른 값을 입력해주세요."),
@@ -39,9 +44,10 @@ public enum ErrorType {
     REQUEST_STATUS_IS_NOT_PENDING(HttpStatus.BAD_REQUEST, "1030", "사업자 회원의 상태는 승인, 거절만 가능합니다.", "요청값을 확인해주세요."),
     BUSINESS_LICENSE_IS_NOT_VALID(HttpStatus.BAD_REQUEST, "1031", "승인된 사업자 번호가 존재하지 않습니다.", "요청값을 확인해주세요."),
     EMAIL_IS_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "1032", "이미 가입된 이메일이 존재합니다.", "요청값을 확인해주세요."),
-    SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9001", "미확인 에러 발생했습니다.", "관리자에게 문의 해주세요."),
-    DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"9002", "DB 에러가 발생했습니다.", "관리자에게 문의 해주세요."),
-    FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9003", "파일 저장 에러가 발생했습니다.", "관리자에게 문의해주세요.")
+    BUSINESS_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1033", "가입된 사업자 회원이 존재하지 않습니다.", "요청값을 확인해주세요"),
+    ROOM_NUMBER_IS_EXIST(HttpStatus.BAD_REQUEST, "1034", "이미 존재하는 객실 호수 입니다.", "요청값을 확인해주세요"),
+    ROOM_TYPE_NAME_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1035", "객실 타입을 잘못 입력했습니다.", "요청값을 확인해주세요"),
+    ROOM_NUMBER_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1036",  "해당하는 객실 번호가 존재하지 않습니다.", "요청값을 확인해주세요."),
 
     ;
 

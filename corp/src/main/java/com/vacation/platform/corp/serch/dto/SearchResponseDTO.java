@@ -1,6 +1,6 @@
 package com.vacation.platform.corp.serch.dto;
 
-import com.vacation.platform.corp.corpuser.entity.BusinessCategory;
+import com.vacation.platform.corp.corperation.entity.BusinessCategory;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

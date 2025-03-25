@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AdminService {
-    StayFinderResponseDTO<?> authorityInquiry(AdminRequestDTO.CorpUserRequestInquiryDTO corpUserRequestInquiryDTO);
-    StayFinderResponseDTO<?> approved(AdminRequestDTO.CorpUserRequestApprovedDTO corpUserRequestApprovedDTO);
+    StayFinderResponseDTO<?> authorityInquiry(AdminRequestDTO.CorporationRequestInquiryDTO corporationRequestInquiryDTO);
+    StayFinderResponseDTO<?> approved(AdminRequestDTO.CorporationRequestApprovedDTO corpUserRequestApprovedDTO);
 }

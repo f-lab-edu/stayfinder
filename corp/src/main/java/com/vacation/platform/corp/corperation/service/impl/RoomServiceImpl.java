@@ -31,15 +31,7 @@ public class RoomServiceImpl implements RoomService {
 	@Transactional
 	public void createRoom(String token, RoomDTO  roomDTO) {
 
-		String email = jwtUtil.getUserEmail(token);
-
-		if(email == null) {
-			throw new StayFinderException(ErrorType.USER_EMAIL_NOT_EXIST, Map.of("error", "Email not exist"), log::error);
-		}
-
-		CorporateUser corporateUser =  corporateUserRepository.findByEmail(email).orElseThrow(
-				() -> new StayFinderException(ErrorType.BUSINESS_IS_NOT_EXIST, Map.of(), log::error)
-		);
+		CorporateUser corporateUser = getCorporateUser(token);
 
 		roomRepository.findByRoomNumber(corporateUser.getId(), roomDTO.getRoomNumber()).ifPresent(
 				room -> {
@@ -48,10 +40,34 @@ public class RoomServiceImpl implements RoomService {
 		);
 
 		Room room = new Room();
+		room.setRoomNumber(roomDTO.getRoomNumber());
+		room.setName(roomDTO.getName());
+		room.setRoomType(roomDTO.getRoomType());
 		room.setPrice(roomDTO.getPrice());
 		room.setCapacity(roomDTO.getCapacity());
 		room.setCorporation(corporateUser.getCorporation());
 
 		roomRepository.save(room);
+	}
+
+	@Override
+	public void modifyRoom(String token, RoomDTO roomDTO) {
+		CorporateUser corporateUser = getCorporateUser(token);
+
+		Room room = roomRepository.findByRoomNumber(corporateUser.getId(), roomDTO.getRoomNumber()).orElseThrow(
+				() -> new StayFinderException(ErrorType.ROOM_NUMBER_IS_NOT_EXIST, Map.of("roomNumber", roomDTO.getRoomNumber()), log::error));
+
+		room.setName(roomDTO.getName());
+		room.setRoomType(roomDTO.getRoomType());
+		room.setPrice(roomDTO.getPrice());
+		room.setCapacity(roomDTO.getCapacity());
+		room.setRoomNumber(roomDTO.getRoomNumber());
+	}
+
+	private CorporateUser  getCorporateUser(String token) {
+		String email = jwtUtil.getUserEmail(token);
+		return corporateUserRepository.findByEmail(email).orElseThrow(
+				() -> new StayFinderException(ErrorType.BUSINESS_IS_NOT_EXIST, Map.of(), log::error)
+		);
 	}
 }

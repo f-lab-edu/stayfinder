@@ -1,5 +1,7 @@
 package com.vacation.platform.api.util;
 
+import com.vacation.platform.api.common.ErrorType;
+import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.login.dto.JwtTokenResponse;
 import com.vacation.platform.api.user.entity.Role;
 import io.jsonwebtoken.Claims;
@@ -8,6 +10,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +21,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -57,7 +61,11 @@ public class JwtUtil {
     }
 
     public String getUserEmail(String token) {
-        return getClaims(token).getSubject();
+        String email = getClaims(token).getSubject();
+        if(email.isEmpty())
+            throw new StayFinderException(ErrorType.USER_EMAIL_NOT_EXIST, Map.of("error", "Email not exist"), log::error);
+
+        return email;
     }
 
     public boolean validateToken(String token, String username) {

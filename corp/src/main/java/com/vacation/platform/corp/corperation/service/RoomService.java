@@ -8,4 +8,6 @@ public interface RoomService {
 
 	void createRoom(String token, RoomDTO roomDTO);
 
+	void modifyRoom(String token, RoomDTO roomDTO);
+
 }

@@ -21,4 +21,10 @@ public class RoomController {
 		return StayFinderResponseDTO.success();
 	}
 
+	@PostMapping("/modify")
+	public StayFinderResponseDTO<?> modifyRoom(@RequestHeader("Authorization") String token, @RequestBody RoomDTO roomDTO){
+		roomService.modifyRoom(token, roomDTO);
+		return StayFinderResponseDTO.success();
+	}
+
 }

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan(basePackages = {
 		"com.vacation.platform.api",
-//		"com.vacation.platform.batch",
 		"com.vacation.platform.corp"
 })
 @EntityScan(basePackages = {"com.vacation.platform.api", "com.vacation.platform.batch", "com.vacation.platform.corp"})

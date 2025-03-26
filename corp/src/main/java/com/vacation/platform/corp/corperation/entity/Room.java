@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table
+@Table(name = "room")
 @Data
 @RequiredArgsConstructor
 public class Room extends BaseEntity {
@@ -32,11 +32,8 @@ public class Room extends BaseEntity {
 	@Column(nullable = false)
 	private Integer capacity;
 
-	@Column(nullable = false)
-	private String roomNumber;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "corp_user_id")
+	@JoinColumn(name = "corp_user_id", nullable = false)
 	private Corporation corporation;
 
 //	@OneToMany(mappedBy = "room")

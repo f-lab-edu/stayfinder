@@ -1,4 +1,4 @@
-package com.vacation.platform.corp.corperation.entity;
+package com.vacation.platform.corp.corperation.entity.room;
 
 
 import com.vacation.platform.api.common.BaseEntity;

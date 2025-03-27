@@ -5,7 +5,7 @@ import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.JwtUtil;
 import com.vacation.platform.corp.corperation.dto.RoomDTO;
 import com.vacation.platform.corp.corperation.entity.CorporateUser;
-import com.vacation.platform.corp.corperation.entity.Room;
+import com.vacation.platform.corp.corperation.entity.room.Room;
 import com.vacation.platform.corp.corperation.repository.CorporateUserRepository;
 import com.vacation.platform.corp.corperation.repository.RoomRepository;
 import com.vacation.platform.corp.corperation.service.RoomService;
@@ -40,7 +40,6 @@ public class RoomServiceImpl implements RoomService {
 		);
 
 		Room room = new Room();
-		room.setRoomNumber(roomDTO.getRoomNumber());
 		room.setName(roomDTO.getName());
 		room.setRoomType(roomDTO.getRoomType());
 		room.setPrice(roomDTO.getPrice());
@@ -61,7 +60,6 @@ public class RoomServiceImpl implements RoomService {
 		room.setRoomType(roomDTO.getRoomType());
 		room.setPrice(roomDTO.getPrice());
 		room.setCapacity(roomDTO.getCapacity());
-		room.setRoomNumber(roomDTO.getRoomNumber());
 	}
 
 	private CorporateUser  getCorporateUser(String token) {

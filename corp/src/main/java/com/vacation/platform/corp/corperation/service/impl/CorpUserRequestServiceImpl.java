@@ -5,7 +5,7 @@ import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
 import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
 import com.vacation.platform.corp.corperation.entity.CorporationRequest;
-import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
 import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
 import com.vacation.platform.corp.corperation.service.CorpUserRequestService;
 import jakarta.transaction.Transactional;

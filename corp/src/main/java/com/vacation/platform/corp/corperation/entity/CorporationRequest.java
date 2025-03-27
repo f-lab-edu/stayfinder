@@ -1,6 +1,7 @@
 package com.vacation.platform.corp.corperation.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

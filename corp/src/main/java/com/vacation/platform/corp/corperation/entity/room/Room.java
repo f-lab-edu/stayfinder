@@ -1,12 +1,14 @@
-package com.vacation.platform.corp.corperation.entity;
+package com.vacation.platform.corp.corperation.entity.room;
 
 import com.vacation.platform.api.common.BaseEntity;
+import com.vacation.platform.corp.corperation.entity.Corporation;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -36,6 +38,6 @@ public class Room extends BaseEntity {
 	@JoinColumn(name = "corp_user_id", nullable = false)
 	private Corporation corporation;
 
-//	@OneToMany(mappedBy = "room")
-//	private List<RoomProductStock> productStocks;
+	@OneToMany(mappedBy = "room")
+	private List<RoomUnit> roomStocks;
 }

@@ -5,7 +5,7 @@ import com.vacation.platform.api.common.StayFinderException;
 import com.vacation.platform.api.util.StayFinderResponseDTO;
 import com.vacation.platform.corp.admin.dto.AdminRequestDTO;
 import com.vacation.platform.corp.admin.service.AdminService;
-import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

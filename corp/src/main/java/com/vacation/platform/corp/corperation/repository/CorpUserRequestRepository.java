@@ -1,7 +1,7 @@
 package com.vacation.platform.corp.corperation.repository;
 
 import com.vacation.platform.corp.corperation.entity.CorporationRequest;
-import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

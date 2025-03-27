@@ -9,7 +9,7 @@ import com.vacation.platform.corp.admin.service.AdminService;
 import com.vacation.platform.corp.corperation.entity.CorpStatus;
 import com.vacation.platform.corp.corperation.entity.Corporation;
 import com.vacation.platform.corp.corperation.entity.CorporationRequest;
-import com.vacation.platform.corp.corperation.entity.RequestStatus;
+import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
 import com.vacation.platform.corp.corperation.repository.CorpUserRequestRepository;
 import com.vacation.platform.corp.corperation.repository.CorporationRepository;
 import jakarta.transaction.Transactional;

@@ -2,7 +2,7 @@ package com.vacation.platform.corp.corperation.entity;
 
 
 import com.vacation.platform.api.common.BaseEntity;
-import com.vacation.platform.corp.reservation.entity.RoomProducts;
+import com.vacation.platform.corp.corperation.entity.room.Room;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,7 +49,4 @@ public class Corporation extends BaseEntity {
 
     @OneToMany(mappedBy = "corporation", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "corporation", cascade = CascadeType.ALL)
-    private List<RoomProducts> roomProducts = new ArrayList<>();
 }

@@ -2,15 +2,11 @@ package com.vacation.platform.corp.corperation.entity;
 
 import com.vacation.platform.api.common.BaseEntity;
 import com.vacation.platform.api.user.entity.Role;
-import com.vacation.platform.corp.reservation.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -41,8 +37,4 @@ public class CorporateUser extends BaseEntity {
 	@OneToOne
 	@JoinColumn(name = "corp_user_id")
 	private Corporation corporation;
-
-	@OneToMany(mappedBy = "confirmedBy", cascade = CascadeType.ALL)
-	private List<Reservation> confirmedReservations = new ArrayList<>();
-
 }

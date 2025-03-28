@@ -41,8 +41,7 @@ public class CorporationRequest {
     private String businessTitle;
 
     @Column(nullable = false, columnDefinition = "숙박업 카테고리")
-    @Enumerated(EnumType.STRING)
-    private BusinessCategory businessCategory;
+    private String businessCategory;
 
     @CreatedDate
     @Column(columnDefinition = "생성일자")

@@ -1,7 +1,6 @@
 package com.vacation.platform.corp.corperation.service.impl;
 
 import com.vacation.platform.corp.corperation.dto.CorpUserRequestDTO;
-import com.vacation.platform.corp.corperation.entity.BusinessCategory;
 import com.vacation.platform.corp.corperation.entity.BusinessLicenseFile;
 import com.vacation.platform.corp.corperation.entity.CorporationRequest;
 import com.vacation.platform.corp.corperation.entity.room.RequestStatus;
@@ -34,12 +33,12 @@ public class CorporationDBService {
     private final BusinessLicenseFileRepository businessLicenseFileRepository;
 
     @Transactional
-    protected void corpUserRequestSave(CorpUserRequestDTO corpUserRequestDTO) throws Exception {
+    protected void corpUserRequestSave(CorpUserRequestDTO corpUserRequestDTO) {
         ModelMapper modelMapper = new ModelMapper();
 
         CorporationRequest corporationRequest = modelMapper.map(corpUserRequestDTO, CorporationRequest.class);
 
-        corporationRequest.setBusinessCategory(BusinessCategory.getByDesc(corpUserRequestDTO.getBusinessCategory()));
+        corporationRequest.setBusinessCategory(corpUserRequestDTO.getBusinessCategory());
         corporationRequest.setStatus(RequestStatus.PENDING);
 
         corpUserRequestRepository.saveAndFlush(corporationRequest);

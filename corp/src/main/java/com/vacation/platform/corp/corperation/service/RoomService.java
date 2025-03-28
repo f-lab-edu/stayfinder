@@ -5,9 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface RoomService {
-
 	void createRoom(String token, RoomDTO roomDTO);
-
-	void modifyRoom(String token, RoomDTO roomDTO);
-
 }

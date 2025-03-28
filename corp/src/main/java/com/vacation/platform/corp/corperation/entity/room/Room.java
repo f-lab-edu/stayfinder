@@ -22,9 +22,6 @@ public class Room extends BaseEntity {
 	@Column(nullable = false, unique = true, updatable = false)
 	private Long roomId;
 
-	@Column(nullable = false)
-	private String name;
-
 	@Column(name = "room_type", nullable = false)
 	private String roomType;
 

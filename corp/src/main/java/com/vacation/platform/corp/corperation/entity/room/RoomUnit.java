@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "room_unit")
+@Table(
+		name = "room_unit",
+		uniqueConstraints = @UniqueConstraint(columnNames = {"room_id", "room_name"})
+)
 @Data
 @RequiredArgsConstructor
 public class RoomUnit extends BaseEntity {
@@ -23,7 +26,7 @@ public class RoomUnit extends BaseEntity {
 	@JoinColumn(name = "room_id", nullable = false)
 	private Room room;
 
-	@Column(name = "room_name")
+	@Column(name = "room_name", nullable = false, length = 50)
 	private String roomName;
 
 }

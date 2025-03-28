@@ -36,8 +36,7 @@ public class Corporation extends BaseEntity {
     private String businessTitle;
 
     @Column(nullable = false, columnDefinition = "숙박업 카테고리")
-    @Enumerated(EnumType.STRING)
-    private BusinessCategory businessCategory;
+    private String businessCategory;
 
     @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)

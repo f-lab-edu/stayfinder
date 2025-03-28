@@ -26,12 +26,12 @@ public class RoomProduceConfig {
 		return TriggerBuilder.newTrigger()
 				.forJob(roomProduceJobDetail)
 				.withIdentity("roomProduceJobTrigger")
-				.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))  // 5초마다 실행
+				.withSchedule(CronScheduleBuilder.cronSchedule("0 10 17 * * ?"))  // 5초마다 실행
 				.build();
 	}
 
 	@Bean
-	public SchedulerFactoryBean schedulerFactoryBean(Trigger roomProduceJobTrigger, JobDetail roomProduceJobDetail) {
+	public SchedulerFactoryBean roomProduceJobSchedulerFactoryBean(Trigger roomProduceJobTrigger, JobDetail roomProduceJobDetail) {
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		schedulerFactoryBean.setJobDetails(roomProduceJobDetail);
 		schedulerFactoryBean.setTriggers(roomProduceJobTrigger);

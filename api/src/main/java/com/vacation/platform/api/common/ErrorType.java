@@ -49,6 +49,8 @@ public enum ErrorType {
     ROOM_TYPE_NAME_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1035", "객실 타입을 잘못 입력했습니다.", "요청값을 확인해주세요"),
     ROOM_NUMBER_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1036",  "해당하는 객실 번호가 존재하지 않습니다.", "요청값을 확인해주세요."),
     ROOM_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1037", "객실이 존재하지 않습니다.", "관리자에게 문의해주세요."),
+    ROOM_NAME_IS_EXIST(HttpStatus.BAD_REQUEST, "1038", "등록하려는 객실명이 존재합니다.", "요청값을 확인해주세요."),
+    ROOM_NAME_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1039", "수정할 객실명이 존재하지 않습니다.", "요청값을 확인해주세요."),
     ;
 
 

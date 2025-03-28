@@ -26,7 +26,7 @@ public class RoomProduceConfig {
 		return TriggerBuilder.newTrigger()
 				.forJob(roomProduceJobDetail)
 				.withIdentity("roomProduceJobTrigger")
-				.withSchedule(CronScheduleBuilder.cronSchedule("0 0/10 * 1/1 * ? *"))  // 10분마다 실행
+				.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))  // 5초마다 실행
 				.build();
 	}
 

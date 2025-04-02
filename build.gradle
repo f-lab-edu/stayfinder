@@ -80,6 +80,8 @@ subprojects {  // 모든 하위 모듈에서 상속받을 설정
 
 		// jackson 모듈 추가
 		implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
+
+		implementation("org.redisson:redisson:3.16.0")
 	}
 }
 

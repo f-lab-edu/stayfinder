@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface RoomStockSummaryRepository extends JpaRepository<RoomStockSummary, Long> {
 
-	@Query("SELECT rts FROM RoomStockSummary rts WHERE rts.roomId = :roomId AND rts.stockDate = :stockDate")
+	@Query("SELECT rts FROM RoomStockSummary rts WHERE rts.roomStockSummaryId.roomId = :roomId AND rts.roomStockSummaryId.stockDate = :stockDate")
 	Optional<RoomStockSummary> findByRoomIdAndStockDate(Long roomId, LocalDate stockDate);
 
 }

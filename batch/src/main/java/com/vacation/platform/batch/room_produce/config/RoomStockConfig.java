@@ -20,7 +20,7 @@ public class RoomStockConfig {
 		return TriggerBuilder.newTrigger()
 				.forJob(roomStockJobDetail)
 				.withIdentity("RoomStockJobTrigger")
-				.withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?"))
+				.withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
 				.build();
 	}
 

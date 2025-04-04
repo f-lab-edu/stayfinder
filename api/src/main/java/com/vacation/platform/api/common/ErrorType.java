@@ -51,6 +51,7 @@ public enum ErrorType {
     ROOM_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1037", "객실이 존재하지 않습니다.", "관리자에게 문의해주세요."),
     ROOM_NAME_IS_EXIST(HttpStatus.BAD_REQUEST, "1038", "등록하려는 객실명이 존재합니다.", "요청값을 확인해주세요."),
     ROOM_NAME_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "1039", "수정할 객실명이 존재하지 않습니다.", "요청값을 확인해주세요."),
+    ROOM_RESERVATION_30(HttpStatus.BAD_REQUEST, "1040", "예약 가능한 날짜는 30일 미만이여야 합니다.", "요청값을 확인해주세요."),
     ;
 
 

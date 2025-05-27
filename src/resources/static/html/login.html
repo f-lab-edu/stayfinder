@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - StayFinder</title>
+    <!-- <link rel="stylesheet" href="styles.css"> 스타일 파일 연결 -->
+</head>
+<body>
+    <header>
+        <h1>StayFinder</h1>
+    </header>
+    <main>
+        <section class="login-container">
+            <h2>로그인</h2>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label>아이디 : <input id="email" type="email" name="email" placeholder="이메일을 입력하세요" required></label>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호 : <input id="password" type="password" name="password" placeholder="비밀번호를 입력하세요" required></label>
+                </div>
+                <button type="button" value="login" onclick="login();">로그인</button>
+            </form>
+            <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 StayFinder. All rights reserved.</p>
+    </footer>
+    <script src="/src/resources/static/script/config.js"></script>
+    <script src="/src/resources/static/script/login.js"></script>    
+</body>
+</html>

@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable);
         http
                 .httpBasic(AbstractHttpConfigurer::disable);
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http
                 .sessionManagement((session) ->
@@ -54,7 +56,10 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/corp/**").permitAll()
                                 .requestMatchers("/api/v1/corp/user/**").hasRole("CORP_USER")
                                 .requestMatchers("/api/v1/room/**").hasRole("CORP_USER")
+                                .requestMatchers("/api/v1/room/unit/**").hasRole("CORP_USER")
+                                .requestMatchers("/api/v1/reservation/**").hasRole("USER")
                                 .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
+                                .requestMatchers("/api/v1/batch/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().denyAll()
                 );
@@ -65,9 +70,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8083", "http://localhost:8082"));  // 8083 포트에서 오는 요청 허용
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://localhost:8081", "http://localhost:8082", "http://localhost:8083"));  // localhost 요청 허용
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*", "Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 CORS 적용
         return source;

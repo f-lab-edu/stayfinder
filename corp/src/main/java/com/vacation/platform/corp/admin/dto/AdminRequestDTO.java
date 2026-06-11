@@ -11,7 +11,7 @@ public class AdminRequestDTO {
 
     @Data
     @RequiredArgsConstructor
-    public static class CorpUserRequestInquiryDTO {
+    public static class CorporationRequestInquiryDTO {
         @NotBlank(message = "시작 일자는 필수 입니다.")
         private String startDate;
         private String endDate;
@@ -20,7 +20,7 @@ public class AdminRequestDTO {
 
     @Data
     @RequiredArgsConstructor
-    public static class CorpUserRequestApprovedDTO {
+    public static class CorporationRequestApprovedDTO {
         @NotNull(message = "상태 변경할 기업은 필수 입니다.")
         private Long corpUserId;
 

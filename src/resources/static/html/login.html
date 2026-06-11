@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayFinder - 로그인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+            color: #2E8B57;
+        }
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .login-container button {
+            padding: 12px;
+            background-color: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #1e6f47;
+        }
+        .login-container .links {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .login-container .links a {
+            color: #2E8B57;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        header {
+            background-color: #2E8B57;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>StayFinder</h1>
+</header>
+
+<div class="login-container">
+    <h2>로그인</h2>
+    <form action="/api/v1/user/login" method="POST">
+        <input id="email" type="email" name="email" placeholder="이메일을 입력하세요" required>
+        <input id="password" type="password" name="password" placeholder="비밀번호를 입력하세요" required>
+        <button type="button" value="login" onclick="login();">로그인</button>
+    </form>
+    <div class="links">
+        <a href="/src/resources/static/html/signup.html">회원가입</a> | <a href="/src/resources/static/html/index.html">메인으로</a>
+    </div>
+</div>
+
+
+    <script src="/src/resources/static/script/config.js"></script>
+    <script src="/src/resources/static/script/login.js"></script>    
+</body>
+</html>

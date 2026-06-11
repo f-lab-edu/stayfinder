@@ -2,43 +2,37 @@ package com.vacation.platform.corp.reservation.entity;
 
 import com.vacation.platform.api.common.BaseEntity;
 import com.vacation.platform.api.user.entity.User;
-import com.vacation.platform.corp.corpuser.entity.CorporateUser;
-import com.vacation.platform.corp.corpuser.entity.Room;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table
+@Table(name = "reservation")
 @Entity
 @RequiredArgsConstructor
 public class Reservation extends BaseEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(nullable = false, unique = true, updatable = false)
 	private Long reservationId;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "room_id", nullable = false)
-	private Room room;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(nullable = false)
-	private Date reservationDate;
+	@Column(name = "check_in_date")
+	private LocalDate checkInDate;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private ReservationStatus status;
+	@Column(name = "check_out_date")
+	private LocalDate checkOutDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "confirmed_by")
-	private CorporateUser confirmedBy;
+	@Column(name = "status")
+	private String status;
+
+	@Column(name = "confirmed_at")
+	private Timestamp confirmedAt;
 }

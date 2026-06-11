@@ -20,8 +20,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/batch")
 @RequiredArgsConstructor
-public class BatchController {
-	private final BatchControlService batchControlService;
+	public class BatchController {
+		private final BatchControlService batchControlService;
 	private final RoomProduceJob roomProduceJob;
 
 	@PostMapping("/room/produce")

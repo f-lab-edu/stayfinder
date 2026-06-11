@@ -60,7 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Map<LocalDate, RoomStock> allocationMap = roomStockService.allocateRoomStocks(reservationDTO);
 
 		User user = userRepository.findByEmail(jwtUtil.getUserEmail(token))
-				.orElseThrow( () -> new StayFinderException(ErrorType.USER_NOT_FOUND, Map.of("error", "User not found"),
+				.orElseThrow( () -> new StayFinderException(ErrorType.USER_NOT_FOUND, Map.of("ReservationDTO", reservationDTO.toString()),
 						log::error));
 
 		ReservationRequestHistory requestHistory = new ReservationRequestHistory();

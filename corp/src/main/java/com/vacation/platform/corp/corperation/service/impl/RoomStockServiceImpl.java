@@ -79,7 +79,7 @@ public class RoomStockServiceImpl implements RoomStockService {
 
 				RoomStockSummary roomStockSummary = roomStockSummaryRepository.findByRoomIdAndStockDate(room.getRoomId(), today)
 						.orElseGet(() -> null);
-
+				// bulk insert 재시도
 				if(roomStockSummary ==  null){
 					roomStockSummary = new RoomStockSummary();
 					RoomStockSummaryId roomStockSummaryId = new RoomStockSummaryId();
@@ -110,6 +110,9 @@ public class RoomStockServiceImpl implements RoomStockService {
 			Boolean candidateAvailable = true;
 			List<RoomStock>  roomStockList = new ArrayList<>();
 			for (LocalDate date = reservationDTO.getCheckIn(); date.isBefore(reservationDTO.getCheckOut()); date = date.plusDays(1)) {
+				// in 으로 처리
+				// date만 뽑아내고
+
 				Optional<RoomStock> stockOpt = roomStockRepository
 						.findByRoomUnitIdAndStockDateAndReservationIdIsNull(roomUnit.getRoomUnitId(), date);
 				if (stockOpt.isEmpty()) {
@@ -133,12 +136,14 @@ public class RoomStockServiceImpl implements RoomStockService {
 						}
 					}
 					if (!allLocked) {
+						// 위험 (락을 한개씩 풀어야함)
 						for (RLock lock : acquiredLocks) {
 							lock.unlock();
 						}
 						continue;
 					}
 
+					// 중복 체크 하지 않기
 					boolean recheckPassed = true;
 					for (RoomStock stock : roomStockList) {
 						Optional<RoomStock> recheckOpt = roomStockRepository.findById(stock.getRoomStockId());
@@ -147,6 +152,7 @@ public class RoomStockServiceImpl implements RoomStockService {
 							break;
 						}
 					}
+					// 락 제거
 					if (!recheckPassed) {
 						for (RLock lock : acquiredLocks) {
 							lock.unlock();
@@ -167,7 +173,8 @@ public class RoomStockServiceImpl implements RoomStockService {
 					return allocationMap;
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
-					throw new RuntimeException("RoomStock 락 획득 중 인터럽트 발생, roomUnitId: " + roomUnit.getRoomUnitId(), e);
+
+//					throw new RuntimeException("RoomStock 락 획득 중 인터럽트 발생, roomUnitId: " + roomUnit.getRoomUnitId(), e);
 				}
 			}
 

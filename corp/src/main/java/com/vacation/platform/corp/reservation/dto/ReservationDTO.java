@@ -3,6 +3,7 @@ package com.vacation.platform.corp.reservation.dto;
 import com.vacation.platform.api.payment.entity.PaymentMethod;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
+@ToString
 public class ReservationDTO {
 	private Long roomId;
 
